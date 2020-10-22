@@ -19,3 +19,13 @@ install_github("TilburgNetworkGroup/remulate")
 # load the package
 library(remulate)
 ```
+
+### Example
+
+```r
+library(remulate)
+
+form <- ~baseline(1)+ inertia(0.2,scaling="prop") + reciprocity(0.2,scaling="prop")
+out <- remulateDyad(form,c(1:20),1000,memory="window",memory_param= 2)
+
+```
