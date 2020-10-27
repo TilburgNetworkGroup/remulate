@@ -126,7 +126,6 @@ remulateDyad <- function(form,actors,M,covariates = list(),risk_set=NULL,waiting
     
     
     #initialize params
-    M <- events
     beta <- vector(length = P)
     for(i in 1:P){
         if(class(params[[i]])=="function"){#function must be defined at t=0
