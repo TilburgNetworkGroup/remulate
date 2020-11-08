@@ -66,6 +66,9 @@ remulateDyad <- function(form,actors,M,covariates = list(),risk_set=NULL,waiting
     P <- effects$P
     effects <- effects$effects
     
+    memory<- match.arg(memory)
+    waiting_time <- match.arg(waiting_time)
+    
     all_effects <- c(
             "baseline", #1
             "send", "receive", #2 #3
@@ -140,7 +143,7 @@ remulateDyad <- function(form,actors,M,covariates = list(),risk_set=NULL,waiting
     
     #pre-allocate space for edgelist,event list, convert to df later
     edgelist <- data.frame(time=rep(0,M),sender = rep(0,M),receiver=rep(0,M))
-    evls <- data.frame(time = rep(0,M),dyad = rep(0,M))
+    evls <- data.frame(dyad = rep(0,M),time = rep(0,M))
     
    
     #stores the event counts for dyads in a #sender x #recv matrix
@@ -149,10 +152,19 @@ remulateDyad <- function(form,actors,M,covariates = list(),risk_set=NULL,waiting
     
     for(i in 1:M){
         #updating event rate / lambda
-        if(P==1){
-            lambda <- exp(stats[i,,] * beta)
-        } else{
-            lambda <- exp(stats[i,,] %*% beta)
+         if(i==1){
+            if(P==1){
+                lambda <- exp(stats[i,,] * beta)
+            } else{
+                lambda <- exp(stats[i,,] %*% beta)
+            }
+        }
+        else{
+            if(P==1){
+                lambda <- exp(stats[i-1,,] * beta)
+            } else{
+                lambda <- exp(stats[i-1,,] %*% beta)
+            }
         }
     
         #sampling waiting time dt
