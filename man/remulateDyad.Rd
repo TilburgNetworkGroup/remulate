@@ -5,25 +5,24 @@
 \title{Simulate REM Dyad}
 \usage{
 remulateDyad(
-  form,
+  formula,
   actors,
   M,
-  covariates = list(),
+  burn_in = 0,
   risk_set = NULL,
   waiting_time = c("exp", "weibull", "gompertz"),
   time_param = 1,
-  memory = c("full", "window", "brandes", "vu"),
-  memory_param = NULL
+  memory = c("full", "window", "window_m", "brandes", "vu"),
+  memory_param = NULL,
+  seeds = NULL
 )
 }
 \arguments{
-\item{form}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data.}
-
 \item{actors}{Vector of actor IDs}
 
 \item{M}{Number of events to generate}
 
-\item{covariates}{fixed effects}
+\item{burn_in}{Number of random events to sample before beginning with the data generation}
 
 \item{risk_set}{risk set, a dataframe wtih sender in 1st column and receiver in second column indicating which pair cannot be in risk set}
 
@@ -32,59 +31,24 @@ remulateDyad(
 which occured events will be remembered for computing statistics, "brandes" memory type uses past events
 weighted by their time, "vu" memory type uses past events weighted by 1/time difference}
 
-\item{memory_param}{[Optional] memory_param value > 0. For memory type "window" this parameter indicates the length of the window. For memory type memory_param for memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.}
+\item{memory_param}{[Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window, For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.}
+
+\item{form}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data.}
 }
 \value{
-edgelist: dataframe with columns (time,sender,receiver)
+edgelist
 
-stats: 3d cube of statistics of dimensions M x D x P
+statistics 3d cube of statistics of dimensions M x D x P
 
-evls: event list (time, dyad)
+evls: event list a matrix with columns (dyad,time)
 
-riskset: dataframe with columns(sender,receiver)
+actors_map : mapping of actor IDs provided by user to the integer ids used in the edgelist
+
+riskset: risket set used for the dyad position in the statistics and event list
 }
 \description{
-A function to simulate relational event data by sampling from a
+A function to simulate relational event date by sampling from a
 tie based relational event model.
-}
-\details{
-A list of available statistics is as follows: 
-\itemize{
- \item{ baseline}
- \item{ send}
- \item{ receive}
- \item{ same}
- \item{ difference}
- \item{ average}
- \item{ minimum}
- \item{ maximum}
- \item{ equate}
- \item{ event}
- \item{ inertia}
- \item{ reciprocity}
- \item{ indegreeSender}
- \item{ indegreeReceiver}
- \item{ outdegreeSender}
- \item{ outdegreeReceiver}
- \item{ totaldegreeSender}
- \item{ totaldegreeReceiver}
- \item{ otp}
- \item{ itp}
- \item{ osp}
- \item{ isp}
- \item{ psABBA}
- \item{ psABBY}
- \item{ psABXA}
- \item{ psABXB}
- \item{ psABXY}
- \item{ psABAY}
-}
-scaling options are: 
-\itemize{
-   \item {"std" for standardizing}
-   \item {"raw" for raw counts and,}
-   \item {"prop" for proportoinal scaling}
-}
 }
 \examples{
 form <- ~baseline(1)+inertia(0.1)+reciprocity(0.4)
