@@ -1,23 +1,60 @@
 #'Simulate REM Dyad
-#' 
-#' A function to simulate relational event date by sampling from a
+#' @description 
+#'  A function to simulate relational event data by sampling from a
 #' tie based relational event model.
-#' @param form an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. 
-#' @param actors Vector of actor IDs
+#'
+#' @details
+#' A list of available statistics follows: 
+#' \itemize{
+#'  \item \code{\link{baseline}()}
+#'  \item \code{\link{send}()}
+#'  \item \code{\link{receive}()}
+#'  \item \code{\link{same}()}
+#'  \item \code{\link{difference}()}
+#'  \item \code{\link{average}()}
+#'  \item \code{\link{minimum}()}
+#'  \item \code{\link{maximum}()}
+#'  \item \code{\link{equate}()}
+#'  \item \code{\link{event}()}
+#'  \item \code{\link{inertia}()}
+#'  \item \code{\link{reciprocity}()}
+#'  \item \code{\link{indegreeSender}()}
+#'  \item \code{\link{indegreeReceiver}()}
+#'  \item \code{\link{outdegreeSender}()}
+#'  \item \code{\link{outdegreeReceiver}()}
+#'  \item \code{\link{totaldegreeSender}()}
+#'  \item \code{\link{totaldegreeReceiver}()}
+#'  \item \code{\link{otp}()}
+#'  \item \code{\link{itp}()}
+#'  \item \code{\link{osp}()}
+#'  \item \code{\link{isp}()}
+#'  \item \code{\link{sp}()}
+#'  \item \code{\link{psABBA}()}
+#'  \item \code{\link{psABBY}()}
+#'  \item \code{\link{psABXA}()}
+#'  \item \code{\link{psABXB}()}
+#'  \item \code{\link{psABXY}()}
+#'  \item \code{\link{psABAY}()}
+#'  \item \code{\link{interact}()}
+#' }
+#'
+#' @param form an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.
+#' @param actors Vector of actor names
 #' @param M Number of events to generate
-#' @param burn_in Number of random events to sample before beginning with the data generation 
-#' @param risk_set risk set, a dataframe wtih sender in 1st column and receiver in second column indicating which pair cannot be in risk set
+#' @param burn_in Number of random events to sample before beginning with the data generation
+#' @param risk_set \code{"\link[base]{data.frame}"} object wtih columns (sender, receiver) indicating which pair cannot be in risk set
 #' @param memory [Optional] (default = full) String indicating which
 #'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto
 #' which occured events will be remembered for computing statistics, "brandes" memory type uses past events
 #' weighted by their time, "vu" memory type uses past events weighted by 1/time difference
-#' @param memory_param [Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window, For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.
-#' @return edgelist
-#' @return statistics 3d cube of statistics of dimensions M x D x P
-#' @return evls: event list a matrix with columns (dyad,time)
-#' @return actors_map : mapping of actor IDs provided by user to the integer ids used in the edgelist
-#' @return riskset: risket set used for the dyad position in the statistics and event list 
+#' @param memory_param [Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.
+#' @return edgelist data.frame object with columns (time,sender,receiver)
+#' @return statistics 3 dimensional array of statistics of dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)
+#' @return evls matrix containing the event list  with columns (event,time) where event represents the index of the dyad or the (sender,receiver) pair in the risk set
+#' @return actors_map  data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations
+#' @return riskset matrix object containing the risket set used for the dyad indices in the statistics and event list 
 #' @examples 
+#'  
 #' form <- ~baseline(1)+inertia(0.1)+reciprocity(0.4)
 #' actors <- c(1:10)
 #' remulateDyad(form,actors,100)
@@ -242,7 +279,7 @@ burn_in_adj_mat<- function(actors,burn_in,rs){
 #' Function to compute the global density of the network. Can be used to check for degeneracy of the simulated network
 #' 
 #' density = number of unique edges in the network / total number of possible edges between nodes
-#' @param evls event list for the network i.e a matrix with columns (dyad,time)
+#' evls event list for the network i.e a matrix with columns (dyad,time)
 get.density <- function(evls,actors){
     edges <- length(unique(evls[,1]))
     total_edges <- length(actors)*(length(actors)-1)
@@ -266,8 +303,9 @@ initialize_exo_effects <- function(covariates,actors_map,effects){
     }
     return(covariates)
 }
+
 #'
-#' @return covariates- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
+#' covariates- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
 parse_formula <- function(formula,pred = FALSE){
     # Get effects information
     ft <- stats::terms(formula)

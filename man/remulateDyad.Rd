@@ -18,39 +18,75 @@ remulateDyad(
 )
 }
 \arguments{
-\item{actors}{Vector of actor IDs}
+\item{actors}{Vector of actor names}
 
 \item{M}{Number of events to generate}
 
 \item{burn_in}{Number of random events to sample before beginning with the data generation}
 
-\item{risk_set}{risk set, a dataframe wtih sender in 1st column and receiver in second column indicating which pair cannot be in risk set}
+\item{risk_set}{\code{"\link[base]{data.frame}"} object wtih columns (sender, receiver) indicating which pair cannot be in risk set}
 
 \item{memory}{[Optional] (default = full) String indicating which
  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto
 which occured events will be remembered for computing statistics, "brandes" memory type uses past events
 weighted by their time, "vu" memory type uses past events weighted by 1/time difference}
 
-\item{memory_param}{[Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window, For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.}
+\item{memory_param}{[Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.}
 
-\item{form}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data.}
+\item{form}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.}
 }
 \value{
-edgelist
+edgelist data.frame object with columns (time,sender,receiver)
 
-statistics 3d cube of statistics of dimensions M x D x P
+statistics 3 dimensional array of statistics of dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)
 
-evls: event list a matrix with columns (dyad,time)
+evls matrix containing the event list  with columns (dyad,time) where dyad represents the index of (sender,receiver) pair in the risk set
 
-actors_map : mapping of actor IDs provided by user to the integer ids used in the edgelist
+actors_map  data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations
 
-riskset: risket set used for the dyad position in the statistics and event list
+riskset matrix object containing the risket set used for the dyad indices in the statistics and event list
 }
 \description{
-A function to simulate relational event date by sampling from a
+A function to simulate relational event data by sampling from a
 tie based relational event model.
 }
+\details{
+A list of available statistics follows: 
+\itemize{
+ \item \code{\link{baseline}()}
+ \item \code{\link{send}()}
+ \item \code{\link{receive}()}
+ \item \code{\link{same}()}
+ \item \code{\link{difference}()}
+ \item \code{\link{average}()}
+ \item \code{\link{minimum}()}
+ \item \code{\link{maximum}()}
+ \item \code{\link{equate}()}
+ \item \code{\link{event}()}
+ \item \code{\link{inertia}()}
+ \item \code{\link{reciprocity}()}
+ \item \code{\link{indegreeSender}()}
+ \item \code{\link{indegreeReceiver}()}
+ \item \code{\link{outdegreeSender}()}
+ \item \code{\link{outdegreeReceiver}()}
+ \item \code{\link{totaldegreeSender}()}
+ \item \code{\link{totaldegreeReceiver}()}
+ \item \code{\link{otp}()}
+ \item \code{\link{itp}()}
+ \item \code{\link{osp}()}
+ \item \code{\link{isp}()}
+ \item \code{\link{sp}()}
+ \item \code{\link{psABBA}()}
+ \item \code{\link{psABBY}()}
+ \item \code{\link{psABXA}()}
+ \item \code{\link{psABXB}()}
+ \item \code{\link{psABXY}()}
+ \item \code{\link{psABAY}()}
+ \item \code{\link{interact}()}
+}
+}
 \examples{
+ 
 form <- ~baseline(1)+inertia(0.1)+reciprocity(0.4)
 actors <- c(1:10)
 remulateDyad(form,actors,100)
