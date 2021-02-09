@@ -18,6 +18,8 @@ remulateDyad(
 )
 }
 \arguments{
+\item{formula}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.}
+
 \item{actors}{Vector of actor names}
 
 \item{M}{Number of events to generate}
@@ -32,15 +34,13 @@ which occured events will be remembered for computing statistics, "brandes" memo
 weighted by their time, "vu" memory type uses past events weighted by 1/time difference}
 
 \item{memory_param}{[Optional] memory_param value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param will be the half-life i.e the time until an event has a weight of one half.}
-
-\item{form}{an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.}
 }
 \value{
 edgelist data.frame object with columns (time,sender,receiver)
 
 statistics 3 dimensional array of statistics of dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)
 
-evls matrix containing the event list  with columns (dyad,time) where dyad represents the index of (sender,receiver) pair in the risk set
+evls matrix containing the event list  with columns (event,time) where event represents the index of the dyad or the (sender,receiver) pair in the risk set
 
 actors_map  data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations
 

@@ -67,7 +67,7 @@ remulateDyad <- function(formula,actors,M,burn_in = 0,risk_set=NULL,waiting_time
     scaling <- effects$scaling
     int_effects <- effects$int_effects
     covariates <- effects$covariates
-    effects <- effects$effects
+    effects <- unname(effects$effects)
     P <- length(effects)
 
     memory<- match.arg(memory)
