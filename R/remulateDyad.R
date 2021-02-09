@@ -38,7 +38,7 @@
 #'  \item \code{\link{interact}()}
 #' }
 #'
-#' @param form an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.
+#' @param formula an object of class \code{"\link[stats]{formula}"}: a symbolic description of statistics used to generate the data. See 'Details' for a list of available statistics.
 #' @param actors Vector of actor names
 #' @param M Number of events to generate
 #' @param burn_in Number of random events to sample before beginning with the data generation
