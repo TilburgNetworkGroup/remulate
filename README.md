@@ -25,7 +25,7 @@ library(remulate)
 ```r
 library(remulate)
 
-f
+
 #Number of possible actors in the network
 N <- 35
 #vector of actor names or ids
