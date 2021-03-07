@@ -67,10 +67,21 @@
 #' actors <- c(1:10)
 #' remulateDyad(form,actors,100)
 #' @export
-remulateActor <- function(sender_formula,dyad_formula,actors,M,burn_in = 0,risk_set =NULL,waiting_time=c("exp","weibull","gompertz"),time_param=1,memory=c("full","window","window_m","brandes","vu"),memory_param = NULL,seeds=NULL){
+remulateActor <- function(
+    sender_formula,
+    dyad_formula,
+    actors,
+    M,
+    burn_in = 0,
+    risk_set =NULL,
+    waiting_time=c("exp","weibull","gompertz"),
+    time_param=1,
+    memory=c("full","window","window_m","brandes","vu"),
+    memory_param = NULL,
+    seeds=NULL){
     
     #process input for sender
-    s_effects <- parse_formula(sender_formula)
+    s_effects <- parse_formula_Sender(sender_formula)
     s_params <- s_effects$params
     s_scaling <- s_effects$scaling
     s_int_effects <- s_effects$int_effects
@@ -78,12 +89,10 @@ remulateActor <- function(sender_formula,dyad_formula,actors,M,burn_in = 0,risk_
     s_effects <- unname(s_effects$effects)
     s_P <- length(s_effects)
 
-    if(any(!s_int_effects %in% c(1,  2, 12, 14,  16, 28))){
-        stop(paste("An effect specified in sender_formula is not a sender effect"))
-    }
+
 
     #process input for receiver choice
-    d_effects <- parse_formula(dyad_formula)
+    d_effects <- parse_formula_Dyad(dyad_formula)
     d_params <- d_effects$params
     d_scaling <- d_effects$scaling
     d_int_effects <- d_effects$int_effects
@@ -253,21 +262,18 @@ remulateActor <- function(sender_formula,dyad_formula,actors,M,burn_in = 0,risk_
         dyad <- sample(s_indx,1,prob = d_lambda_given_sender/sum(d_lambda_given_sender))
 
 
-        #update stats for t_i 
+        #update dyadic stats for t_i 
         if(i==1){
-            d_stats[i,,] <- compute_stats(d_int_effects, d_P, rs, actors_map$id, as.matrix(edgelist[1,]),adj_mat, d_covariates, d_scaling,as.matrix(d_stats[1,,]))
+            d_stats[i,,] <- compute_stats_Dyad(d_int_effects, d_P, rs, actors_map$id, as.matrix(edgelist[1,]),adj_mat, d_covariates, d_scaling,as.matrix(d_stats[1,,]))
         }else{
-            d_stats[i,,] <- compute_stats(d_int_effects, d_P, rs, actors_map$id, as.matrix(edgelist[1:i-1,]),adj_mat, d_covariates, d_scaling,as.matrix(d_stats[i-1,,]))
+            d_stats[i,,] <- compute_stats_Dyad(d_int_effects, d_P, rs, actors_map$id, as.matrix(edgelist[1:i-1,]),adj_mat, d_covariates, d_scaling,as.matrix(d_stats[i-1,,]))
         }
-
+        #update sender stats for t_i 
         if(i==1){
-            statsrow <- compute_stats(s_int_effects, s_P, rs, actors_map$id, as.matrix(edgelist[1,]),adj_mat, s_covariates, s_scaling,as.matrix(s_statsprev))
-            
+            s_stats[i,,] <- compute_stats_Actor(s_int_effects, s_P, rs, actors_map$id, as.matrix(edgelist[1,]),adj_mat, s_covariates, s_scaling,as.matrix(s_stats[1,,]))
         }else{
-            statsrow <- compute_stats(s_int_effects, s_P, rs, actors_map$id, as.matrix(edgelist[1:i-1,]),adj_mat, s_covariates, s_scaling,as.matrix(s_statsprev))
+            s_stats[i,,] <- compute_stats_Actor(s_int_effects, s_P, rs, actors_map$id, as.matrix(edgelist[1:i-1,]),adj_mat, s_covariates, s_scaling,as.matrix(s_stats[i-1,,]))
         }
-        s_statsprev <- statsrow
-        s_stats[i,,] <- statsrow[sender_rs_indx,]
 
         edgelist$time[i] <- t
         edgelist$sender[i] <- sender

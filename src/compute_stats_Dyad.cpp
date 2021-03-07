@@ -18,8 +18,12 @@ arma::vec standardize(arma::vec statrow) {
 }
 
 //modified from remstats
-arma::vec compute_actorEffect(const arma::mat& values, int type, 
-    const arma::mat& edgelist, const arma::mat& riskset,const arma::vec& statsprevrow){
+arma::vec compute_actorEffect(
+    const arma::mat& values, 
+    int type, 
+    const arma::mat& edgelist, 
+    const arma::mat& riskset,
+    const arma::vec& statsprevrow){
     
     arma::vec statsrow(riskset.n_rows,arma::fill::zeros);
     
@@ -85,10 +89,12 @@ arma::vec compute_actorEffect(const arma::mat& values, int type,
 }
 
 //modified from remstats
-arma::mat compute_dyadEffect(const arma::mat& values, int type, 
-    const arma::mat& edgelist, const arma::mat& riskset,const arma::vec& statsprevrow) {
-    
-    //cout << 1 <<endl;
+arma::mat compute_dyadEffect(
+    const arma::mat& values, 
+    int type, 
+    const arma::mat& edgelist, 
+    const arma::mat& riskset,
+    const arma::vec& statsprevrow) {
 
     arma::vec statsrow(riskset.n_rows,arma::fill::zeros);
 
@@ -139,7 +145,6 @@ arma::mat compute_dyadEffect(const arma::mat& values, int type,
         }
         return(statsrow);
     }
-    //cout << 3 <<endl;
     statsrow = statsprevrow;
     double time = m;
 
@@ -208,9 +213,11 @@ arma::mat compute_dyadEffect(const arma::mat& values, int type,
 }
 
 
+
 //Updates a statistic row at each time point
 // [[Rcpp::export]]
-arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,const arma::vec& actors,const arma::mat& edgelist, const arma::mat& adj_mat , Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat){
+arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat& rs,const arma::vec& actors,const arma::mat& edgelist, const arma::mat& adj_mat , Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat){
+    
     arma::mat statmat(rs.n_rows , P);
     
     // used for skipping double computation of some statistics
@@ -230,7 +237,6 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
                 }
             //send
             case 2:{  
-                //cout << "send"<<endl;
                 statsrow = compute_actorEffect(covariates(i), 1, edgelist, rs,statprevmat.col(i)); 
                 break;
             }
@@ -274,7 +280,6 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
             //     break;
             // }
 
-            
             //inertia
             case 10:{
                 for(arma::uword j=0; j<rs.n_rows;j++){
@@ -423,30 +428,24 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
             }
             //PS AB-BA
             case 22:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(0)==receiver && rs.col(1)==sender);
                     statsrow(psdyads(0)) = 1;
-                }
                 break;
             }
             //PS AB-BY
             case 23:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(0)==receiver && rs.col(1)!=sender && rs.col(1) != receiver);
-
                     for(arma::uword d = 0; d < psdyads.n_elem; d++) {
                         statsrow(psdyads(d)) = 1;
                     }
-                }
                 break;
             }
             //PS AB-XA
             case 24:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(1)==sender && rs.col(0)!=sender && rs.col(0) != receiver);
@@ -454,12 +453,10 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
                     for(arma::uword d = 0; d < psdyads.n_elem; d++) {
                         statsrow(psdyads(d)) = 1;
                     }
-                }
                 break;
             }
             //PS AB-XB
             case 25:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(1)==receiver && rs.col(0)!=sender && rs.col(0) != receiver);
@@ -467,12 +464,10 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
                     for(arma::uword d = 0; d < psdyads.n_elem; d++) {
                         statsrow(psdyads(d)) = 1;
                     }
-                }
                 break;
             }
             //PS AB-XY
             case 26:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(0)!=sender && rs.col(0) != receiver&& rs.col(1)!=sender && rs.col(1) != receiver);
@@ -480,12 +475,10 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
                     for(arma::uword d = 0; d < psdyads.n_elem; d++) {
                         statsrow(psdyads(d)) = 1;
                     }
-                }
                 break;
             }
             //PS AB-AY
             case 27:{
-                if(edgelist.n_rows >1){
                     arma::uword sender = edgelist(edgelist.n_rows-1,1);
                     arma::uword receiver = edgelist(edgelist.n_rows-1,2); 
                     arma::uvec psdyads = find(rs.col(0)==sender && rs.col(1)!=sender && rs.col(1) != receiver);
@@ -493,7 +486,6 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
                     for(arma::uword d = 0; d < psdyads.n_elem; d++){
                         statsrow(psdyads(d)) = 1;
                     }
-                }
                 break;
             }
             //interact
@@ -517,7 +509,6 @@ arma::mat compute_stats(const arma::vec& int_effects,int P,const arma::mat& rs,c
         switch(effect){
             //inertia
             case 10:{
-                //cout << "in inertia scaling is:"<<scaling(i)<<endl;
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
                 }

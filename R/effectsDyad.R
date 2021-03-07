@@ -5,7 +5,6 @@ baseline <- function(param){
     out <- prepEndoVar("baseline",param,scaling)
 }
 
-
 #' interact
 #'
 #' This function specifies the input for the interact effect in the \code{formula} argument for the function \code{\link{remulateDyad}}. The interaction is always between the first two terms of the formula argument. Not to be used independently
@@ -373,50 +372,5 @@ maximum <- function(param=NULL, variable,covariates,scaling=c("raw","std")) {
 #     out
 # }
 
-
-# Internal function, modified from remstats
-prepExoVar <- function(effect_name, param, scaling, variable, covariates) {
-    # Warning for missing values
-    if(anyNA(covariates[,variable])) {
-        warning("Missing values in covariates object.")
-    }
-
-    scaling <- match(scaling,c("raw","std","prop"))
-
-    cov <- data.frame(
-        id = covariates[,1], 
-        time = covariates[,2], 
-        val = covariates[,variable]
-    )
-    cov <- cov[order(cov$id,cov$time),]
-
-    out <- list(
-        effect = list(
-            param= param,
-            scaling = scaling,
-            cov = cov,
-            stat_name = paste0(effect_name,"_",variable)
-        )
-    )
-    names(out) <- effect_name
-    out
-}
-
-# Internal function, modified from remstats
-prepEndoVar <- function(effect_name, param, scaling) {
-
-    scaling <- match(scaling,c("raw","std","prop"))
-
-    out <- list(
-        effect = list(
-            param= param,
-            scaling = scaling,
-            stat_name = effect_name
-        )
-    )
-
-    names(out) <- effect_name
-    out
-}
 
 

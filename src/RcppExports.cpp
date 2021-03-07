@@ -6,20 +6,9 @@
 
 using namespace Rcpp;
 
-// standardize
-arma::vec standardize(arma::vec statrow);
-RcppExport SEXP _remulate_standardize(SEXP statrowSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type statrow(statrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(standardize(statrow));
-    return rcpp_result_gen;
-END_RCPP
-}
-// compute_stats
-arma::mat compute_stats(const arma::vec& int_effects, int P, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat);
-RcppExport SEXP _remulate_compute_stats(SEXP int_effectsSEXP, SEXP PSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {
+// compute_stats_Actor
+arma::mat compute_stats_Actor(const arma::vec& int_effects, int P, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat);
+RcppExport SEXP _remulate_compute_stats_Actor(SEXP int_effectsSEXP, SEXP PSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,14 +21,45 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type covariates(covariatesSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type scaling(scalingSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type statprevmat(statprevmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_stats(int_effects, P, rs, actors, edgelist, adj_mat, covariates, scaling, statprevmat));
+    rcpp_result_gen = Rcpp::wrap(compute_stats_Actor(int_effects, P, rs, actors, edgelist, adj_mat, covariates, scaling, statprevmat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// standardize
+arma::vec standardize(arma::vec statrow);
+RcppExport SEXP _remulate_standardize(SEXP statrowSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type statrow(statrowSEXP);
+    rcpp_result_gen = Rcpp::wrap(standardize(statrow));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_stats_Dyad
+arma::mat compute_stats_Dyad(const arma::vec& int_effects, int P, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat);
+RcppExport SEXP _remulate_compute_stats_Dyad(SEXP int_effectsSEXP, SEXP PSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type int_effects(int_effectsSEXP);
+    Rcpp::traits::input_parameter< int >::type P(PSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rs(rsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type actors(actorsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type edgelist(edgelistSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type adj_mat(adj_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type scaling(scalingSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type statprevmat(statprevmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_stats_Dyad(int_effects, P, rs, actors, edgelist, adj_mat, covariates, scaling, statprevmat));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_remulate_compute_stats_Actor", (DL_FUNC) &_remulate_compute_stats_Actor, 9},
     {"_remulate_standardize", (DL_FUNC) &_remulate_standardize, 1},
-    {"_remulate_compute_stats", (DL_FUNC) &_remulate_compute_stats, 9},
+    {"_remulate_compute_stats_Dyad", (DL_FUNC) &_remulate_compute_stats_Dyad, 9},
     {NULL, NULL, 0}
 };
 
