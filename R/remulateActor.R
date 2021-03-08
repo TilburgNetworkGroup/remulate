@@ -168,10 +168,11 @@ remulateActor <- function(
 
     d_stats <- array(0,dim=c(M,nrow(rs),d_P))
 
-    #pre-allocate space for edgelist,event list
+    #pre-allocate space for edgelist,event list,probs
     edgelist <- data.frame(time=rep(0,M),sender = rep(0,M),receiver=rep(0,M))
     evls <- data.frame(dyad = rep(0,M),time = rep(0,M))
-    
+    probs <- array(0,dim=c(M,nrow(rs)))
+
     #adjacency matrix ( #sender x #recv matrix)
     adj_mat <- burn_in_adj_mat(actors,burn_in,rs)
 
@@ -221,7 +222,9 @@ remulateActor <- function(
         lambda <-apply(rs,MARGIN = 1,function(x){
             s_lambda[x[1]] * d_lambda[x[2]] / d_lambda_per_sender[x[1]]
         })
-
+        
+        probs[i,] <- lambda/sum(lambda)
+        
         #sampling waiting time dt
         if(waiting_time=="exp"){
             if(!is.null(seeds)){
