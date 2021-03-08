@@ -133,7 +133,7 @@ remulateDyad <- function(
     #initialize statistics cube of dimension (M x #dyads x #params) for all events that are going to be sampled 
     stats <- array(0,dim=c(M,nrow(rs),P))
     
-    #pre-allocate space for edgelist,event list
+    #pre-allocate space for edgelist,event list,probs
     edgelist <- data.frame(time=rep(0,M),sender = rep(0,M),receiver=rep(0,M))
     evls <- data.frame(dyad = rep(0,M),time = rep(0,M))
     probs <- array(0,dim=c(M,nrow(rs)))
