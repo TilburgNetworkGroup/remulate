@@ -3,6 +3,18 @@
 
 using namespace std;
 
+// standardize
+// 
+// Can be used to standardize a statistic row 
+// 
+//[[Rcpp::export]]
+arma::vec standardize(arma::vec statrow) {
+    if(stddev(statrow) > 0) {
+        statrow = (statrow-mean(statrow))/stddev(statrow);
+    }
+    return statrow;
+}
+
 //computes send covariate for actor oriented model, modified from remstats
 arma::vec compute_senderEffect(
     const arma::mat& values, 
