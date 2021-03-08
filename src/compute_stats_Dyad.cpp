@@ -345,7 +345,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
-                //out degree receiver
+            //out degree receiver
             case 15:{
                 if(skip_flag(15)==0){
                     arma::vec out_degrees = arma::sum(adj_mat,1);
@@ -541,6 +541,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //in degree Sender
             case 12:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -551,6 +552,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //in degree receiver
             case 13:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -561,6 +563,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //out degree sender
             case 14:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -571,6 +574,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //out degree receiver
             case 15:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -581,6 +585,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //total degree sender
             case 16: {
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -591,6 +596,7 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //total degree receiver
             case 17:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
@@ -601,24 +607,28 @@ arma::mat compute_stats_Dyad(const arma::vec& int_effects,int P,const arma::mat&
                 }
                 break;
             }
+            //otp
             case 18:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
                 }
                 break;
             }
+            //itp
             case 19:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
                 }
                 break;
             }
+            //osp
             case 20:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
                 }
                 break;
             }
+            //isp
             case 21:{
                 if(scaling(i)==2){
                     statmat.col(i) = standardize(statmat.col(i));
