@@ -216,6 +216,99 @@ arma::mat compute_stats_Actor(
         statmat.col(i) = statsrow;
         i++;
     }
-   
+    //scaling after
+    for(int i = 0;i<P;i++){
+        int effect = int_effects(i);
+        switch(effect){
+            //inertia_s
+            case 3:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                else if (scaling(i)==3)//outdegreeSender
+                {
+                    //Perhaps a more efficient (less redundant) solution exists
+                    statmat.col(i) = statmat.col(i)/arma::sum(adj_mat,1);
+                    statmat.col(i).replace(arma::datum::nan,0);
+                }
+                break;
+            }
+            //reciprocity_s
+            case 4:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                else if (scaling(i)==3)//indegreeSender
+                {
+                    //Perhaps a more efficient (less redundant) solution exists
+                    statmat.col(i) = statmat.col(i)/arma::sum(adj_mat,0).t();
+                    statmat.col(i).replace(arma::datum::nan,0);
+                }
+                break;
+            }
+            //indegreeSender
+            case 5:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                else if (scaling(i)==3)//past events
+                {
+                    statmat.col(i) = statmat.col(i)/edgelist.n_rows;
+                }
+                break;
+            }
+            //outdegreeSender
+            case 6:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                else if (scaling(i)==3)//past events
+                {
+                    statmat.col(i) = statmat.col(i)/edgelist.n_rows;
+                }
+                break;
+            }
+            //totaldegreeSender
+            case 7:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                else if (scaling(i)==3)//past events
+                {
+                    statmat.col(i) = statmat.col(i)/edgelist.n_rows;
+                }
+                break;
+            }
+            //otp_s
+            case 8:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                break;
+            }
+            //itp_s
+            case 9:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                break;
+            }
+            //osp_s
+            case 10:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                break;
+            }
+            //isp_s
+            case 11:{
+                if(scaling(i)==2){
+                    statmat.col(i) = standardize(statmat.col(i));
+                }
+                break;
+            }
+        }
+    }
+    
     return(statmat);
 }
