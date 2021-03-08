@@ -96,22 +96,26 @@ arma::mat compute_stats_Actor(
         switch(effect){
             //baseline
             case 1:{
-                    statsrow.fill(1);
-                    break;
-                }
+                statsrow.fill(1);
+                
+                break;
+            }
             //send
             case 2:{ 
                 statsrow = compute_senderEffect(covariates(i), edgelist, actors,statprevmat.col(i)); 
+                
                 break;
             }
             //inertia_s
             case 3:{
                 statsrow = arma::max(adj_mat,1);
+                
                 break;
             }
             //reciprocity_s
             case 4:{
                 statsrow =  arma::max(adj_mat,0).t();
+                
                 break;
             }
             //indegreeSender
@@ -120,6 +124,7 @@ arma::mat compute_stats_Actor(
                 //arma::rowvec in_degrees = arma::sum(adj_mat,0);
                 //statsrow = in_degrees.as_col();
                 statsrow =  arma::sum(adj_mat,0).t();
+                
                 break;
                 }
             //outdegreeSender
