@@ -6,7 +6,7 @@
 #' 
 #' @param scaling the method for scaling the inertia sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-inertia_s <- function(param=NULL, scaling=c("raw","prop")){
+inertia_s <- function(param=NULL, scaling=c("raw","prop","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("inertia_s",param,scaling)
     out
@@ -20,7 +20,7 @@ inertia_s <- function(param=NULL, scaling=c("raw","prop")){
 #' 
 #' @param scaling the method for scaling the reciprocity sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-reciprocity_s <- function(param=NULL, scaling=c("raw","prop")){
+reciprocity_s <- function(param=NULL, scaling=c("raw","prop","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("reciprocity_s",param,scaling)
     out
@@ -34,7 +34,7 @@ reciprocity_s <- function(param=NULL, scaling=c("raw","prop")){
 #' 
 #' @param scaling the method for scaling the otp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-otp_s <- function(param=NULL, scaling=c("raw","prop")){
+otp_s <- function(param=NULL, scaling=c("raw","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("otp_s",param,scaling)
     out
@@ -48,7 +48,7 @@ otp_s <- function(param=NULL, scaling=c("raw","prop")){
 #' 
 #' @param scaling the method for scaling the osp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-osp_s <- function(param=NULL, scaling=c("raw","prop")){
+osp_s <- function(param=NULL, scaling=c("raw","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("osp_s",param,scaling)
     out
@@ -62,7 +62,7 @@ osp_s <- function(param=NULL, scaling=c("raw","prop")){
 #' 
 #' @param scaling the method for scaling the itp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-itp_s <- function(param=NULL, scaling=c("raw","prop")){
+itp_s <- function(param=NULL, scaling=c("raw","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("itp_s",param,scaling)
     out
@@ -76,7 +76,7 @@ itp_s <- function(param=NULL, scaling=c("raw","prop")){
 #' 
 #' @param scaling the method for scaling the isp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export 
-isp_s <- function(param=NULL, scaling=c("raw","prop")){
+isp_s <- function(param=NULL, scaling=c("raw","std")){
     scaling <-  match.arg(scaling)
     out <- prepEndoVar("isp_s",param,scaling)
     out
