@@ -67,3 +67,17 @@ itp_s <- function(param=NULL, scaling=c("raw","prop")){
     out <- prepEndoVar("itp_s",param,scaling)
     out
 }
+
+#'isp sender
+#' 
+#' This function specifies the input for the isp  sender effect in the \code{s_formula} argument for the function \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the Actor Oriented Model
+#' 
+#' @param scaling the method for scaling the isp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @export 
+isp_s <- function(param=NULL, scaling=c("raw","prop")){
+    scaling <-  match.arg(scaling)
+    out <- prepEndoVar("isp_s",param,scaling)
+    out
+}
