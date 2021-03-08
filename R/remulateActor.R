@@ -357,7 +357,7 @@ remulateActor <- function(
             sender_statistics = s_stats,
             dyad_statistics = d_stats,
             riskset = rs,
-            actors = actors_map
+            actors = actors_map,
             probs = probs
         )
     ) 
