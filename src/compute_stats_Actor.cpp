@@ -106,13 +106,14 @@ arma::mat compute_stats_Actor(
             }
             //inertia_s
             case 3:{
-                
+                statsrow = arma::max(adj_mat,1);
                 break;
             }
             //reciprocity_s
             case 4:{
-                
-                break;}
+                statsrow =  arma::max(adj_mat,0).t();
+                break;
+            }
             //indegreeSender
             case 5:{
                 //computing sum only once for each actor
