@@ -209,8 +209,8 @@ remulateActor <- function(sender_formula,dyad_formula,actors,M,burn_in = 0,risk_
             sum(d_lambda[s_indx])
         })
 
-        lambda <-apply(rs,MARGIN = 1,function(x){
-            s_lambda[x[1]] * d_lambda[x[2]] / d_lambda_per_sender[x[1]]
+        lambda <-vapply(1:nrow(rs),FUN.VALUE = numeric(1), function(x){
+            s_lambda[rs[x,1]] * d_lambda[x] / d_lambda_per_sender[rs[x,1]]
         })
 
         #sampling waiting time dt
