@@ -143,8 +143,10 @@ arma::mat compute_stats_Actor(
                     double val = 0;
                     for(arma::uword k=0; k<actors.n_elem;k++){//receiver
                         val = 0;
-                        for(arma::uword h = 0; h < actors.n_elem; ++h) {
-                            val += std::min(adj_mat(j,h) , adj_mat(h , k));
+                        if(j != k){
+                            for(arma::uword h = 0; h < actors.n_elem; ++h) {
+                                val += std::min(adj_mat(j,h) , adj_mat(h , k));
+                            }
                         }
                         statsrow(j) = std::max(statsrow(j),val);
                     }
@@ -159,9 +161,12 @@ arma::mat compute_stats_Actor(
                     double val = 0;
                     for(arma::uword k=0; k<actors.n_elem;k++){//receiver
                         val = 0;
-                        for(arma::uword h = 0; h < actors.n_elem; ++h) {
-                            val += std::min(adj_mat(k,h) , adj_mat(h , j));
+                        if(j != k){
+                            for(arma::uword h = 0; h < actors.n_elem; ++h) {
+                                val += std::min(adj_mat(k,h) , adj_mat(h , j));
+                            }
                         }
+
                         statsrow(j) = std::max(statsrow(j),val);
                     }
                 }
@@ -176,8 +181,10 @@ arma::mat compute_stats_Actor(
                     double val = 0;
                     for(arma::uword k=0; k<actors.n_elem;k++){//receiver
                         val = 0;
-                        for(arma::uword h = 0; h < actors.n_elem; ++h) {
-                            val += std::min(adj_mat(j,h) , adj_mat(k,h));
+                        if(j != k){
+                            for(arma::uword h = 0; h < actors.n_elem; ++h) {
+                                val += std::min(adj_mat(j,h) , adj_mat(k,h));
+                            }
                         }
                         statsrow(j) = std::max(statsrow(j),val);
                     }
@@ -192,8 +199,10 @@ arma::mat compute_stats_Actor(
                     double val = 0;
                     for(arma::uword k=0; k<actors.n_elem;k++){//receiver
                         val = 0;
-                        for(arma::uword h = 0; h < actors.n_elem; ++h) {
-                            val += std::min(adj_mat(h,j) , adj_mat(h , k));
+                        if(j != k){
+                            for(arma::uword h = 0; h < actors.n_elem; ++h) {
+                                val += std::min(adj_mat(h,j) , adj_mat(h , k));
+                            }
                         }
                         statsrow(j) = std::max(statsrow(j),val);
                     }
