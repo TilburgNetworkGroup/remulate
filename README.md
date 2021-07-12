@@ -23,7 +23,7 @@ library(remulate)
 ### Help files
 ```
 #To view all help files in the remulate package
-help(packages='remulate')
+help(package='remulate')
 
 #To view available effects for remulateTie
 help('remulateTieEffects')
