@@ -6,40 +6,50 @@
 
 using namespace Rcpp;
 
-// standardize
-arma::vec standardize(arma::vec statrow);
-RcppExport SEXP _remulate_standardize(SEXP statrowSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type statrow(statrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(standardize(statrow));
-    return rcpp_result_gen;
-END_RCPP
-}
-// compute_stats
-arma::mat compute_stats(const arma::vec& int_effects, int P, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, arma::vec scaling, arma::mat statprevmat);
-RcppExport SEXP _remulate_compute_stats(SEXP int_effectsSEXP, SEXP PSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {
+// computeStatsActor
+arma::mat computeStatsActor(const arma::vec& int_effects, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, Rcpp::List interact_effects, arma::vec scaling, arma::mat statprevmat);
+RcppExport SEXP _remulate_computeStatsActor(SEXP int_effectsSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP interact_effectsSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::vec& >::type int_effects(int_effectsSEXP);
-    Rcpp::traits::input_parameter< int >::type P(PSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type rs(rsSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type actors(actorsSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type edgelist(edgelistSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type adj_mat(adj_matSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type interact_effects(interact_effectsSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type scaling(scalingSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type statprevmat(statprevmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_stats(int_effects, P, rs, actors, edgelist, adj_mat, covariates, scaling, statprevmat));
+    rcpp_result_gen = Rcpp::wrap(computeStatsActor(int_effects, rs, actors, edgelist, adj_mat, covariates, interact_effects, scaling, statprevmat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// computeStatsTie
+arma::mat computeStatsTie(const arma::vec& int_effects, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, Rcpp::List interact_effects, arma::vec scaling, arma::vec mem_start, arma::vec mem_end, arma::mat statprevmat);
+RcppExport SEXP _remulate_computeStatsTie(SEXP int_effectsSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP interact_effectsSEXP, SEXP scalingSEXP, SEXP mem_startSEXP, SEXP mem_endSEXP, SEXP statprevmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type int_effects(int_effectsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rs(rsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type actors(actorsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type edgelist(edgelistSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type adj_mat(adj_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type interact_effects(interact_effectsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type scaling(scalingSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type mem_start(mem_startSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type mem_end(mem_endSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type statprevmat(statprevmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(computeStatsTie(int_effects, rs, actors, edgelist, adj_mat, covariates, interact_effects, scaling, mem_start, mem_end, statprevmat));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_remulate_standardize", (DL_FUNC) &_remulate_standardize, 1},
-    {"_remulate_compute_stats", (DL_FUNC) &_remulate_compute_stats, 9},
+    {"_remulate_computeStatsActor", (DL_FUNC) &_remulate_computeStatsActor, 9},
+    {"_remulate_computeStatsTie", (DL_FUNC) &_remulate_computeStatsTie, 11},
     {NULL, NULL, 0}
 };
 
