@@ -18,10 +18,10 @@ initialize_adj_mat<- function(actors_map,initial,rs){
 
     #change actor ids to names in initial
     initial["sender"] <- lapply(initial["sender"], function(x) {
-      actors_map$name[x]
+      actors_map$id[match(x,actors_map$given)]
     })
     initial["receiver"] <- lapply(initial["receiver"], function(x) {
-      actors_map$name[x]
+      actors_map$id[match(x,actors_map$given)]
     })
 
     adj_mat <- array(0,dim=c(nrow(actors_map),nrow(actors_map)))
