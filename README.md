@@ -28,7 +28,7 @@ help(package='remulate')
 #To view available effects for remulateTie
 help('remulateTieEffects')
 
-#To view available effects for remulateTie
+#To view available effects for remulateActor
 help('remulateActorEffects')
 
 ```
