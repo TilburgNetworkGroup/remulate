@@ -18,18 +18,18 @@ initialize_adj_mat<- function(actors_map,initial,rs){
 
     #change actor ids to names in initial
     initial["sender"] <- lapply(initial["sender"], function(x) {
-      actors_map$id[match(x,actors_map$given)]
+      actors_map$id[match(x,actors_map$name)]
     })
     initial["receiver"] <- lapply(initial["receiver"], function(x) {
-      actors_map$id[match(x,actors_map$given)]
+      actors_map$id[match(x,actors_map$name)]
     })
-
+    
     adj_mat <- array(0,dim=c(nrow(actors_map),nrow(actors_map)))
     for(i in 1:nrow(initial)){
       adj_mat[initial[i,2],initial[i,3]] =  adj_mat[initial[i,2],initial[i,3]] + 1;
     }
   }
-  #cat("Burn in of ",burn_in," events was used")
+  
   return(adj_mat)
 }
 
@@ -38,7 +38,7 @@ initialize_adj_mat<- function(actors_map,initial,rs){
 #
 # density = number of unique edges in the network / total number of possible edges between nodes
 # evls event list for the network i.e a matrix with columns (dyad,time)
-get.sparsity <- function(evls,actors){
+get.density <- function(evls,actors){
   edges <- length(unique(evls[,1]))
   total_edges <- length(actors)*(length(actors)-1)
   return(edges/total_edges)

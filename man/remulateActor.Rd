@@ -48,7 +48,7 @@ weighted by their time, "vu" memory type uses past events weighted by 1/time sin
 \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
 \item{actors_map}{data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations}
 \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
-\item{sparsity}{value indicating sparsity in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
+\item{density}{value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
 }
 }
 \description{

@@ -56,7 +56,7 @@
 #' \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
 #' \item{actors_map}{data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations}
 #' \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
-#' \item{sparsity}{value indicating sparsity in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
+#' \item{density}{value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
 #' }
 #' @examples 
 #'  # To generate events upto time '50' in a network of 25 actors with 
@@ -191,14 +191,14 @@ remulateActor <- function(
     #initialize output objects
     rateStatistics <- list() #list of matrices
     rateStatistics[[1]] <- array(0,dim=c(N,s_P))
-
+    if(any(s_int_effects==1)){ #fill in baseline for first time point
+        rateStatistics[[1]][,which(s_int_effects==1)] <- array(1,dim=c(N,1))
+    }
     choiceStatistics <- list() #list of matrices
     choiceStatistics[[1]] <- array(0,dim=c(nrow(rs),d_P))
 
     edgelist <- array(0,dim=c(1,3))
     evls <- array(0,dim=c(1,2))
-    rateProbs <- array(0,dim=c(1,N))
-    choiceProbs <- array(0,dim=c(1,N))
     
     #adjacency matrix ( #sender x #recv matrix)
     adj_mat <- initialize_adj_mat(actors_map, initial, rs)
@@ -220,8 +220,6 @@ remulateActor <- function(
             d_lambda <- exp(choiceStatistics[[i]] %*% beta)
         }
  
-        rateProbs[i,] <- s_lambda / sum(s_lambda)
-
         #sampling waiting time dt
         if(waiting_time=="exp"){
             dt <- rexp(1,rate = sum(s_lambda))
@@ -302,8 +300,7 @@ remulateActor <- function(
 
         #add row for next iteration
         edgelist <- rbind(edgelist,array(0,dim=c(1,3)))
-        evls <- rbind(evls,array(0,dim=c(1,2)))
-        rateProbs <- rbind(rateProbs,array(0,dim=c(1,N)))
+        evls <- rbind(evls,array(0,dim=c(1,2)))        
 
         #update parameters in case they vary with time
         for(j in 1:d_P){
@@ -339,7 +336,6 @@ remulateActor <- function(
     choiceStatistics <- choiceStatistics[-dim(choiceStatistics)[1],,]
     edgelist <- edgelist[-dim(edgelist)[1],]
     evls <- evls[-dim(evls)[1],]
-    rateProbs <- rateProbs[-dim(rateProbs)[1],]
 
     edgelist <- as.data.frame(edgelist)
     colnames(edgelist) <- c("time","sender","receiver")
@@ -365,8 +361,6 @@ remulateActor <- function(
         dimnames(choiceStatistics)<-list(NULL,NULL,d_effects)
     }
     
-    sparsity <- get.sparsity(evls,actors)
-
     return(
         list(
             edgelist = edgelist,
@@ -377,9 +371,7 @@ remulateActor <- function(
             choiceParams = d_params,
             riskset = rs,
             actors = actors_map,
-            sparsity = sparsity,
-            rateProbs = rateProbs,
-            choiceProbs = choiceProbs
+            density = get.density(evls,actors)
         )
     ) 
 }

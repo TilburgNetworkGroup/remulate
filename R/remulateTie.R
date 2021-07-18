@@ -54,7 +54,7 @@
 #' \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
 #' \item{actors_map}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
 #' \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
-#' \item{sparsity}{numeric value indicating sparsity in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
+#' \item{density}{numeric value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
 #' }
 #' @examples 
 #'  # To generate events upto time '50' in a network of 25 actors with 
@@ -167,9 +167,11 @@ remulateTie <- function(
   #initialize output objects
   statistics <- list() #list of matrices
   statistics[[1]] <- array(0, dim = c(nrow(rs), P))
+  if(any(int_effects==1)){ #fill in baseline for first time point
+    statistics[[1]][,which(int_effects==1)] <- array(1,dim=c(nrow(rs),1))
+  }
   edgelist <- array(0, dim = c(1, 3))
   evls <- array(0, dim = c(1, 2))
-  probs <- array(0, dim = c(1, nrow(rs)))
 
   #stores the event counts for dyads in a #sender x #recv matrix
   adj_mat <- initialize_adj_mat(actors_map, initial, rs)
@@ -184,7 +186,6 @@ remulateTie <- function(
       lambda <- exp(statistics[[i]] %*% beta)
     }
 
-    probs[i,] <- lambda / sum(lambda)
     #sampling waiting time dt
     if (waiting_time == "exp") {
       dt <- rexp(1, rate = sum(lambda))
@@ -287,7 +288,6 @@ remulateTie <- function(
   statistics <- statistics[-dim(statistics)[1],,]
   edgelist <- edgelist[-dim(edgelist)[1],]
   evls <- evls[-dim(evls)[1],]
-  probs <- probs[-dim(probs)[1],]
 
   edgelist <- as.data.frame(edgelist)
   colnames(edgelist) <- c("time", "sender", "receiver")
@@ -306,8 +306,6 @@ remulateTie <- function(
   if(P!=1){
     dimnames(statistics) <- list(NULL, NULL, effect_names)
   }
-  
-  sparsity <- get.sparsity(evls, actors)
 
   return(
     list(
@@ -317,8 +315,7 @@ remulateTie <- function(
         params = params,
         riskset = rs,
         actors = actors_map,
-        sparsity = sparsity,
-        probs = probs
+        density = get.density(evls, actors)
     )
   )
 }
