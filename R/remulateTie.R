@@ -62,8 +62,11 @@
 #'  
 #'  #exogenous attributes data.frame
 #'  cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+#'  
 #'  #effects specification
-#'  effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+#'  effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+
+#'  remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+#'  
 #'  #calling remulateTie
 #'  remulate::remulateTie(effects, actors = 1:25, time =50, events = 500, initial = 200)
 #'  
@@ -123,11 +126,6 @@ remulateTie <- function(
   actors_map <- data.frame(id = 1:length(actors), name = actors)
 
   #Create a risk set
-  #TODO: allow risk set to vary with time (enhancement:feature)
-  rs <- as.matrix(expand.grid(actors_map$id, actors_map$id))
-  colnames(rs) <- c("sender", "receiver")
-  rs <- rs[rs[, "sender"] != rs[, "receiver"],]
-
   if (!is.null(riskset)) { #custom riskset
     if (any(!riskset[[1]] %in% actors_map$name)) {
       stop("risk set contains sender actor not specified in actor's list")
@@ -135,7 +133,19 @@ remulateTie <- function(
       stop("risk set contains receiver actor not specified in actor's list")
     }
     #convert names in riskset to ids
-    rs <- rs[(rs[, 1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[, 2] %in% actors_map$id[actors_map$name %in% riskset[[2]]]),]
+    #rs <- rs[(rs[, 1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[, 2] %in% actors_map$id[actors_map$name %in% riskset[[2]]]),]
+    rs <- risket
+    rs[,2] <- sapply(rs[,2], function(x) {
+      actors_map$id[match(x,actors_map$name)]
+    })
+    rs[,1] <- sapply(rs[,1], function(x) {
+        actors_map$id[match(x,actors_map$name)]
+    })
+  }else{
+    #TODO: allow risk set to vary with time (enhancement:feature)
+    rs <- as.matrix(expand.grid(actors_map$id, actors_map$id))
+    colnames(rs) <- c("sender", "receiver")
+    rs <- rs[rs[, "sender"] != rs[, "receiver"],]
   }
 
   #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
@@ -148,7 +158,6 @@ remulateTie <- function(
     }
   }
     
-
   #TODO: check if exogenous effect doesnt change with time only once (enhancement:comp time)
   #initialize attributes
   attributes <- initialize_exo_effects(attributes, actors_map, parsed_effects)
@@ -266,7 +275,7 @@ remulateTie <- function(
     #add row for next iteration
     edgelist <- rbind(edgelist, array(0, dim = c(1, 3)))
     evls <- rbind(evls, array(0, dim = c(1, 2)))
-    probs <- rbind(probs, array(0, dim = c(1, nrow(rs))))
+    
 
     #update beta
     for (j in 1:P) {

@@ -93,14 +93,16 @@ A list of available statistics for receiver choice sub-model:
  
  #exogenous attributes data.frame
  cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+ 
  #effects specification
- rateform <- ~ remulate::baseline(-10) + remulate::indegreeSender(0.01) +remulate::send(0.2,variable="age",attributes = cov)+ remulate::interact(0.01,indices=c(2,3))
+ rateform <- ~ remulate::baseline(-6) + remulate::indegreeSender(0.01) +remulate::send(0.02,variable="age",attributes = cov)+ remulate::interact(0.01,indices=c(2,3))
  choiceform <- ~ remulate::inertia(0.01) + remulate::reciprocity(-0.03)+remulate::interact(0.01,indices=c(2,1))
+ 
  #calling remulateActor
- remulate::remulateActor(rateform,choiceform,actors = 1:25,time=20,initial = 200,events = 500,seed=123)
+ remulate::remulateActor(rateform,choiceform,actors = 1:25,time=100,initial = 200,events = 500,seed=123)
   
  # To predict events, given an edgelist of initial events
  initialREH <- data.frame(time = seq(0.5,100,0.5), sender = sample(1:25,200,T), receiver = sample(1:25,200,T))
- remulate::remulateActor(rateform, choiceform, actors = 1:25, time=120, initial = initialREH, events = 500, seed=123)
+ remulate::remulateActor(rateform, choiceform, actors = 1:25, time=200, initial = initialREH, events = 500, seed=123)
 
 }

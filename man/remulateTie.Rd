@@ -91,8 +91,11 @@ A list of available statistics. See \link{remulateTieEffects} for details:
  
  #exogenous attributes data.frame
  cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+ 
  #effects specification
- effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+ effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+
+ remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+ 
  #calling remulateTie
  remulate::remulateTie(effects, actors = 1:25, time =50, events = 500, initial = 200)
  

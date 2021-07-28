@@ -112,11 +112,11 @@ at timepoint t is equal to the minimum of past
 \examples{
 
 # To specify an endogenous effects (example inertia)
-inertia(0.1 , scaling = "std") 
+effects <- ~  inertia(0.1 , scaling = "std") 
 
 # To specify an exogenous effects (example same)
 cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=T, 10), age=sample(20:30, 10, replace=T))
-same(0.2 , variable="gender", attributes = cov)
+effects <- ~ same(0.2 , variable="gender", attributes = cov)
 
 #Rate Effects:
 #If parameter is constant

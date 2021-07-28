@@ -101,11 +101,11 @@
 #' @examples 
 #' 
 #' # To specify an endogenous effects (example inertia)
-#' inertia(0.1 , scaling = "std") 
+#' effects <- ~  inertia(0.1 , scaling = "std") 
 #' 
 #' # To specify an exogenous effects (example same)
 #' cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=T, 10), age=sample(20:30, 10, replace=T))
-#' same(0.2 , variable="gender", attributes = cov)
+#' effects <- ~ same(0.2 , variable="gender", attributes = cov)
 #' 
 #' #Rate Effects:
 #' #If parameter is constant
@@ -133,9 +133,9 @@ remulateActorEffects <- function() {
 # 
 # @param scaling the method for scaling the otp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 
-otp_s <- function(param = NULL, scaling = c("raw", "prop")) {
+ospSender <- function(param = NULL, scaling = c("raw", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("otp_s", param, scaling)
+  out <- prepEndoVar("ospSender", param, scaling)
   out
 }
 
@@ -147,9 +147,9 @@ otp_s <- function(param = NULL, scaling = c("raw", "prop")) {
 # 
 # @param scaling the method for scaling the osp sender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 
-osp_s <- function(param = NULL, scaling = c("raw", "prop")) {
+otpSender <- function(param = NULL, scaling = c("raw", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("osp_s", param, scaling)
+  out <- prepEndoVar("otpSender", param, scaling)
   out
 }
 
