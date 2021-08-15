@@ -12,7 +12,7 @@ The package contains code written in:
 
 To install the package in R using `devtools`:
 
-```
+```R
 library(devtools)
 install_github("TilburgNetworkGroup/remulate")
 
@@ -27,8 +27,8 @@ effects <- ~ baseline(-4) + inertia(0.01) + reciprocity(-0.04) + itp(0.01,scalin
 remulateTie(effects, actors = 1:25, time = 20, events = 500, initial = 200)
 
 ```
-### Support
-```
+## Support
+```R
 #To view all help files in the remulate package
 help(package='remulate')
 
