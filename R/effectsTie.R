@@ -3,7 +3,7 @@
 #' This page lists the effects that are available in the remulate package.
 #'
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the DyNAM model.
-#' @param scaling the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling.
+#' @param scaling the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling \code{"log"} adds 1 to each statistic value and takes logarithm of that value.
 #' @param  variable string with the name of the column in the \code{attributes} data.frame for which the statistic has to be computed.
 #' @param  attributes a data.frame object that contains the exogenous attributes. See details.
 #' 
@@ -124,8 +124,7 @@ remulateTieEffects <- function() {
 
 #baseline
 baseline <- function(param = NULL) {
-  scaling <- "raw"
-  out <- prepEndoVar("baseline", param, scaling)
+  out <- prepEndoVar("baseline", param, "raw")
   out
 }
 
@@ -151,7 +150,7 @@ tie <- function(param = NULL, scaling = c("raw", "std", "prop"), start = 0, end 
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the inertia statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-inertia <- function(param = NULL, scaling = c("raw", "std", "prop"), start = 0, end = 0) {
+inertia <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("inertia", param, scaling, start, end)
   out
@@ -165,7 +164,7 @@ inertia <- function(param = NULL, scaling = c("raw", "std", "prop"), start = 0, 
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the reciprocity statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the in degree of the sender at time t.
-reciprocity <- function(param = NULL, scaling = c("raw", "std", "prop"), start = 0, end = 0) {
+reciprocity <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("reciprocity", param, scaling, start, end)
   out
@@ -178,7 +177,7 @@ reciprocity <- function(param = NULL, scaling = c("raw", "std", "prop"), start =
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the indegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("indegreeSender", param, scaling)
   out
@@ -191,7 +190,7 @@ indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the indegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("indegreeReceiver", param, scaling)
   out
@@ -204,7 +203,7 @@ indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the outdegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
-outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("outdegreeSender", param, scaling)
   out
@@ -218,7 +217,7 @@ outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the outdegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
-outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("outdegreeReceiver", param, scaling)
   out
@@ -231,7 +230,7 @@ outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the totaldegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
-totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("totaldegreeSender", param, scaling)
   out
@@ -245,7 +244,7 @@ totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the totaldegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
-totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("totaldegreeReceiver", param, scaling)
   out
@@ -258,7 +257,7 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop"))
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the otp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-otp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+otp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("otp", param, scaling)
   out
@@ -271,7 +270,7 @@ otp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the itp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-itp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+itp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("itp", param, scaling)
   out
@@ -284,7 +283,7 @@ itp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the osp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-osp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+osp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("osp", param, scaling)
   out
@@ -297,7 +296,7 @@ osp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param scaling the method for scaling the isp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-isp <- function(param = NULL, scaling = c("raw", "std", "prop")) {
+isp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("isp", param, scaling)
   out
@@ -469,7 +468,8 @@ maximum <- function(param = NULL, variable, attributes, scaling = c("raw", "std"
 # @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 # 
 # @param indices is a numeric vector of indices on which the interaction term needs to be computed.
-interact <- function(param = NULL, indices) {
-  out <- prepInteractVar(param, indices)
+interact <- function(param = NULL, indices,scaling=c("raw","std")) {
+  scaling <- match.arg(scaling)
+  out <- prepInteractVar(param, indices,scaling)
   out
 }

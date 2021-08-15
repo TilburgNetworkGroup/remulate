@@ -15,7 +15,7 @@ initialize_adj_mat<- function(actors_map,initial,rs){
   }
   else if(is.data.frame(initial)){
     colnames(initial) <- c("time", "sender", "receiver")
-
+    
     #change actor ids to names in initial
     initial["sender"] <- sapply(initial["sender"], function(x) {
       actors_map$id[match(x,actors_map$name)]
@@ -66,13 +66,13 @@ initialize_exo_effects <- function(attributes,actors_map,effects){
 parseEffectsTie <- function(formula){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)
-
+  
   var <- attr(ft, "variables")
   var <- as.list(var)[-1]
-
+  
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
-
+  
   all_effects <- c(
     "baseline", #1
     "send", "receive", #2 #3
@@ -87,36 +87,36 @@ parseEffectsTie <- function(formula){
     "psABXB", "psABXY", "psABAY",  #25 #26 #27
     "interact" #28
   )
-
+  
   if(any(! names(effects) %in% all_effects)){
     stop(paste("An effect specified in effects argument is not a valid effect"))
   }
-
+  
   # Prepare effects for switch  case
   int_effects <- match(names(effects), all_effects)
-
+  
   # Prepare scaling info, default raw counts
   scaling <- sapply(effects, function(x) {
     sc <- x$scaling
     sc
   })
-
+  
   mem_start <- sapply(effects, function(x) {
     mm <- x$mem_start
     mm
   })
-
+  
   mem_end <- sapply(effects, function(x) {
     mm <- x$mem_end
     mm
   })
-
+  
   # Prepare the params, can be NULL if just computing statistics
   params <- sapply(effects,function(x){
     p <- x$param
     p
   })
-
+  
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -126,30 +126,30 @@ parseEffectsTie <- function(formula){
     }
     s
   })
-
+  
   #Prepare the attributes
   attributes<- lapply(effects,function(x){
     c <- x$cov
     c
   })
-
+  
   #prepare interaction effects
   interact_effects <- lapply(effects,function(x){
     if(x$stat_name=="interact"){
       if(length(x$interact.vec)<2){
-          stop(paste("Interact effect cannot have less than two effects"))
+        stop(paste("Interact effect cannot have less than two effects"))
       }
       if(! all(x$interact.vec %in% c(1:length(effects)[-which(names(effects)=="interact")]))){
-          stop(paste("Interact effect mis-specified"))
+        stop(paste("Interact effect mis-specified"))
       }
       i <- x$interact.vec-1 # -1 for cpp indexing
     }
     else{
-        i <- NULL
+      i <- NULL
     }
     i
   })
-
+  
   return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects,"mem_start"=mem_start,"mem_end"=mem_end))
 }
 
@@ -157,13 +157,13 @@ parseEffectsTie <- function(formula){
 parseEffectsRate <- function(formula,pred = FALSE){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)
-
+  
   var <- attr(ft, "variables")
   var <- as.list(var)[-1]
-
+  
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
-
+  
   all_effects <- c(
     "baseline", #1
     "send", #2
@@ -173,26 +173,26 @@ parseEffectsRate <- function(formula,pred = FALSE){
     "ospSender", "otpSender", #6 #7
     "interact" #8
   )
-
+  
   if(any(!names(effects) %in% all_effects)){
-      stop(paste("An effect specified in effectsRate is not a valid effect"))
+    stop(paste("An effect specified in effectsRate is not a valid effect"))
   }
-
+  
   # Prepare effects for switch  case
   int_effects <- match(names(effects), all_effects)
-
+  
   # Prepare scaling info, default raw counts
   scaling <- sapply(effects, function(x) {
     sc <- x$scaling
     sc
   })
-
+  
   # Prepare the params, can be NULL if just computing statistics
   params <- sapply(effects,function(x){
     p <- x$param
     p
   })
-
+  
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -202,43 +202,43 @@ parseEffectsRate <- function(formula,pred = FALSE){
     }
     s
   })
-
+  
   #Prepare the attributes
   attributes<- lapply(effects,function(x){
     c <- x$cov
     c
   })
-
+  
   #prepare interaction effects
   interact_effects <- lapply(effects,function(x){
     if(x$stat_name=="interact"){
       if(length(x$interact.vec)<2){
-          stop(paste("Interact effect cannot have less than two effects"))
+        stop(paste("Interact effect cannot have less than two effects"))
       }
       if(! all(x$interact.vec %in% c(1:length(effects)[-which(names(effects)=="interact")]))){
-          stop(paste("Interact effect mis-specified"))
+        stop(paste("Interact effect mis-specified"))
       }
       i <- x$interact.vec-1 # -1 for cpp indexing
     }
     else{
-        i <- NULL
+      i <- NULL
     }
     i
   })
-
+  
   return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects))
 }
 
 parseEffectsChoice <- function(formula){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)
-
+  
   var <- attr(ft, "variables")
   var <- as.list(var)[-1]
-
+  
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
-
+  
   all_effects <- c(
     "baseline", #1
     "", "receive", #2 #3
@@ -253,33 +253,33 @@ parseEffectsChoice <- function(formula){
     "", "", "",  #25 #26 #27
     "interact" #28
   )
-
+  
   # Prepare effects for switch  case
   int_effects <- match(names(effects), all_effects)
-
+  
   # Prepare scaling info, default raw counts
   scaling <- sapply(effects, function(x) {
     sc <- x$scaling
     sc
   })
-
+  
   mem_start <- sapply(effects, function(x) {
     mm <- x$mem_start
     mm
   })
-
+  
   mem_end <- sapply(effects, function(x) {
     mm <- x$mem_end
     mm
   })
-
-
+  
+  
   # Prepare the params, can be NULL if just computing statistics
   params <- sapply(effects,function(x){
     p <- x$param
     p
   })
-
+  
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -289,30 +289,30 @@ parseEffectsChoice <- function(formula){
     }
     s
   })
-
-   #Prepare the attributes
+  
+  #Prepare the attributes
   attributes<- lapply(effects,function(x){
     c <- x$cov
     c
   })
-
+  
   #prepare interaction effects
   interact_effects <- lapply(effects,function(x){
     if(x$stat_name=="interact"){
       if(length(x$interact.vec)<2){
-          stop(paste("Interact effect cannot have less than two effects"))
+        stop(paste("Interact effect cannot have less than two effects"))
       }
       if(! all(x$interact.vec %in% c(1:length(effects)[-which(names(effects)=="interact")]))){
-          stop(paste("Interact effect mis-specified"))
+        stop(paste("Interact effect mis-specified"))
       }
       i <- x$interact.vec-1 # -1 for cpp indexing
     }
     else{
-        i <- NULL
+      i <- NULL
     }
     i
   })
-
+  
   return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects,"mem_start"=mem_start,"mem_end"=mem_end))
 }
 
@@ -323,9 +323,9 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
   if(anyNA(attributes[,variable])) {
     warning(paste("Missing values in attributes object, variable:",variable))
   }
-
+  
   scaling <- match(scaling,c("raw","std","prop"))
-
+  
   #TODO: Allow all cov in the same matrix for cpp computation (memory)
   cov <- data.frame(
     id = attributes[,1],
@@ -333,7 +333,7 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
     val = attributes[,variable]
   )
   cov <- cov[order(cov$id,cov$time),]
-
+  
   out <- list(
     effect = list(
       param= param,
@@ -350,9 +350,9 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
 
 # Internal function, modified from remstats
 prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
-
-  scaling <- match(scaling,c("raw","std","prop"))
-
+  
+  scaling <- match(scaling,c("raw","std","prop","log"))
+  
   out <- list(
     effect = list(
       param= param,
@@ -363,13 +363,15 @@ prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
       cov=NULL
     )
   )
-
+  
   names(out) <- effect_name
   out
 }
 
-prepInteractVar <- function(param=NULL,effects){
-
+prepInteractVar <- function(param=NULL,effects,scaling){
+  
+  scaling <- match(scaling,c("raw","std","prop"))
+  
   out <- list(
     interact=list(
       param = param,
