@@ -1,7 +1,6 @@
-# remulate (Version: 1.1.0)
+# remulate
 
-### About the package
-A package to generate Relational Event History Data
+remulate is a R library to generate dynamic temporal networks based on Relational Event Models.
 
 ### Programming Languages
 The package contains code written in:
@@ -9,18 +8,26 @@ The package contains code written in:
 * Rcpp (>= 1.0.4.6) and RcppArmadillo (>= 0.9.860.2.0)
 * C++11 (Compiler Version: GCC-8.1.0)
 	
-### Installing the package
+## Installation
+
 To install the package in R using `devtools`:
 
 ```
 library(devtools)
 install_github("TilburgNetworkGroup/remulate")
 
-# load the package
+#load the package
 library(remulate)
 ```
 
-### Help files
+## Usage
+```R
+effects <- ~ baseline(-4) + inertia(0.01) + reciprocity(-0.04) + itp(0.01,scaling="std")
+
+remulateTie(effects, actors = 1:25, time = 20, events = 500, initial = 200)
+
+```
+### Support
 ```
 #To view all help files in the remulate package
 help(package='remulate')
@@ -32,3 +39,5 @@ help('remulateTieEffects')
 help('remulateActorEffects')
 
 ```
+## Contributing
+Pull requests and bug reports are welcome. For major changes, please open an issue first to discuss what you would like to change.
