@@ -84,9 +84,10 @@ remulateTie <- function(
   riskset = NULL,
   memory = c("full", "window", "brandes", "vu"),
   memory_param = NULL,
-  seed = NULL) {
+  seed = NULL,
+  damping = 0) {
 
- #waiting_time =c("exp","weibull","gompertz"),
+  #waiting_time =c("exp","weibull","gompertz"),
   #time_param = NULL,
   waiting_time="exp"
   #waiting_time <- match.arg(waiting_time)
@@ -181,6 +182,7 @@ remulateTie <- function(
   }
   edgelist <- array(0, dim = c(1, 3))
   evls <- array(0, dim = c(1, 2))
+  probs <- array(0,dim=c(1,nrow(rs)))
 
   #stores the event counts for dyads in a #sender x #recv matrix
   adj_mat <- initialize_adj_mat(actors_map, initial, rs)
@@ -217,10 +219,16 @@ remulateTie <- function(
 
     #sampling dyad for next event
     # R sampling slightly faster than arma sampling (due to hashing)
-    dyad <- sample(1:nrow(rs), 1, prob = lambda / sum(lambda))
+    if(runif(1) > damping){
+      dyad <- sample(1:nrow(rs), 1)
+    }else{
+      dyad <- sample(1:nrow(rs), 1, prob = lambda / sum(lambda))
+    }
+    
 
     edgelist[i,] <- c(t, rs[dyad, 1], rs[dyad, 2])
     evls[i,] <- c(dyad, t)
+    probs[i,] <- lambda
 
     #update adj mat
     #TODO: move to C++
@@ -275,7 +283,7 @@ remulateTie <- function(
     #add row for next iteration
     edgelist <- rbind(edgelist, array(0, dim = c(1, 3)))
     evls <- rbind(evls, array(0, dim = c(1, 2)))
-    
+    probs <- rbind(probs, array(0, dim = c(1,nrow(rs))))
 
     #update beta
     for (j in 1:P) {
@@ -324,7 +332,8 @@ remulateTie <- function(
         params = params,
         riskset = rs,
         actors = actors_map,
-        density = get.density(evls, actors)
+        density = get.density(evls, actors),
+        probs = probs
     )
   )
 }
