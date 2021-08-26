@@ -219,7 +219,7 @@ remulateTie <- function(
 
     #sampling dyad for next event
     # R sampling slightly faster than arma sampling (due to hashing)
-    if(runif(1) > damping){
+    if(runif(1) < damping){
       dyad <- sample(1:nrow(rs), 1)
     }else{
       dyad <- sample(1:nrow(rs), 1, prob = lambda / sum(lambda))
