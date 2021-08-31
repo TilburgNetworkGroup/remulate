@@ -135,7 +135,7 @@ remulateTie <- function(
     }
     #convert names in riskset to ids
     #rs <- rs[(rs[, 1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[, 2] %in% actors_map$id[actors_map$name %in% riskset[[2]]]),]
-    rs <- risket
+    rs <- riskset
     rs[,2] <- sapply(rs[,2], function(x) {
       actors_map$id[match(x,actors_map$name)]
     })
