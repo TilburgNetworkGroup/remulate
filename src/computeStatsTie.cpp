@@ -366,59 +366,60 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
             //inertia
         case 10:
         {
-            if (mem_start(i) != 0 || mem_end(i) != 0)
-        {
-            arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
-            //which time points in edgelist belong to mem window
-            arma::uvec in_window = find(edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));
-            if (in_window.n_elem != 0)
-            {
-                for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+            if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));
+                if (in_window.n_elem != 0)
                 {
-                    adj_mat_mem(edgelist(ind, 1) - 1, edgelist(ind, 2) - 1) = adj_mat_mem(edgelist(ind, 1) - 1, edgelist(ind, 2) - 1) + 1;
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++) //compute new adj mat memory
+                    {
+                        adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                    }
+                    for (arma::uword j = 0; j < rs.n_rows; j++) //compute inertia on adj mat with memory
+                    {
+                        // -1 because r indexes from 1 and c++ from 0
+                        statsrow(j) = adj_mat_mem(rs(j, 0) - 1, rs(j, 1) - 1);
+                    }
                 }
+                break;
+            }else{
                 for (arma::uword j = 0; j < rs.n_rows; j++)
                 {
                     // -1 because r indexes from 1 and c++ from 0
-                    statsrow(j) = adj_mat_mem(rs(j, 0) - 1, rs(j, 1) - 1);
+                    statsrow(j) = adj_mat(rs(j, 0) - 1, rs(j, 1) - 1);
                 }
+                break;
             }
-            break;
-        }
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                // -1 because r indexes from 1 and c++ from 0
-                statsrow(j) = adj_mat(rs(j, 0) - 1, rs(j, 1) - 1);
-            }
-            break;
+            
         }
             //reciprocity
         case 11:
         {
-            if (mem_start(i) != 0 || mem_end(i) != 0)
-        {
-            arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
-            //which time points in edgelist belong to mem window
-            arma::uvec in_window = find(edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));
-            if (in_window.n_elem != 0)
-            {
-                for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
-                {
-                    adj_mat_mem(edgelist(ind, 1) - 1, edgelist(ind, 2) - 1) = adj_mat_mem(edgelist(ind, 1) - 1, edgelist(ind, 2) - 1) + 1;
+            if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));                
+                if (in_window.n_elem != 0){
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+                    {
+                        adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                    }
+                    for (arma::uword j = 0; j < rs.n_rows; j++)
+                    {
+                        // -1 because r indexes from 1 and c++ from 0
+                        statsrow(j) = adj_mat_mem(rs(j, 1) - 1, rs(j, 0) - 1);
+                    }
                 }
+                break;
+            }else{
                 for (arma::uword j = 0; j < rs.n_rows; j++)
                 {
-                    // -1 because r indexes from 1 and c++ from 0
-                    statsrow(j) = adj_mat_mem(rs(j, 1) - 1, rs(j, 0) - 1);
+                    statsrow(j) = adj_mat(rs(j, 1) - 1, rs(j, 0) - 1);
                 }
+                break;
             }
-            break;
-        }
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                statsrow(j) = adj_mat(rs(j, 1) - 1, rs(j, 0) - 1);
-            }
-            break;
+            
         }
             //indegree Sender
         case 12:
