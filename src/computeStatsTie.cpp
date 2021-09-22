@@ -694,6 +694,7 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
         }
         if(scaling(i)==4){
             statmat.col(i) = arma::log(statmat.col(i) + 1);
+            continue;
         }
         
         //prop scaling
@@ -781,7 +782,7 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
         }
         //interact
         case 29:
-        {
+        {   
             arma::vec interact_vec = interact_effects(i);
             arma::vec statsrow(rs.n_rows, arma::fill::ones); //placeholder for values of ith effect for all dyads
             for (arma::uword j = 0; j < interact_vec.n_elem; j++)
