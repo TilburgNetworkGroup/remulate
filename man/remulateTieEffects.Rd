@@ -14,13 +14,17 @@ exo(param, variable, attributes, scaling=c("raw","std"))
 interact(param, indices)
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the DyNAM model.}
+\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the model.}
 
-\item{scaling}{the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling.}
+\item{scaling}{the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling \code{"log"} adds 1 to each statistic value and takes logarithm of that value.}
 
 \item{variable}{string with the name of the column in the \code{attributes} data.frame for which the statistic has to be computed.}
 
-\item{attributes}{a data.frame object that contains the exogenous attributes. See details.}
+\item{attributes}{a data.frame object that contains the exogenous attributes. 
+
+The attributes object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). At least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.
+
+The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.}
 
 \item{indices}{an integer vector specifying the indices of effects which are to be computed in the interaction effect.}
 }
@@ -31,8 +35,6 @@ The effect functions do not return anything when called individually. They are o
 This page lists the effects that are available in the remulate package.
 }
 \details{
-The attributes object contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). Subsequent columns contain the attributes that are called in the specifications of exogenous statistics. The same \code{attributes} object can be used with multiple exogenous statistics.
-
 The indices aregument in the interact effect corresponds to the position of the specified effects in the \code{effects} argument of \code{\link{remulateTie}} for which the interaction needs to be computed. The individual constitutive effects for an interaction must be specified before the interact term in the \code{effects} argument. To omit the individual constitutive effects in the generation, specify the \code{param} arugment to zero.
 }
 \section{Remulate Effects}{
@@ -99,15 +101,16 @@ at timepoint t is equal to the minimum of past
 
 \strong{Exogenous effects (Node Attributes):}
 \describe{
-\item{\code{send}}{The tendency to create an event i->j when i has a high attribute value.}
-\item{\code{receive}}{The tendency to create an event i->j when j has a high attribute value.}
+\item{\code{send}}{Sender covariate: The tendency to create an event i->j when i has a high attribute value.}
+\item{\code{receive}}{Receiver covariate: The tendency to create an event i->j when j has a high attribute value.}
 }
 
 \strong{Exogenous effects (Tie Attribute):}
 \describe{
+\item{\code{dyad}}{ dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.}
 \item{\code{same}}{ (Homophily) is the tendency to create an event i->j if actors i and j have the same attribute values}
 \item{\code{difference}}{ (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values}
-\item{\code{average}}{ average attribute value for dyad (i,j) is the average of the attribute values for actors i, j}
+\item{\code{average}}{average attribute value for dyad (i,j) is the average of the attribute values for actors i, j}
 \item{\code{minimum}}{minimum attribute value for dyad (i,j) is the smaller of the attribute values for actors i , j}
 \item{\code{maximum}}{maximum attribute value for dyad (i,j) is the bigger of the attribute values for actors i , j}
 }
@@ -120,6 +123,14 @@ effects <- ~ inertia(0.1 , scaling = "std")
 # To specify an exogenous effect (example same)
 cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=T, 10), age=sample(20:30, 10, replace=T))
 effects <- ~ same(0.2 , variable="gender", attributes = cov)
+
+# To specify an exogenous dyadic effect (example dyad)
+cov <- cov <- expand.grid(1:10,1:10)
+cov <- cov[cov[,1] != cov[,2],]
+cov$grade <- runif(90,1,10)
+
+effects <- ~ dyad(0.2 , variable="grade", attributes = cov)
+
 
 #If parameter is constant
 effects <- ~ inertia(0.3) + same(0.2 , variable="gender", attributes = cov) + reciprocity(-0.1) + itp(0.01)

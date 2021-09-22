@@ -103,9 +103,10 @@ at timepoint t is equal to the minimum of past
 
 \strong{Exogenous effects:}
 \describe{
-\item{\code{receive}}{receiver attribute value is the tendency to create an event i->j when j has a high attribute value.}
-\item{\code{same}}{same attribute value (Homophily) is the tendency to create an event i->j if actors i and j have the same attribute values}
-\item{\code{difference}}{difference attribute value (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values}
+\item{\code{dyad}}{ Dyadic attribute value is tendency to create an event i -> j when (i,j) has a high attribute value.}
+\item{\code{receive}}{Receiver attribute value is the tendency to create an event i->j when j has a high attribute value.}
+\item{\code{same}}{Same attribute value (Homophily) is the tendency to create an event i->j if actors i and j have the same attribute values}
+\item{\code{Difference}}{difference attribute value (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values}
 }
 }
 

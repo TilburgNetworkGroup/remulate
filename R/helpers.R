@@ -52,11 +52,26 @@ initialize_exo_effects <- function(attributes,actors_map,effects){
   }
   for(i in 1:P){
     if(!is.null(attributes[[i]])){
-      if(any(! actors_map$name %in% attributes[[i]]$id )){
-        stop(paste(effects[[i]]," effect not specified for all actors in actor's list"))
+      if(effects$int_effects[i] %in% c(28)){  #28:dyad
+        if(any(! actors_map$name %in% attributes[[i]]$sender_id )){
+          stop(paste(names(effects)[i]," dyadic covariate not specified for all senders in actor's list"))
+        }
+        if(any(! actors_map$name %in% attributes[[i]]$receiver_id )){
+          stop(paste(names(effects)[i]," dyadic covariate not specified for all receivers in actor's list"))
+        }
+
+        attributes[[i]]$sender_id <- actors_map$id[match(attributes[[i]]$sender_id,actors_map$name)]
+        attributes[[i]]$receiver_id <- actors_map$id[match(attributes[[i]]$receiver_id,actors_map$name)]
+        attributes[[i]] <- as.matrix(attributes[[i]])
+
+      }else{
+        if(any(! actors_map$name %in% attributes[[i]]$id )){
+          stop(paste(names(effects)[i]," actor covariate not specified for all actors in actor's list"))
+        }
+        attributes[[i]]$id <- actors_map$id[match(attributes[[i]]$id,actors_map$name)]
+        attributes[[i]] <- as.matrix(attributes[[i]])
       }
-      attributes[[i]]$id <- actors_map$id[match(attributes[[i]]$id,actors_map$name)]
-      attributes[[i]] <- as.matrix(attributes[[i]])
+      
     }
   }
   return(attributes)
@@ -85,7 +100,8 @@ parseEffectsTie <- function(formula){
     "otp", "itp", "osp", "isp", #18 #19 #20 #21
     "psABBA", "psABBY", "psABXA",  #22 #23 #24
     "psABXB", "psABXY", "psABAY",  #25 #26 #27
-    "interact" #28
+    "dyad", #28
+    "interact" #29
   )
   
   if(any(! names(effects) %in% all_effects)){
@@ -251,7 +267,8 @@ parseEffectsChoice <- function(formula){
     "otp", "itp", "osp", "isp", #18 #19 #20 #21
     "", "", "",  #22 #23 #24
     "", "", "",  #25 #26 #27
-    "interact" #28
+    "dyad", #28
+    "interact" #29
   )
   
   # Prepare effects for switch  case
@@ -316,7 +333,6 @@ parseEffectsChoice <- function(formula){
   return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects,"mem_start"=mem_start,"mem_end"=mem_end))
 }
 
-
 # Internal function, modified from remstats
 prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
   # Warning for missing values
@@ -324,15 +340,24 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
     warning(paste("Missing values in attributes object, variable:",variable))
   }
   
-  scaling <- match(scaling,c("raw","std","prop"))
-  
-  #TODO: Allow all cov in the same matrix for cpp computation (memory)
-  cov <- data.frame(
-    id = attributes[,1],
-    time = attributes[,2],
-    val = attributes[,variable]
-  )
-  cov <- cov[order(cov$id,cov$time),]
+  scaling <- match(scaling,c("raw","std"))
+
+  #dyadic covariate
+  if(effect_name %in% c("dyad")){
+    cov<- data.frame(
+      sender_id = attributes[,1],
+      receiver_id = attributes[,2],
+      val = attributes[,variable]
+    )
+  }else{
+    #TODO: Allow all cov in the same matrix for cpp computation (memory)
+    cov <- data.frame(
+      id = attributes[,1],
+      time = attributes[,2],
+      val = attributes[,variable]
+    )
+    cov <- cov[order(cov$id,cov$time),]
+  }
   
   out <- list(
     effect = list(

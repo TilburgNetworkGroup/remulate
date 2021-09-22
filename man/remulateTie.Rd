@@ -13,7 +13,8 @@ remulateTie(
   riskset = NULL,
   memory = c("full", "window", "brandes", "vu"),
   memory_param = NULL,
-  seed = NULL
+  seed = NULL,
+  damping = 0
 )
 }
 \arguments{
@@ -56,8 +57,9 @@ tie based relational event model.
 A list of available statistics. See \link{remulateTieEffects} for details:
 \itemize{
  \item \code{baseline(param)}
- \item \code{send(param, variable, attributes, scaling=c("raw","std"))}
+ \item \code{send()}
  \item \code{receive()}
+ \item \code{dyad()}
  \item \code{same()}
  \item \code{difference()}
  \item \code{average()}

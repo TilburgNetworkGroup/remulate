@@ -71,6 +71,7 @@ A list of available statistics for receiver choice sub-model:
 \itemize{
  \item \code{baseline()}
  \item \code{receive()}
+ \item \code{dyad()}
  \item \code{same()}
  \item \code{difference()}
  \item \code{equate()}

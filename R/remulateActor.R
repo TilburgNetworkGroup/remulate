@@ -20,6 +20,7 @@
 #'\itemize{
 #'  \item \code{baseline()}
 #'  \item \code{receive()}
+#'  \item \code{dyad()}
 #'  \item \code{same()}
 #'  \item \code{difference()}
 #'  \item \code{equate()}
@@ -99,7 +100,6 @@ remulateActor <- function(
     if(!is.null(seed)){
         set.seed(seed)
     }
-
     #process input for rate sub-model
     parsed_s <- parseEffectsRate(rateEffects)
     s_params <- parsed_s$params
@@ -109,7 +109,6 @@ remulateActor <- function(
     s_effects <- unname(parsed_s$effects)
     s_interact_effects <- parsed_s$interact_effects
     s_P <- length(s_effects)
-
     #process input for receiver choice sub-model
     parsed_d <- parseEffectsChoice(choiceEffects)
     d_params <- parsed_d$params
@@ -121,7 +120,6 @@ remulateActor <- function(
     d_effects <- unname(parsed_d$effects)
     d_interact_effects <- parsed_d$interact_effects
     d_P <- length(d_effects)
-
     memory<- match.arg(memory)
     #checking memory specification
     if(! memory[1] %in% c("full","window","window_m","brandes","vu")){
@@ -144,7 +142,6 @@ remulateActor <- function(
     rs <- as.matrix(expand.grid(actors_map$id,actors_map$id))
     colnames(rs) <- c("sender", "receiver")
     rs <- rs[rs[,"sender"]!=rs[,"receiver"],]
-
     if(!is.null(riskset)){
         if(any(!riskset[[1]] %in% actors_map$name)){
             stop("risk set contains sender actor not specified in actor's list")
@@ -164,11 +161,10 @@ remulateActor <- function(
         stop("Last event of initial data.frame is after 'time' argument")
         }
     }
-
     #initialize attributes
-    s_attributes <- initialize_exo_effects(s_attributes,actors_map,s_effects)
+    s_attributes <- initialize_exo_effects(s_attributes,actors_map,parsed_s)
     
-    d_attributes <- initialize_exo_effects(d_attributes,actors_map,d_effects)
+    d_attributes <- initialize_exo_effects(d_attributes,actors_map,parsed_d)
 
     #initialize params for sender
     gamma <- vector(length = s_P)
@@ -179,7 +175,6 @@ remulateActor <- function(
             gamma[i] <- s_params[[i]]
         }
     }
-
     #initialize params for receiver choice
     beta <- vector(length = d_P)
     for(i in 1:d_P){

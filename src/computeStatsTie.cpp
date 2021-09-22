@@ -352,6 +352,26 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
             
             break;
         }
+            //dyad
+        case 28:
+        {
+            arma::uword m = edgelist.n_rows;
+            if(m==1){
+                for (arma::uword j = 0; j < rs.n_rows; j++){
+                    arma::uword actor1 = rs(j,0);
+                    arma::uword actor2 = rs(j,1);
+                    arma::mat attributes = covariates(i);
+                    arma::uvec index = find((attributes.col(0) == actor1) && (attributes.col(1) == actor2));
+
+                    statsrow(j) = attributes(index(0),2);
+                }
+
+            }else{
+                statsrow = statprevmat.col(i);
+            }
+
+            break;
+        }
             //tie
         case 9:
         {
@@ -653,17 +673,6 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
             }
             break;
         }
-            //interact
-        case 28:
-        {
-            arma::vec interact_vec = interact_effects(i);
-            statsrow.ones();
-            for (arma::uword j = 0; j < interact_vec.n_elem; j++)
-            {
-                statsrow = statsrow % statmat.col(interact_vec(j));
-            }
-            break;
-        }
             
         } //end switch case
         if (skip_flag(effect) == 0)
@@ -768,6 +777,18 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
         {
             statmat.col(i) = statmat.col(i) / (2 * edgelist.n_rows);
         }
+            break;
+        }
+        //interact
+        case 29:
+        {
+            arma::vec interact_vec = interact_effects(i);
+            arma::vec statsrow(rs.n_rows, arma::fill::ones); //placeholder for values of ith effect for all dyads
+            for (arma::uword j = 0; j < interact_vec.n_elem; j++)
+            {
+                statsrow = statsrow % statmat.col(interact_vec(j));
+            }
+            statmat.col(i) = statsrow;
             break;
         }
             
