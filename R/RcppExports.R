@@ -9,3 +9,7 @@ computeStatsTie <- function(int_effects, rs, actors, edgelist, adj_mat, covariat
     .Call(`_remulate_computeStatsTie`, int_effects, rs, actors, edgelist, adj_mat, covariates, interact_effects, scaling, mem_start, mem_end, statprevmat)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_remulate_RcppExport_registerCCallable', PACKAGE = 'remulate')
+})
