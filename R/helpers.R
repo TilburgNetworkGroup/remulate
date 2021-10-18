@@ -340,7 +340,7 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
     warning(paste("Missing values in attributes object, variable:",variable))
   }
   
-  scaling <- match(scaling,c("raw","std"))
+  scaling <- match(scaling,c("raw","std","inertia"))
 
   #dyadic covariate
   if(effect_name %in% c("dyad")){
@@ -377,14 +377,18 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
 prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
   
   scaling <- match(scaling,c("raw","std","prop","log"))
-  
+  if(start!=0 || end!=0){
+    stat_name = paste0(c(effect_name,start,end),collapse="_") 
+  }else{
+    stat_name = effect_name
+  }
   out <- list(
     effect = list(
       param= param,
       scaling = scaling,
       mem_start=start,
       mem_end=end,
-      stat_name = effect_name,
+      stat_name = stat_name,
       cov=NULL
     )
   )
