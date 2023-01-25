@@ -44,7 +44,7 @@
 #' @param time Numeric, time upto which to simulate network.
 #' @param events [Optional] Integer, maximum number of events to simulate.
 #' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
-#' @param riskset [Optional] \code{data.frame} object wtih columns (sender, receiver) for custom risk set
+#' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
 #' @param memory [Optional] (default = full) String indicating which.
 #'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto.
 #' which occured events will be remembered for computing statistics, "brandes" memory type uses past events
