@@ -43,6 +43,7 @@
 #' @param actors Numeric or character vector of actor names.
 #' @param time Numeric, time upto which to simulate network.
 #' @param events [Optional] Integer, maximum number of events to simulate.
+#' @param start_time [Optional] (default = 0) Numeric time specifying the time at which to initialize the simulation
 #' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
 #' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
 #' @param memory [Optional] (default = full) String indicating which.
@@ -84,13 +85,12 @@ remulateActor <- function(
     actors,
     time,
     events = NULL,
+    start_time = 0,
     initial = 0,
     riskset = NULL,
     memory = c("full","window","brandes","vu"),
     memory_param = NULL,
     seed = NULL){
-    
-
     #waiting_time =c("exp","weibull","gompertz"),
     #time_param = NULL,
     waiting_time="exp"
@@ -152,15 +152,17 @@ remulateActor <- function(
         rs <- rs[(rs[,1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[,2] %in% actors_map$id[actors_map$name %in% riskset[[2]] ]),]
     }
     
-     #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
-    if(is.numeric(initial)){
-        t <- 0
-    }else if(is.data.frame(initial)){
+    #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
+    if(is.data.frame(initial)){
         t <- initial[nrow(initial),1]
         if(t > time){
-        stop("Last event of initial data.frame is after 'time' argument")
+         stop("Last event of initial data.frame is after 'time' argument")
         }
+    }else{
+        #in case is.numeric(initial) OR intial == NULL
+        t<- start_time
     }
+
     #initialize attributes
     s_attributes <- initialize_exo_effects(s_attributes,actors_map,parsed_s)
     

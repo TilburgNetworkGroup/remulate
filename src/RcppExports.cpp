@@ -9,6 +9,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // computeStatsActor
 arma::mat computeStatsActor(const arma::vec& int_effects, const arma::mat& rs, const arma::vec& actors, const arma::mat& edgelist, const arma::mat& adj_mat, Rcpp::List covariates, Rcpp::List interact_effects, arma::vec scaling, arma::mat statprevmat);
 static SEXP _remulate_computeStatsActor_try(SEXP int_effectsSEXP, SEXP rsSEXP, SEXP actorsSEXP, SEXP edgelistSEXP, SEXP adj_matSEXP, SEXP covariatesSEXP, SEXP interact_effectsSEXP, SEXP scalingSEXP, SEXP statprevmatSEXP) {

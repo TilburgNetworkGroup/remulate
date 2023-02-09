@@ -9,6 +9,7 @@ remulateTie(
   actors,
   time,
   events = NULL,
+  start_time = 0,
   initial = 0,
   riskset = NULL,
   memory = c("full", "window", "brandes", "vu"),
@@ -26,9 +27,11 @@ remulateTie(
 
 \item{events}{[Optional] Integer, maximum number of events to simulate.}
 
+\item{start_time}{[Optional] (default = 0) Numeric specifying the time at which to initialize the simulation}
+
 \item{initial}{[Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.}
 
-\item{riskset}{[Optional] \code{data.frame} object wtih columns (sender, receiver) for custom risk set}
+\item{riskset}{[Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set}
 
 \item{memory}{[Optional] (default = full) String indicating which.
  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto.
@@ -103,6 +106,13 @@ A list of available statistics. See \link{remulateTieEffects} for details:
  
  # To predict events, given an edgelist of initial events
  initialREH <- data.frame(time = seq(0.5,100,0.5), sender = sample(1:25,200,T), receiver = sample(1:25,200,T))
- remulate::remulateTie(effects, actors=1:25, time=150, initial=initialREH, events = 500, seed=123)
+ remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, initial=initialREH)
+
+#custom riskset
+rs <- as.matrix(expand.grid(1:N,1:N))
+rs <- rs[rs[,1] != rs[, 2],]
+custom.rs = rs[sample(1:90,50),]
+remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, riskset = custom.rs )
+
  
 }
