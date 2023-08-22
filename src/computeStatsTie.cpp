@@ -271,6 +271,76 @@ arma::mat compute_dyadAttribute(
     return (statsrow);
 }
 
+
+arma::mat compute_recency(int type,
+                       const arma::mat &edgelist,
+                       const arma::mat &rs)
+{
+
+    arma::vec lastActive(rs.n_rows);
+    lastActive.fill(arma::datum::inf);
+    
+    for (int m = 0; m < (edgelist.n_rows-1); m++){
+        switch(type)
+        {
+            case 1: //recency continue
+            {
+                arma::uvec index = find((rs.col(0) == edgelist(m,1)) && (rs.col(1) == edgelist(m,2)));
+                if(index.n_elem != 0){
+                    lastActive(index(0)) = edgelist(m,0);
+                }
+
+                break;
+            }
+
+            case 2: //recency send sender
+            {
+                arma::uvec index = find(rs.col(0) == edgelist(m,1));
+                for( arma::uword d=0; d<index.n_rows;  d++){
+                    lastActive(index(d))= edgelist(m,0);
+                }
+                            
+                break;
+            }
+
+            case 3: //recency send receiver
+            {
+                arma::uvec index = find(rs.col(1) == edgelist(m,1));
+                for( arma::uword d=0; d<index.n_rows;  d++){
+                   lastActive(index(d))= edgelist(m,0);
+                }
+                            
+                break;
+            }
+
+            case 4: //recency receive sender
+            {
+                arma::uvec index = find(rs.col(0) == edgelist(m,2));
+                for( arma::uword d=0; d<index.n_rows;  d++){
+                   lastActive(index(d))= edgelist(m,0);
+                }
+                            
+                break;
+            }
+
+            case 5: //recency receive receiver
+            {
+                arma::uvec index = find(rs.col(1) == edgelist(m,2));
+                for( arma::uword d=0; d<index.n_rows;  d++){
+                   lastActive(index(d))= edgelist(m,0);
+                }
+                            
+                break;
+            }
+
+        }
+    }
+    double time = edgelist(edgelist.n_rows-1,0);
+    arma::vec statrow(rs.n_rows, arma::fill::zeros);
+    statrow = 1 / ((time - lastActive) + 1);
+    return (statrow);
+}
+
 //Updates a statistic row at each time point
 // [[Rcpp::export]]
 arma::mat computeStatsTie(const arma::vec &int_effects,
@@ -674,7 +744,43 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
             }
             break;
         }
+        //recency continue
+        case 30:
+        {
+            statsrow = compute_recency(1,edgelist,rs) ;
             
+            break;
+        }
+
+        //recency SendSender
+        case 31:
+        {
+            statsrow = compute_recency(2,edgelist,rs) ;
+            
+            break;
+        }
+        //recency SendReceiver  
+        case 32:
+        {
+            statsrow = compute_recency(3,edgelist,rs) ;
+            
+            break;
+        }
+        //recency ReceiveSender
+        case 33:
+        {
+            statsrow = compute_recency(4,edgelist,rs) ;
+            
+            break;
+        }
+        //recency ReceiveReceiver
+        case 34:
+        {
+            statsrow = compute_recency(5,edgelist,rs) ;
+            
+            break;
+        }
+
         } //end switch case
         if (skip_flag(effect) == 0)
         {

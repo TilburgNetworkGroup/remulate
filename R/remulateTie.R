@@ -34,6 +34,11 @@
 #'  \item \code{psABXB()}
 #'  \item \code{psABXY()}
 #'  \item \code{psABAY()}
+#'  \item \code{recencyContinue()}
+#'  \item \code{recencySendSender()}
+#'  \item \code{recencySendReceiver()}
+#'  \item \code{recencyReceiveSender()}
+#'  \item \code{recencyReceiveReceiver()} 
 #'  \item \code{interact()}
 #' }
 #'

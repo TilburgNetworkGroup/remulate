@@ -99,6 +99,30 @@ at timepoint t is equal to the minimum of past
 \item{\code{psABXY}}{ AB-XY Participating shifts (turn usurping) is the tendency to create an event h->k at timepoint t if event i->j occured at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,k) for all h not equal to i and k not equal to j, that will create the participation shift at timepoint t. }
 }
 
+\strong{Endogenous effects (Recency statistics):}
+\describe{
+\item{\code{recencyContinue}}{The recencyContinue effect refers to a recency statistic similar to what is
+described in Vu et al. (2017) and Mulder and Leenders (2019). For each
+timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the time
+that has past since the dyad was last active + 1).}
+\item{\code{recencySendSender}}{ The recencySendSender effect refers to a recency statistic similar to what
+is described in Vu et al. (2017) and Mulder and Leenders (2019). For each
+timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the time
+that has past since sender i was last active as sender + 1).}
+\item{\code{recencySendReceiver}}{The recencySendReceiver effect refers to a recency statistic similar to what
+is described in Vu et al. (2017) and Mulder and Leenders (2019). For each
+timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the time
+that has past since receiver j was last active as sender + 1). }
+\item{\code{recencyReceiveSender}}{The recencyReceiveSender effect refers to a recency statistic similar to
+what is described in Vu et al. (2017) and Mulder and Leenders (2019). For
+each timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the
+time that has past since sender i was last active as receiver + 1). }
+\item{\code{recencyReceiveReceiver}}{The recencyReceiveReceiver effect refers to a recency statistic similar to
+what is described in Vu et al. (2017) and Mulder and Leenders (2019). For
+each timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the
+time that has past since receiver j was last active as receiver + 1).}
+} 
+
 \strong{Exogenous effects (Node Attributes):}
 \describe{
 \item{\code{send}}{Sender covariate: The tendency to create an event i->j when i has a high attribute value.}

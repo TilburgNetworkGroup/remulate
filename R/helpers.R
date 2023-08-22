@@ -101,7 +101,10 @@ parseEffectsTie <- function(formula){
     "psABBA", "psABBY", "psABXA",  #22 #23 #24
     "psABXB", "psABXY", "psABAY",  #25 #26 #27
     "dyad", #28
-    "interact" #29
+    "interact", #29
+    "recencyContinue", #30
+    "recencySendSender","recencySendReceiver", #31,#32
+    "recencyReceiveSender","recencyReceiveReceiver" #33, #34
   )
   
   if(any(! names(effects) %in% all_effects)){
