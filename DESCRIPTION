@@ -12,27 +12,27 @@ Authors@R:
         person(
             given = "Marlyne",
             family = "Meijerink-Bosman",
-            role = "aut",
+            role = "ctb",
             email = "m.l.meijerink@tilburguniversity.edu"),
         person(
             given = "Giuseppe",
             family = "Arena",
-            role = "aut",
+            role = "ctb",
             email = "g.arena@tilburguniversity.edu"),
         person(
             given = "Diana",
             family = "Karimova",
-            role = "aut",
+            role = "ctb",
             email = "d.karimova@tilburguniversity.edu"),
         person(
             given = "Mahdi",
             family = "Shafiee Kamalabad",
-            role = "aut",
+            role = "ctb",
             email = "m.shafiee@tilburguniversity.edu"),
         person(
             given = "Fabio",
             family = "Generoso Vieira",
-            role = "aut",
+            role = "ctb",
             email = "f.v.generosovieira@tilburguniversity.edu"),
         person(
             given = "Roger",
@@ -47,6 +47,7 @@ Authors@R:
     )
 Maintainer: Rumana Lakdawala <R.J.Lakdawala@tilburguniversity.edu>
 Description: This package  allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to  model temporal variability, uncertainty, changes in the network composition and to account for memory decay in dynamic social networks. 
+The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant  (758791).
 License: GPL (>= 3)
 URL: https://github.com/TilburgNetworkGroup/remulate
 Depends: 
