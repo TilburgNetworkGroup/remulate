@@ -39,6 +39,20 @@ help('remulateTieEffects')
 help('remulateActorEffects')
 
 ```
+
+## Citing this Work
+
+If you use this R package in your research or in any publications, please cite it as follows to help support our work:
+
+@misc{lakdawala2024simulating,
+    title={Simulating Relational Event Histories - Why and How}, 
+    author={Rumana Lakdawala and Joris Mulder and Roger Leenders},
+    year={2024},
+    eprint={2403.19329},
+    archivePrefix={arXiv},
+    primaryClass={cs.SI}
+}
+
 ## Contributing
 Pull requests and bug reports are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
