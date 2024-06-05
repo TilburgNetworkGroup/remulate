@@ -92,6 +92,8 @@ A list of available statistics. See \link{remulateTieEffects} for details:
  \item \code{recencySendReceiver()}
  \item \code{recencyReceiveSender()}
  \item \code{recencyReceiveReceiver()} 
+ \item \code{rrankSend()} 
+ \item \code{rrankReceive()} 
  \item \code{interact()}
 }
 }

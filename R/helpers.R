@@ -104,7 +104,8 @@ parseEffectsTie <- function(formula){
     "interact", #29
     "recencyContinue", #30
     "recencySendSender","recencySendReceiver", #31,#32
-    "recencyReceiveSender","recencyReceiveReceiver" #33, #34
+    "recencyReceiveSender","recencyReceiveReceiver", #33, #34
+    "rrankSend","rrankReceive" #35, #36
   )
   
   if(any(! names(effects) %in% all_effects)){

@@ -39,6 +39,8 @@
 #'  \item \code{recencySendReceiver()}
 #'  \item \code{recencyReceiveSender()}
 #'  \item \code{recencyReceiveReceiver()} 
+#'  \item \code{rrankSend()} 
+#'  \item \code{rrankReceive()} 
 #'  \item \code{interact()}
 #' }
 #'
@@ -198,7 +200,7 @@ remulateTie <- function(
   }
   edgelist <- array(0, dim = c(1, 3))
   evls <- array(0, dim = c(1, 2))
-  probs <- array(0,dim=c(1,nrow(rs)))
+  # probs <- array(0,dim=c(1,nrow(rs)))
 
   #stores the event counts for dyads in a #sender x #recv matrix
   adj_mat <- initialize_adj_mat(actors_map, initial, rs)
@@ -244,7 +246,7 @@ remulateTie <- function(
 
     edgelist[i,] <- c(t, rs[dyad, 1], rs[dyad, 2])
     evls[i,] <- c(dyad, t)
-    probs[i,] <- lambda
+    # probs[i,] <- lambda
 
     #update adj mat
     #TODO: move to C++
@@ -348,8 +350,6 @@ remulateTie <- function(
         params = params,
         riskset = rs,
         actors = actors_map,
-        density = get.density(evls, actors),
-        probs = probs
-    )
+        density = get.density(evls, actors)    )
   )
 }

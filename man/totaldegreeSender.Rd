@@ -4,7 +4,12 @@
 \alias{totaldegreeSender}
 \title{totaldegreeSender}
 \usage{
-totaldegreeSender(param = NULL, scaling = c("raw", "std", "prop", "log"))
+totaldegreeSender(
+  param = NULL,
+  scaling = c("raw", "std", "prop", "log"),
+  start = 0,
+  end = 0
+)
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}

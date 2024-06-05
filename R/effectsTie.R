@@ -159,7 +159,6 @@ remulateTieEffects <- function() {
   print("")
 }
 
-
 #'baseline
 #' @export
 baseline <- function(param = NULL) {
@@ -220,9 +219,9 @@ reciprocity <- function(param = NULL, scaling = c("raw", "std", "prop","log"), s
 #' 
 #' @param scaling the method for scaling the indegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("indegreeSender", param, scaling)
+  out <- prepEndoVar("indegreeSender", param, scaling, start, end)
   out
 }
 
@@ -234,9 +233,9 @@ indegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")
 #' 
 #' @param scaling the method for scaling the indegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("indegreeReceiver", param, scaling)
+  out <- prepEndoVar("indegreeReceiver", param, scaling, start, end)
   out
 }
 
@@ -248,9 +247,9 @@ indegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log
 #' 
 #' @param scaling the method for scaling the outdegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
 #' @export
-outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("outdegreeSender", param, scaling)
+  out <- prepEndoVar("outdegreeSender", param, scaling, start, end)
   out
 }
 
@@ -263,9 +262,9 @@ outdegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log"
 #' 
 #' @param scaling the method for scaling the outdegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
 #' @export
-outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("outdegreeReceiver", param, scaling)
+  out <- prepEndoVar("outdegreeReceiver", param, scaling, start, end)
   out
 }
 
@@ -277,9 +276,9 @@ outdegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","lo
 #' 
 #' @param scaling the method for scaling the totaldegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
 #' @export
-totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("totaldegreeSender", param, scaling)
+  out <- prepEndoVar("totaldegreeSender", param, scaling, start, end)
   out
 }
 
@@ -292,9 +291,9 @@ totaldegreeSender <- function(param = NULL, scaling = c("raw", "std", "prop","lo
 #' 
 #' @param scaling the method for scaling the totaldegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
 #' @export
-totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("totaldegreeReceiver", param, scaling)
+  out <- prepEndoVar("totaldegreeReceiver", param, scaling, start, end)
   out
 }
 
@@ -306,9 +305,9 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("raw", "std", "prop","
 #' 
 #' @param scaling the method for scaling the otp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-otp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+otp <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("otp", param, scaling)
+  out <- prepEndoVar("otp", param, scaling, start, end)
   out
 }
 
@@ -320,9 +319,9 @@ otp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
 #' 
 #' @param scaling the method for scaling the itp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-itp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+itp <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("itp", param, scaling)
+  out <- prepEndoVar("itp", param, scaling, start, end)
   out
 }
 
@@ -334,9 +333,9 @@ itp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
 #' 
 #' @param scaling the method for scaling the osp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-osp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+osp <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("osp", param, scaling)
+  out <- prepEndoVar("osp", param, scaling, start, end)
   out
 }
 
@@ -348,9 +347,9 @@ osp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
 #' 
 #' @param scaling the method for scaling the isp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-isp <- function(param = NULL, scaling = c("raw", "std", "prop","log")) {
+isp <- function(param = NULL, scaling = c("raw", "std", "prop","log"), start = 0, end = 0) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("isp", param, scaling)
+  out <- prepEndoVar("isp", param, scaling, start, end)
   out
 }
 
@@ -496,6 +495,31 @@ recencyReceiveReceiver <- function(param = NULL) {
   out <- prepEndoVar("recencyReceiveReceiver", param,"raw")
   out
 }
+
+
+#' rrankReceive
+#' 
+#' This function specifies the input for the rrankReceive effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
+#' 
+#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @export
+rrankReceive <- function(param = NULL) {
+  out <- prepEndoVar("rrankReceive", param,"raw")
+  out
+}
+
+
+#' rrankSend
+#' 
+#' This function specifies the input for the rrankSend effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
+#' 
+#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @export
+rrankSend <- function(param = NULL) {
+  out <- prepEndoVar("rrankSend", param,"raw")
+  out
+}
+
 
 #'send
 #' 

@@ -341,6 +341,59 @@ arma::mat compute_recency(int type,
     return (statrow);
 }
 
+
+arma::mat compute_rrank(int type, const arma::mat &edgelist, int N, const arma::mat &rs) {
+
+    // Initialize the last interaction time matrix with NaNs to differentiate uninitialized entries
+    arma::mat lastTime(N, N, arma::fill::none);
+    lastTime.fill(arma::datum::nan);
+
+    for (arma::uword i = 0; i < edgelist.n_rows; ++i) {
+        int sender = edgelist(i, 1) - 1;  // Adjust for zero-based indexing
+        int receiver = edgelist(i, 2) - 1;
+        double event_time = edgelist(i, 0);
+
+        if (sender < 0 || sender >= N || receiver < 0 || receiver >= N) {            
+            continue;
+        }
+
+        lastTime(sender, receiver) = event_time; 
+    }
+
+    arma::mat inverseRanks(N, N, arma::fill::zeros);
+    for (int k = 0; k < N; ++k) {
+        arma::vec times;
+        if (type == 1) {
+            times = lastTime.row(k).t();            
+        } else if (type == 2) {
+            times = lastTime.col(k);            
+        }
+
+        // Finding valid time indices
+        arma::uvec valid_indices = arma::find_finite(times);
+        if (!valid_indices.is_empty()) {
+            arma::vec valid_times = times(valid_indices);
+            arma::uvec sorted_indices = arma::sort_index(valid_times, "descend");
+            arma::uvec ranks = arma::sort_index(sorted_indices) + 1;
+
+            // Calculate inverse ranks for each valid event
+            for (size_t j = 0; j < valid_indices.n_elem; j++) {
+                inverseRanks(k, valid_indices(j)) = 1.0 / ranks(j);
+            }
+        }
+    }
+
+    arma::vec statrow(rs.n_rows, arma::fill::zeros);
+    for (arma::uword j = 0; j < rs.n_rows; ++j) {
+        int sender = rs(j, 0) - 1;
+        int receiver = rs(j, 1) - 1;
+        statrow(j) = inverseRanks(sender, receiver);
+    }
+
+    return statrow;
+}
+
+
 //Updates a statistic row at each time point
 // [[Rcpp::export]]
 arma::mat computeStatsTie(const arma::vec &int_effects,
@@ -515,75 +568,158 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
             //indegree Sender
         case 12:
         {
-            //computing sum only once for each actor
-            arma::rowvec in_degrees = arma::sum(adj_mat, 0);
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                statsrow(j) = in_degrees(rs(j, 0) - 1);
-            }
-            //don't break here
-            // check if indegree receiver stat is also present so that in_degrees vec can be used without computing again
-            arma::uvec other_index = find(int_effects == 13);
-            
-            if (other_index.n_elem != 0)
-            {
-                arma::vec statsrow2(rs.n_rows, arma::fill::zeros);
+            if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));                
+                if (in_window.n_elem != 0){
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+                        {
+                            adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                        }                    
+                    arma::rowvec in_degrees = arma::sum(adj_mat_mem, 0);
+                    for (arma::uword j = 0; j < rs.n_rows; j++)
+                    {
+                        statsrow(j) = in_degrees(rs(j, 0) - 1);
+                    
+                    }
+                }
+                break;
+            }else{
+                //computing sum only once for each actor
+                arma::rowvec in_degrees = arma::sum(adj_mat, 0);
                 for (arma::uword j = 0; j < rs.n_rows; j++)
                 {
-                    statsrow2(j) = in_degrees(rs(j, 1) - 1);
+                    statsrow(j) = in_degrees(rs(j, 0) - 1);
                 }
-                statmat.col(other_index(0)) = statsrow2;
-                skip_flag(13) = 1; // will ensure skip ahead to the next stat
+                break;
             }
-            break;
-        }
+        }   
+            //don't break here
+            // check if indegree receiver stat is also present so that in_degrees vec can be used without computing again
+            // arma::uvec other_index = find(int_effects == 13);
+            
+            // if (other_index.n_elem != 0)
+            // {
+            //     arma::vec statsrow2(rs.n_rows, arma::fill::zeros);
+            //     for (arma::uword j = 0; j < rs.n_rows; j++)
+            //     {
+            //         statsrow2(j) = in_degrees(rs(j, 1) - 1);
+            //     }
+            //     statmat.col(other_index(0)) = statsrow2;
+            //     skip_flag(13) = 1; // will ensure skip ahead to the next stat
+            // }
+            // break;
+       
             //in degree receiver
         case 13:
-        {
-            if (skip_flag(13) == 0)
-        {
-            //will only reach here if indegree sender not in effects list
-            arma::rowvec in_degrees = arma::sum(adj_mat, 0);
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                statsrow(j) = in_degrees(rs(j, 1) - 1);
+
+          {
+            if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));                
+                if (in_window.n_elem != 0){
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+                        {
+                            adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                        }                    
+                    arma::rowvec in_degrees = arma::sum(adj_mat_mem, 0);
+                    for (arma::uword j = 0; j < rs.n_rows; j++)
+                    {
+                        statsrow(j) = in_degrees(rs(j, 1) - 1);
+                    
+                    }
+                }
+                break;
+            }else{
+                //computing sum only once for each actor
+                arma::rowvec in_degrees = arma::sum(adj_mat, 0);
+                for (arma::uword j = 0; j < rs.n_rows; j++)
+                {
+                    statsrow(j) = in_degrees(rs(j, 1) - 1);
+                }
+                break;
             }
         }
-            break;
-        }
+        // {
+        //     if (skip_flag(13) == 0)
+        // {
+            //will only reach here if indegree sender not in effects list
+        
             //out degree sender
         case 14:
         {
-            arma::vec out_degrees = arma::sum(adj_mat, 1);
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                statsrow(j) = out_degrees(rs(j, 0) - 1);
-            }
-            arma::uvec other_index = find(int_effects == 15);
-            if (other_index.n_elem != 0)
-            {
-                arma::vec statsrow2(rs.n_rows, arma::fill::zeros);
+            if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));                
+                if (in_window.n_elem != 0){
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+                        {
+                            adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                        }                    
+                    arma::vec out_degrees = arma::sum(adj_mat_mem, 1);
+                    for (arma::uword j = 0; j < rs.n_rows; j++)
+                    {
+                        statsrow(j) = out_degrees(rs(j, 0) - 1);
+                    }
+                }
+                break;
+            }else{
+                //computing sum only once for each actor
+                arma::vec out_degrees = arma::sum(adj_mat, 1);
                 for (arma::uword j = 0; j < rs.n_rows; j++)
                 {
-                    statsrow2(j) = out_degrees(rs(j, 1) - 1);
+                    statsrow(j) = out_degrees(rs(j, 0) - 1);
                 }
-                statmat.col(other_index(0)) = statsrow2;
-                skip_flag(15) = 1;
+                break;
             }
-            break;
         }
+            
+
+            // arma::uvec other_index = find(int_effects == 15);
+            // if (other_index.n_elem != 0)
+            // {
+            //     arma::vec statsrow2(rs.n_rows, arma::fill::zeros);
+            //     for (arma::uword j = 0; j < rs.n_rows; j++)
+            //     {
+            //         statsrow2(j) = out_degrees(rs(j, 1) - 1);
+            //     }
+            //     statmat.col(other_index(0)) = statsrow2;
+            //     // skip_flag(15) = 1;
+            // }
+            // break;
+        
             //out degree receiver
         case 15:
         {
-            if (skip_flag(15) == 0)
-        {
-            arma::vec out_degrees = arma::sum(adj_mat, 1);
-            for (arma::uword j = 0; j < rs.n_rows; j++)
-            {
-                statsrow(j) = out_degrees(rs(j, 1) - 1);
-            }
-        }
-            break;
+        //     if (skip_flag(15) == 0)
+       if (mem_start(i) != 0 || mem_end(i) != 0){
+                arma::mat adj_mat_mem(actors.n_elem, actors.n_elem, arma::fill::zeros);
+                //which time points in edgelist belong to mem window
+                arma::uvec in_window = find(edgelist.col(0) >= edgelist(edgelist.n_rows - 1, 0) - std::max(mem_start(i), mem_end(i)) && edgelist.col(0) <= edgelist(edgelist.n_rows - 1, 0) - std::min(mem_start(i), mem_end(i)));                
+                if (in_window.n_elem != 0){
+                    for (arma::uword ind = 0; ind < in_window.n_elem; ind++)
+                        {
+                            adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) = adj_mat_mem(edgelist(in_window(ind), 1) - 1, edgelist(in_window(ind), 2) - 1) + 1;
+                        }                    
+                    arma::vec out_degrees = arma::sum(adj_mat_mem, 1);
+                    for (arma::uword j = 0; j < rs.n_rows; j++)
+                    {
+                        statsrow(j) = out_degrees(rs(j, 1) - 1);
+                    }
+                }
+                break;
+            }else{
+                //computing sum only once for each actor
+                arma::vec out_degrees = arma::sum(adj_mat, 1);
+                for (arma::uword j = 0; j < rs.n_rows; j++)
+                {
+                    statsrow(j) = out_degrees(rs(j, 1) - 1);
+                }
+                break;
+            }      
         }
             //total degree sender
         case 16:
@@ -777,6 +913,20 @@ arma::mat computeStatsTie(const arma::vec &int_effects,
         case 34:
         {
             statsrow = compute_recency(5,edgelist,rs) ;
+            
+            break;
+        }
+        //rrankSend
+        case 35:
+        {
+            statsrow = compute_rrank(1,edgelist,actors.n_elem,rs) ;
+            
+            break;
+        }
+        //rrankReceive
+        case 36:
+        {
+            statsrow = compute_rrank(2,edgelist,actors.n_elem,rs) ;
             
             break;
         }
