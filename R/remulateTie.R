@@ -301,7 +301,7 @@ remulateTie <- function(
     #add row for next iteration
     edgelist <- rbind(edgelist, array(0, dim = c(1, 3)))
     evls <- rbind(evls, array(0, dim = c(1, 2)))
-    probs <- rbind(probs, array(0, dim = c(1,nrow(rs))))
+    #probs <- rbind(probs, array(0, dim = c(1,nrow(rs))))
 
     #update beta
     for (j in 1:P) {
