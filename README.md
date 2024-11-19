@@ -1,6 +1,8 @@
 # remulate
 
-remulate is a R library to generate dynamic temporal networks based on Relational Event Models.
+remulate is a R library to simulate dynamic temporal networks based on Relational Event Models. Remulate can be used to simulate network data with time-varying effects, time-varying exogenous predictors under actor and tie-oriented relational event models. The package can also be used to simualte mixed-effects models, stochastic block models, and latent class relational event models.
+
+
 
 ### Programming Languages
 The package contains code written in:
