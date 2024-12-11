@@ -47,13 +47,14 @@ help('remulateActorEffects')
 If you use this R package in your research or in any publications, please cite it as follows to help support our work:
 
 ```bibtex
-@misc{lakdawala2024simulating,
-    title={Simulating Relational Event Histories - Why and How}, 
-    author={Rumana Lakdawala and Joris Mulder and Roger Leenders},
-    year={2024},
-    eprint={2403.19329},
-    archivePrefix={arXiv},
-    primaryClass={cs.SI}
+@misc{lakdawala2024simulatingrelationaleventhistories,
+      title={Simulating Relational Event Histories: Why and How}, 
+      author={Rumana Lakdawala and Joris Mulder and Roger Leenders},
+      year={2024},
+      eprint={2403.19329},
+      archivePrefix={arXiv},
+      primaryClass={cs.SI},
+      url={https://arxiv.org/abs/2403.19329}, 
 }
 ```
 
