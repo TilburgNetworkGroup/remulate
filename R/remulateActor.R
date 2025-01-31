@@ -5,26 +5,21 @@
 #'
 #' @details
 #' 
-#' A list of available statistics for actor rate sub-model. See \link{remulateActorEffects} for details on effects: 
+#' A list of available statistics for actor rate model. See \link{remulateActorEffects} for details on effects: 
 #' \itemize{
 #'  \item \code{baseline()}
-#'  \item \code{send()}
 #'  \item \code{indegreeSender()}
 #'  \item \code{outdegreeSender()}
 #'  \item \code{totaldegreeSender()}
 #'  \item \code{ospSender()}
 #'  \item \code{otpSender()}
+#'  \item \code{send()}
 #'  \item \code{interact()}
 #' }
-#' A list of available statistics for receiver choice sub-model:
+#'
+#' A list of available statistics for receiver choice model. See \link{remulateActorEffects} for details on effects: :
 #'\itemize{
 #'  \item \code{baseline()}
-#'  \item \code{receive()}
-#'  \item \code{dyad()}
-#'  \item \code{same()}
-#'  \item \code{difference()}
-#'  \item \code{equate()}
-#'  \item \code{event()}
 #'  \item \code{inertia()}
 #'  \item \code{reciprocity()}
 #'  \item \code{indegreeReceiver()}
@@ -34,6 +29,13 @@
 #'  \item \code{itp()}
 #'  \item \code{osp()}
 #'  \item \code{isp()}
+#'  \item \code{receive()}
+#'  \item \code{dyad()}
+#'  \item \code{same()}
+#'  \item \code{average()}
+#'  \item \code{difference()}
+#'  \item \code{minimum()}
+#'  \item \code{maximum()}
 #'  \item \code{interact()}
 #' }
 #'
@@ -43,41 +45,76 @@
 #' @param actors Numeric or character vector of actor names.
 #' @param time Numeric, time upto which to simulate network.
 #' @param events [Optional] Integer, maximum number of events to simulate.
-#' @param start_time [Optional] (default = 0) Numeric time specifying the time at which to initialize the simulation
+#' @param startTime [Optional] (default = 0) Numeric specifying the time at which to initialize the simulation 
 #' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
 #' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
 #' @param memory [Optional] (default = full) String indicating which.
-#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto.
-#' which occured events will be remembered for computing statistics, "brandes" memory type uses past events
-#' weighted by their time, "vu" memory type uses past events weighted by 1/time since event occured.
-#' @param memory_param [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param is the half-life i.e the time until an event has a weight of one half. For memory type "vu" the memory_param is power of (1/time since event occured).
-#' @param seed [Optional] Seed for random number stream.
+#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a time window in the past upto.
+#' which occured events will be remembered for computing statistics, "window_m" memory indicates a window (number of events) in the past upto.
+#' which occured events will be remembered for computing statistics, "decay" memory type allows for an exponential decay of past events
+#' weighted by elapsed time.
+#' @param memoryParam [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window.  
+#' For memory type "window_m" this parameter indicates the length (in number of events) of the window. 
+#' For memory type "decay" the memoryParam is the half-life i.e the time until an event has a weight of one half.
 #' @return \describe{
-#' \item{edgelist}{data.frame object with columns (time,sender,receiver)}
-#' \item{statistics}{array of statistics of dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)}
-#' \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
-#' \item{actors_map}{data.frame object containing the mapping of actor names provided by user to the integer ids used in the internal computations}
-#' \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
-#' \item{density}{value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
+#' \item{edgelist}{A data.frame object with columns (time, sender, receiver) representing the generated event sequence.}
+#' \item{evls}{A matrix containing the event list with columns (dyad, time), where dyad represents the index of the (sender, receiver) pair in the risk set.}
+#' \item{rateStatistics}{An array of dimensions M x N x P, where M is the number of events, N is the number of actors, and P is the number of sender rate statistics.}
+#' \item{choiceStatistics}{An array of dimensions M x D x Q, where M is the number of events, D is the number of dyads in the risk set, and Q is the number of receiver choice statistics.}
+#' \item{rateParams}{A named list of rate model parameters corresponding to specified rate statistics.}
+#' \item{choiceParams}{A named list of choice model parameters corresponding to specified choice statistics.}
+#' \item{riskset}{A matrix with columns (sender, receiver) representing the risk set used in the simulation.}
+#' \item{actors}{A data.frame containing the mapping of actor names provided by the user to the integer IDs used in internal computations.}
+#' \item{density}{A numeric value indicating the density of the generated network, defined as the number of observed ties divided by N*(N-1) (where N is the number of actors).}
 #' }
 #' @examples 
-#'  # To generate events upto time '50' in a network of 25 actors with 
+#'  # To generate events up to time '50' in a network of 25 actors with 
 #'  # 200 random initial events
 #'  
-#'  #exogenous attributes data.frame
-#'  cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+#'  # Exogenous attributes data.frame
+#'  cov <- data.frame(
+#'    id = 1:25, 
+#'    time = rep(0, 25), 
+#'    sex = sample(c(0,1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
+#'    age = sample(20:30, 25, replace = TRUE) 
+#'  )
 #'  
-#'  #effects specification
-#'  rateform <- ~ remulate::baseline(-6) + remulate::indegreeSender(0.01) +remulate::send(0.02,variable="age",attributes = cov)+ remulate::interact(0.01,indices=c(2,3))
-#'  choiceform <- ~ remulate::inertia(0.01) + remulate::reciprocity(-0.03)+remulate::interact(0.01,indices=c(2,1))
+#'  # Effects specification
+#'  rateform <- ~ remulate::baseline(-6) + 
+#'               remulate::indegreeSender(0.01) + 
+#'               remulate::send(0.02, variable = "age", attributes = cov) + 
+#'               remulate::interact(0.01, indices = c(2, 3))
 #'  
-#'  #calling remulateActor
-#'  remulate::remulateActor(rateform,choiceform,actors = 1:25,time=100,initial = 200,events = 500,seed=123)
+#'  choiceform <- ~ remulate::inertia(0.01) + 
+#'                remulate::reciprocity(-0.03) + 
+#'                remulate::interact(0.01, indices = c(2, 1))
+#'  
+#'  # Calling remulateActor
+#'  remulate::remulateActor(
+#'    rateform, 
+#'    choiceform, 
+#'    actors = 1:25, 
+#'    time = 100, 
+#'    initial = 200, 
+#'    events = 500, 
+#'  )
 #'   
 #'  # To predict events, given an edgelist of initial events
-#'  initialREH <- data.frame(time = seq(0.5,100,0.5), sender = sample(1:25,200,T), receiver = sample(1:25,200,T))
-#'  remulate::remulateActor(rateform, choiceform, actors = 1:25, time=200, initial = initialREH, events = 500, seed=123)
-#' 
+#'  initialREH <- data.frame(
+#'    time = seq(0.5, 100, 0.5), 
+#'    sender = sample(1:25, 200, TRUE), 
+#'    receiver = sample(1:25, 200, TRUE)
+#'  )
+#'  
+#'  remulate::remulateActor(
+#'    rateform, 
+#'    choiceform, 
+#'    actors = 1:25, 
+#'    time = 200, 
+#'    initial = initialREH, 
+#'    events = 500
+#'  )
+
 #' @export
 remulateActor <- function(
     rateEffects,
@@ -85,21 +122,14 @@ remulateActor <- function(
     actors,
     time,
     events = NULL,
-    start_time = 0,
+    startTime = 0,
     initial = 0,
     riskset = NULL,
     memory = c("full","window","brandes","vu"),
-    memory_param = NULL,
-    seed = NULL){
-    #waiting_time =c("exp","weibull","gompertz"),
-    #time_param = NULL,
-    waiting_time="exp"
-    #waiting_time <- match.arg(waiting_time)
+    memoryParam = NULL){
 
-    #set seed
-    if(!is.null(seed)){
-        set.seed(seed)
-    }
+    waiting_time="exp"
+
     #process input for rate sub-model
     parsed_s <- parseEffectsRate(rateEffects)
     s_params <- parsed_s$params
@@ -125,11 +155,11 @@ remulateActor <- function(
     if(! memory[1] %in% c("full","window","window_m","brandes","vu")){
         stop(paste("\n'",memory[1], "'memory method not defined"))
     }
-    if(memory != "full" && is.null(memory_param)){
+    if(memory != "full" && is.null(memoryParam)){
         if(memory[1]=="window" || memory[1]=="window_m"){
-            stop(paste("Cannot use window memory technique without a memory_param value"))
-        }else if(memory_param <= 0){
-            stop(paste("memory_param must be positive"))
+            stop(paste("Cannot use window memory technique without a memoryParam value"))
+        }else if(memoryParam <= 0){
+            stop(paste("memoryParam must be positive"))
         }
     }
 
@@ -160,7 +190,7 @@ remulateActor <- function(
         }
     }else{
         #in case is.numeric(initial) OR intial == NULL
-        t<- start_time
+        t<- startTime
     }
 
     #initialize attributes
@@ -224,15 +254,15 @@ remulateActor <- function(
             dt <- rexp(1,rate = sum(s_lambda))
             t <- t + dt
         }
-        else if (waiting_time=="weibull") {
-            #TODO: add checks on time params
-           dt <- rweibull(1,shape=time_param,scale = sum(s_lambda))
-           t <- t + dt
-        }
-        else if (waiting_time=="gompertz") {
-           dt <- rgompertz(1,scale = sum(s_lambda), shape=time_param)
-           t <- t + dt
-        }
+        # else if (waiting_time=="weibull") {
+        #     #TODO: add checks on time params
+        #    dt <- rweibull(1,shape=time_param,scale = sum(s_lambda))
+        #    t <- t + dt
+        # }
+        # else if (waiting_time=="gompertz") {
+        #    dt <- rgompertz(1,scale = sum(s_lambda), shape=time_param)
+        #    t <- t + dt
+        # }
         
         if(t > time){
             cat(i-1, "events generated \n")
@@ -255,16 +285,16 @@ remulateActor <- function(
         else if (memory=="window"){ #window memory takes memory by time window
             #TODO: to vectorize
             adj_mat[] <- 0
-            in_window <- which(edgelist[,1] > t - memory_param) #event indices which are in memory_param
+            in_window <- which(edgelist[,1] > t - memoryParam) #event indices which are in memoryParam
             for(ind in in_window){
                 adj_mat[edgelist[ind,2],edgelist[ind,3]] =  adj_mat[edgelist[ind,2],edgelist[ind,3]] + 1;
             }
         }
         else if(memory=="window_m"){ #window_m takes memory by last m events
-            if(memory_param<i){
+            if(memoryParam<i){
                 adj_mat[] <- 0
-                print(paste("memory in:",i-memory_param,"to",i))
-                for(ind in c(i-memory_param,i)){
+                print(paste("memory in:",i-memoryParam,"to",i))
+                for(ind in c(i-memoryParam,i)){
                     adj_mat[edgelist[ind,2],edgelist[ind,3]] =  adj_mat[edgelist[ind,2],edgelist[ind,3]] + 1;
                 }
             }else{
@@ -275,13 +305,13 @@ remulateActor <- function(
             #TODO: to vectorize
             adj_mat [] <- 0
             for(j in 1:i){#loop through edgelist
-                adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + exp((-(t-edgelist[j,1]))*(log(2)/memory_param))
+                adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + exp((-(t-edgelist[j,1]))*(log(2)/memoryParam))
             }
         }
         else if(memory=="vu"){
             adj_mat [] <- 0
             for(j in 1:i-1){#loop through edgelist
-                adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + 1/((t-edgelist[j,1])**memory_param)
+                adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + 1/((t-edgelist[j,1])**memoryParam)
             }
         }
         #stop if max number of events reached

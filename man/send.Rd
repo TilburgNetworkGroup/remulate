@@ -11,10 +11,13 @@ send(param = NULL, variable, attributes, scaling = c("raw", "std"))
 
 \item{variable}{character vector specifies the name of the column with covariate value in data dataframe}
 
-\item{scaling}{specifies the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
+\item{attributes}{data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name}
 
-\item{data}{data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name}
+\item{scaling}{specifies the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
 Sender covariate: The tendency to create an event i->j when i has a high attribute value.
+}
+\details{
+This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

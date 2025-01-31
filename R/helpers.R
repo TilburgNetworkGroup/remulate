@@ -262,8 +262,8 @@ parseEffectsChoice <- function(formula){
   all_effects <- c(
     "baseline", #1
     "", "receive", #2 #3
-    "same", "diff", "", #4 #5 #6
-    "", "", #7 #8
+    "same", "difference", "average", #4 #5 #6
+    "minimum", "maximum", #7 #8
     "tie", "inertia", "reciprocity", #9 #10 #11
     "", "indegreeReceiver", #12 #13
     "", "outdegreeReceiver", #14 #15

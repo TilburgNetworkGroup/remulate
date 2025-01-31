@@ -1,6 +1,6 @@
 Package: remulate
 Type: Package
-Title: Remulate - Simulate Dynamic Networks
+Title: Remulate - Simulate Dynamic Networks from Relational Event Models
 Version: 1.1.0
 Date: September 1, 2020
 Authors@R: 
@@ -46,18 +46,16 @@ Authors@R:
             email = "j.mulder3@tilburguniversity.edu")
     )
 Maintainer: Rumana Lakdawala <R.J.Lakdawala@tilburguniversity.edu>
-Description: This package  allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to  model temporal variability, uncertainty, changes in the network composition and to account for memory decay in dynamic social networks. The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant  (758791).
+Description: This package  allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to  model temporal variability, heterogeneity, changes in the network composition and to account for memory decay in dynamic social networks. The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant  (758791).
 License: GPL (>= 3)
 URL: https://github.com/TilburgNetworkGroup/remulate
 Depends: 
     R (>= 2.10),
 Imports:
     Rcpp (>= 1.0.2),
-    stats,
-    utils,
-    remify
+    stats
 LinkingTo: 
     Rcpp, 
     RcppArmadillo
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Encoding: UTF-8

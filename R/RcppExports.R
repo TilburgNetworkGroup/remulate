@@ -11,5 +11,5 @@ computeStatsTie <- function(int_effects, rs, actors, edgelist, adj_mat, covariat
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('_remulate_RcppExport_registerCCallable', PACKAGE = 'remulate')
+    .Call(`_remulate_RcppExport_registerCCallable`)
 })

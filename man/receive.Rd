@@ -18,3 +18,6 @@ receive(param = NULL, variable, attributes, scaling = c("raw", "std"))
 \description{
 Receiver covariate: The tendency to create an event i->j when j has a high attribute value.
 }
+\details{
+This function specifies the input for the receive effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+}

@@ -116,7 +116,7 @@ at timepoint t is equal to the minimum of past
 effects <- ~  inertia(0.1 , scaling = "std") 
 
 # To specify an exogenous effects (example same)
-cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=T, 10), age=sample(20:30, 10, replace=T))
+cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=TRUE, 10), age=sample(20:30, 10, replace=TRUE))
 effects <- ~ same(0.2 , variable="gender", attributes = cov)
 
 #Rate Effects:

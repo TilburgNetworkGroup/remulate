@@ -4,14 +4,7 @@
 \alias{remulateTieEffects}
 \title{Remulate Tie Effects}
 \usage{
-#Specification of endogenous effect
-endo(param, scaling=c("raw","std","prop"))
-
-#Specification of exogenous effect
-exo(param, variable, attributes, scaling=c("raw","std"))
-
-#Specification of interaction effects
-interact(param, indices)
+remulateTieEffects()
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the model.}
@@ -145,7 +138,7 @@ time that has past since receiver j was last active as receiver + 1).}
 effects <- ~ inertia(0.1 , scaling = "std")
 
 # To specify an exogenous effect (example same)
-cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=T, 10), age=sample(20:30, 10, replace=T))
+cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=TRUE, 10), age=sample(20:30, 10, replace=TRUE))
 effects <- ~ same(0.2 , variable="gender", attributes = cov)
 
 # To specify an exogenous dyadic effect (example dyad)

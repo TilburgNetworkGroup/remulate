@@ -4,12 +4,7 @@
 \alias{totaldegreeReceiver}
 \title{totaldegreeReceiver}
 \usage{
-totaldegreeReceiver(
-  param = NULL,
-  scaling = c("raw", "std", "prop", "log"),
-  start = 0,
-  end = 0
-)
+totaldegreeReceiver(param = NULL, scaling = c("raw", "std", "prop"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
@@ -17,5 +12,5 @@ totaldegreeReceiver(
 \item{scaling}{the method for scaling the totaldegreeReceiver statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.}
 }
 \description{
-This function specifies the input for the totaldegreeReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
+This function specifies the input for the totaldegreeReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

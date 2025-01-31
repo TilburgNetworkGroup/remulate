@@ -18,3 +18,6 @@ dyad(param = NULL, variable, attributes, scaling = c("raw", "std"))
 \description{
 Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.
 }
+\details{
+This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+}

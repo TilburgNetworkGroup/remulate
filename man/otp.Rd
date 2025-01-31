@@ -4,7 +4,7 @@
 \alias{otp}
 \title{otp}
 \usage{
-otp(param = NULL, scaling = c("raw", "std", "prop", "log"), start = 0, end = 0)
+otp(param = NULL, scaling = c("raw", "std", "prop"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
@@ -12,5 +12,5 @@ otp(param = NULL, scaling = c("raw", "std", "prop", "log"), start = 0, end = 0)
 \item{scaling}{the method for scaling the otp statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
 \description{
-This function specifies the input for the otp effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
+This function specifies the input for the otp effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

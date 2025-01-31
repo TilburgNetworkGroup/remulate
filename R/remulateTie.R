@@ -48,71 +48,102 @@
 #' @param actors Numeric or character vector of actor names.
 #' @param time Numeric, time upto which to simulate network.
 #' @param events [Optional] Integer, maximum number of events to simulate.
-#' @param start_time [Optional] (default = 0) Numeric specifying the time at which to initialize the simulation 
+#' @param startTime [Optional] (default = 0) Numeric specifying the time at which to initialize the simulation 
 #' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
 #' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
 #' @param memory [Optional] (default = full) String indicating which.
-#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto.
-#' which occured events will be remembered for computing statistics, "brandes" memory type uses past events
-#' weighted by their time, "vu" memory type uses past events weighted by 1/time since event occured.
-#' @param memory_param [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param is the half-life i.e the time until an event has a weight of one half. For memory type "vu" the memory_param is power of (1/time since event occured).
-#' @param seed [Optional] Seed for random number stream.
+#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a time window in the past upto.
+#' which occured events will be remembered for computing statistics, "window_m" memory indicates a window (number of events) in the past upto.
+#' which occured events will be remembered for computing statistics, "decay" memory type allows for an exponential decay of past events
+#' weighted by elapsed time.
+#' @param memoryParam [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window.  
+#' For memory type "window_m" this parameter indicates the length (in number of events) of the window. 
+#' For memory type "decay" the memoryParam is the half-life i.e the time until an event has a weight of one half.
 #' @return \describe{
 #' \item{edgelist}{data.frame object with columns (time,sender,receiver)}
 #' \item{statistics}{array of statistics with dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)}
 #' \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
-#' \item{actors_map}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
+#' \item{actors}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
 #' \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
 #' \item{density}{numeric value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
 #' }
 #' @examples 
-#'  # To generate events upto time '50' in a network of 25 actors with 
+#'  # To generate events up to time '50' in a network of 25 actors with 
 #'  # 200 random initial events
 #'  
-#'  #exogenous attributes data.frame
-#'  cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+#'  # Exogenous attributes data.frame
+#'  cov <- data.frame(
+#'    id = 1:25, 
+#'    time = rep(0, 25), 
+#'    sex = sample(c(0, 1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
+#'    age = sample(20:30, 25, replace = TRUE) 
+#'  )
 #'  
-#'  #effects specification
-#'  effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+
-#'  remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+#'  # Effects specification
+#'  effects <- ~ remulate::baseline(-5) + 
+#'              remulate::inertia(0.01) + 
+#'              remulate::reciprocity(-0.04) + 
+#'              remulate::itp(0.01, scaling = "std") + 
+#'              remulate::same(0.02, variable = "sex", attributes = cov) + 
+#'              remulate::interact(0.01, indices = c(2, 5))
 #'  
-#'  #calling remulateTie
-#'  remulate::remulateTie(effects, actors = 1:25, time =50, events = 500, initial = 200)
+#'  # Calling remulateTie
+#'  remulate::remulateTie(
+#'    effects, 
+#'    actors = 1:25, 
+#'    time = 50, 
+#'    events = 500, 
+#'    initial = 200
+#'  )
 #'  
 #'  # To predict events, given an edgelist of initial events
-#'  initialREH <- data.frame(time = seq(0.5,100,0.5), sender = sample(1:25,200,T), receiver = sample(1:25,200,T))
-#'  remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, initial=initialREH)
-#' 
-#' #custom riskset
-#' rs <- as.matrix(expand.grid(1:N,1:N))
-#' rs <- rs[rs[,1] != rs[, 2],]
-#' custom.rs = rs[sample(1:90,50),]
-#' remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, riskset = custom.rs )
-#' 
+#'  initialREH <- data.frame(
+#'    time = seq(0.5, 100, 0.5), 
+#'    sender = sample(1:25, 200, TRUE), 
+#'    receiver = sample(1:25, 200, TRUE)
+#'  )
 #'  
+#'  remulate::remulateTie(
+#'    effects, 
+#'    actors = 1:25, 
+#'    time = 150, 
+#'    events = 500, 
+#'    initial = initialREH
+#'  )
+#'  
+#'  # Custom risk set
+#'  rs <- as.matrix(expand.grid(1:25, 1:25))
+#'  rs <- rs[rs[, 1] != rs[, 2], ]
+#'  
+#'  custom_rs <- rs[sample(1:90, 50), ]
+#'  
+#'  remulate::remulateTie(
+#'    effects, 
+#'    actors = 1:25, 
+#'    time = 150, 
+#'    events = 500, 
+#'    riskset = custom_rs
+#'  )
+#' 
+#' @references
+#' Lakdawala, R., Mulder, J., & Leenders, R. (2025).
+#' *Simulating Relational Event Histories: Why and How*.
+#' arXiv:2403.19329.
+#' 
+#' }
 #' @export
 remulateTie <- function(
   effects,
   actors,
   time ,
   events = NULL,
-  start_time = 0,
+  startTime = 0,
   initial = 0,
   riskset = NULL,
-  memory = c("full", "window", "brandes", "vu"),
-  memory_param = NULL,
-  seed = NULL,
-  damping = 0) {
+  memory = c("full", "window", "decay"),
+  memoryParam = NULL) {
 
-  #waiting_time =c("exp","weibull","gompertz"),
-  #time_param = NULL,
   waiting_time="exp"
-  #waiting_time <- match.arg(waiting_time)
-
-  #set seed
-  if (!is.null(seed)) {
-    set.seed(seed)
-  }
 
   parsed_effects <- parseEffectsTie(effects)
 
@@ -129,14 +160,14 @@ remulateTie <- function(
 
   memory<- match.arg(memory)
   #checking memory specification
-  if (!memory[1] %in% c("full", "window", "window_m", "brandes", "vu")) {
+  if (!memory[1] %in% c("full", "window", "window_m", "decay")) {
     stop(paste("\n'", memory[1], "'memory method not defined"))
   }
-  if (memory != "full" && is.null(memory_param)) {
+  if (memory != "full" && is.null(memoryParam)) {
     if (memory[1] == "window" || memory[1] == "window_m") {
-      stop(paste("Cannot use window memory technique without a memory_param value"))
-    } else if (memory_param <= 0) {
-      stop(paste("memory_param must be positive"))
+      stop(paste("Cannot use window memory technique without a memoryParam value"))
+    } else if (memoryParam <= 0) {
+      stop(paste("memoryParam must be positive"))
     }
   }
 
@@ -151,7 +182,6 @@ remulateTie <- function(
       stop("risk set contains receiver actor not specified in actor's list")
     }
     #convert names in riskset to ids
-    #rs <- rs[(rs[, 1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[, 2] %in% actors_map$id[actors_map$name %in% riskset[[2]]]),]
     rs <- riskset
     rs[,2] <- sapply(rs[,2], function(x) {
       actors_map$id[match(x,actors_map$name)]
@@ -174,7 +204,7 @@ remulateTie <- function(
       }
   }else{
       #in case is.numeric(initial) OR intial == NULL
-      t<- start_time
+      t<- startTime
   }
     
   #TODO: check if exogenous effect doesnt change with time only once (enhancement:comp time)
@@ -220,15 +250,15 @@ remulateTie <- function(
       dt <- rexp(1, rate = sum(lambda))
       t <- t + dt
     }
-    else if (waiting_time == "weibull") {
-      #TODO: add checks on time params
-      dt <- rweibull(1, shape = time_param, scale = sum(lambda))
-      t <- t + dt
-    }
-    else if (waiting_time == "gompertz") {
-      dt <- rgompertz(1, scale = sum(lambda), shape = time_param)
-      t <- t + dt
-    }
+    # else if (waiting_time == "weibull") {
+    #   #TODO: add checks on time params
+    #   dt <- rweibull(1, shape = time_param, scale = sum(lambda))
+    #   t <- t + dt
+    # }
+    # else if (waiting_time == "gompertz") {
+    #   dt <- rgompertz(1, scale = sum(lambda), shape = time_param)
+    #   t <- t + dt
+    # }
 
     if(t > time){
       cat(i-1, "events generated \n")
@@ -237,16 +267,10 @@ remulateTie <- function(
 
     #sampling dyad for next event
     # R sampling slightly faster than arma sampling (due to hashing)
-    if(runif(1) < damping){
-      dyad <- sample(1:nrow(rs), 1)
-    }else{
-      dyad <- sample(1:nrow(rs), 1, prob = lambda / sum(lambda))
-    }
-    
+    dyad <- sample(1:nrow(rs), 1, prob = lambda / sum(lambda))    
 
     edgelist[i,] <- c(t, rs[dyad, 1], rs[dyad, 2])
     evls[i,] <- c(dyad, t)
-    # probs[i,] <- lambda
 
     #update adj mat
     #TODO: move to C++
@@ -257,39 +281,32 @@ remulateTie <- function(
       #window memory takes memory by time window
       #TODO: to vectorize
       adj_mat[] <- 0
-      in_window <- which(edgelist[, 1] > t - memory_param) #event indices which are in memory_param
+      in_window <- which(edgelist[, 1] > t - memoryParam) #event indices which are in memoryParam
       for (ind in in_window) {
         adj_mat[edgelist[ind, 2], edgelist[ind, 3]] = adj_mat[edgelist[ind, 2], edgelist[ind, 3]] + 1;
       }
     }
     else if (memory == "window_m") {
       #window_m takes memory by last m events
-      if (memory_param < i) {
+      if (memoryParam < i) {
         adj_mat[] <- 0
-        print(paste("memory in:", i - memory_param, "to", i))
-        for (ind in c(i - memory_param, i)) {
+        print(paste("memory in:", i - memoryParam, "to", i))
+        for (ind in c(i - memoryParam, i)) {
           adj_mat[edgelist[ind, 2], edgelist[ind, 3]] = adj_mat[edgelist[ind, 2], edgelist[ind, 3]] + 1;
         }
       } else {
         adj_mat[edgelist[i, 2], edgelist[i, 3]] = adj_mat[edgelist[i, 2], edgelist[i, 3]] + 1;
       }
     }
-    else if (memory == "brandes") {
+    else if (memory == "decay") {
       #TODO: to vectorize
       adj_mat[] <- 0
       for (j in 1:i) {
         #loop through edgelist
-        adj_mat[edgelist[j, 2], edgelist[j, 3]] = adj_mat[edgelist[j, 2], edgelist[j, 3]] + exp((-(t - edgelist[j, 1])) * (log(2) / memory_param))
+        adj_mat[edgelist[j, 2], edgelist[j, 3]] = adj_mat[edgelist[j, 2], edgelist[j, 3]] + exp((-(t - edgelist[j, 1])) * (log(2) / memoryParam))
       }
     }
-    else if (memory == "vu") {
-      adj_mat[] <- 0
-      for (j in 1:i - 1) {
-        #loop through edgelist
-        adj_mat[edgelist[j, 2], edgelist[j, 3]] = adj_mat[edgelist[j, 2], edgelist[j, 3]] + 1 / ((t - edgelist[j, 1]) ** memory_param)
-      }
-    }
-
+    
     #stop if max number of events reached
     if(!is.null(events) && i-1>=events){
       cat(paste0("Stopping: maximum number of events (",i-1,") sampled \n"))

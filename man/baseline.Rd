@@ -6,6 +6,9 @@
 \usage{
 baseline(param = NULL)
 }
+\arguments{
+\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the baseline in the REM model}
+}
 \description{
-baseline
+This function specified the input for the baseline effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}.
 }

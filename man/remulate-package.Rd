@@ -2,11 +2,11 @@
 % Please edit documentation in R/remulate-package.R
 \docType{package}
 \name{remulate-package}
+\alias{remulate}
 \alias{remulate-package}
-\alias{_PACKAGE}
-\title{remulate: Remulate - Simulate Dynamic Networks}
+\title{remulate: Remulate - Simulate Dynamic Networks from Relational Event Models}
 \description{
-This package allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to model temporal variability, uncertainty, changes in the network composition and to account for memory decay in dynamic social networks. The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
+This package allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to model temporal variability, heterogeneity, changes in the network composition and to account for memory decay in dynamic social networks. The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
 }
 \seealso{
 Useful links:

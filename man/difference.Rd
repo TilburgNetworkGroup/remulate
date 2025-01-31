@@ -18,3 +18,6 @@ difference(param = NULL, variable, attributes, scaling = c("raw", "std"))
 \description{
 Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values
 }
+\details{
+This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+}

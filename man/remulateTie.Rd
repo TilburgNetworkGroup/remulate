@@ -9,13 +9,11 @@ remulateTie(
   actors,
   time,
   events = NULL,
-  start_time = 0,
+  startTime = 0,
   initial = 0,
   riskset = NULL,
-  memory = c("full", "window", "brandes", "vu"),
-  memory_param = NULL,
-  seed = NULL,
-  damping = 0
+  memory = c("full", "window", "decay"),
+  memoryParam = NULL
 )
 }
 \arguments{
@@ -27,27 +25,28 @@ remulateTie(
 
 \item{events}{[Optional] Integer, maximum number of events to simulate.}
 
-\item{start_time}{[Optional] (default = 0) Numeric specifying the time at which to initialize the simulation}
+\item{startTime}{[Optional] (default = 0) Numeric specifying the time at which to initialize the simulation}
 
 \item{initial}{[Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.}
 
 \item{riskset}{[Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set}
 
 \item{memory}{[Optional] (default = full) String indicating which.
- memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a window in the past upto.
-which occured events will be remembered for computing statistics, "brandes" memory type uses past events
-weighted by their time, "vu" memory type uses past events weighted by 1/time since event occured.}
+ memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a time window in the past upto.
+which occured events will be remembered for computing statistics, "window_m" memory indicates a window (number of events) in the past upto.
+which occured events will be remembered for computing statistics, "decay" memory type allows for an exponential decay of past events
+weighted by elapsed time.}
 
-\item{memory_param}{[Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window. For memory type "brandes" the memory_param is the half-life i.e the time until an event has a weight of one half. For memory type "vu" the memory_param is power of (1/time since event occured).}
-
-\item{seed}{[Optional] Seed for random number stream.}
+\item{memoryParam}{[Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window.
+For memory type "window_m" this parameter indicates the length (in number of events) of the window. 
+For memory type "decay" the memoryParam is the half-life i.e the time until an event has a weight of one half.}
 }
 \value{
 \describe{
 \item{edgelist}{data.frame object with columns (time,sender,receiver)}
 \item{statistics}{array of statistics with dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)}
 \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
-\item{actors_map}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
+\item{actors}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
 \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
 \item{density}{numeric value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
 }
@@ -98,28 +97,60 @@ A list of available statistics. See \link{remulateTieEffects} for details:
 }
 }
 \examples{
- # To generate events upto time '50' in a network of 25 actors with 
+ # To generate events up to time '50' in a network of 25 actors with 
  # 200 random initial events
  
- #exogenous attributes data.frame
- cov <- data.frame(id=1:25, time=rep(0,25), sex=sample(c(0,1),25,replace=T,prob=c(0.4,0.6)), age=sample(20:30,25,replace=T) )
+ # Exogenous attributes data.frame
+ cov <- data.frame(
+   id = 1:25, 
+   time = rep(0, 25), 
+   sex = sample(c(0, 1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
+   age = sample(20:30, 25, replace = TRUE) 
+ )
  
- #effects specification
- effects <- ~ remulate::baseline(-5) + remulate::inertia(0.01) + remulate::reciprocity(-0.04)+
- remulate::itp(0.01,scaling="std") + remulate::same(0.02,variable="sex",attributes = cov) + remulate::interact(0.01,indices=c(2,5))
+ # Effects specification
+ effects <- ~ remulate::baseline(-5) + 
+             remulate::inertia(0.01) + 
+             remulate::reciprocity(-0.04) + 
+             remulate::itp(0.01, scaling = "std") + 
+             remulate::same(0.02, variable = "sex", attributes = cov) + 
+             remulate::interact(0.01, indices = c(2, 5))
  
- #calling remulateTie
- remulate::remulateTie(effects, actors = 1:25, time =50, events = 500, initial = 200)
+ # Calling remulateTie
+ remulate::remulateTie(
+   effects, 
+   actors = 1:25, 
+   time = 50, 
+   events = 500, 
+   initial = 200
+ )
  
  # To predict events, given an edgelist of initial events
- initialREH <- data.frame(time = seq(0.5,100,0.5), sender = sample(1:25,200,T), receiver = sample(1:25,200,T))
- remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, initial=initialREH)
-
-#custom riskset
-rs <- as.matrix(expand.grid(1:N,1:N))
-rs <- rs[rs[,1] != rs[, 2],]
-custom.rs = rs[sample(1:90,50),]
-remulate::remulateTie(effects, actors = 1:25, time = 150, events = 500, riskset = custom.rs )
-
+ initialREH <- data.frame(
+   time = seq(0.5, 100, 0.5), 
+   sender = sample(1:25, 200, TRUE), 
+   receiver = sample(1:25, 200, TRUE)
+ )
  
+ remulate::remulateTie(
+   effects, 
+   actors = 1:25, 
+   time = 150, 
+   events = 500, 
+   initial = initialREH
+ )
+ 
+ # Custom risk set
+ rs <- as.matrix(expand.grid(1:25, 1:25))
+ rs <- rs[rs[, 1] != rs[, 2], ]
+ 
+ custom_rs <- rs[sample(1:90, 50), ]
+ 
+ remulate::remulateTie(
+   effects, 
+   actors = 1:25, 
+   time = 150, 
+   events = 500, 
+   riskset = custom_rs
+ )
 }
