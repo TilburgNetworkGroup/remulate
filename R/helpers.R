@@ -344,7 +344,7 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
     warning(paste("Missing values in attributes object, variable:",variable))
   }
   
-  scaling <- match(scaling,c("raw","std","inertia"))
+  scaling <- match(scaling,c("full","std","inertia"))
 
   #dyadic covariate
   if(effect_name %in% c("dyad")){
@@ -380,7 +380,7 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
 # Internal function, modified from remstats
 prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
   
-  scaling <- match(scaling,c("raw","std","prop","log"))
+  scaling <- match(scaling,c("full","std","prop","log"))
   if(start!=0 || end!=0){
     stat_name = paste0(c(effect_name,start,end),collapse="_") 
   }else{
@@ -403,7 +403,7 @@ prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
 
 prepInteractVar <- function(param=NULL,effects,scaling){
   
-  scaling <- match(scaling,c("raw","std","prop"))
+  scaling <- match(scaling,c("full","std","prop"))
   
   out <- list(
     interact=list(

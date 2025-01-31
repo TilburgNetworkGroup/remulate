@@ -4,12 +4,12 @@
 \alias{totaldegreeSender}
 \title{totaldegreeSender}
 \usage{
-totaldegreeSender(param = NULL, scaling = c("raw", "std", "prop"))
+totaldegreeSender(param = NULL, scaling = c("full", "std", "prop"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
-\item{scaling}{the method for scaling the totaldegreeSender statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.}
+\item{scaling}{the method for scaling the totaldegreeSender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.}
 }
 \description{
 This function specifies the input for the totaldegreeSender effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently

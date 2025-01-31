@@ -4,12 +4,12 @@
 \alias{psABXB}
 \title{psABXB}
 \usage{
-psABXB(param = NULL, scaling = c("raw", "std", "prop"))
+psABXB(param = NULL, scaling = c("full", "std", "prop"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
-\item{scaling}{the method for scaling the psABXB statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
+\item{scaling}{the method for scaling the psABXB statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
 \description{
 This function specifies the input for the psABXB effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently

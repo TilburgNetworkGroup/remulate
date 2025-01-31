@@ -1,11 +1,16 @@
-#' Simulate Temporal Events Network - Actor oriented model
+#' Simulate Relational Event Data - Tie based model
+#' 
 #' @description
-#'  A function to simulate relational event data by sampling from an
+#' A function to simulate relational event data by sampling from an
 #' actor oriented event model.
 #'
 #' @details
+#' #' If time is irrelevant and only a specific number of events are desired, set time to Inf. 
+#' If both time and events are supplied then the function 
+#' stops simulating whenever the first stop condition is met
 #' 
-#' A list of available statistics for actor rate model. See \link{remulateActorEffects} for details on effects: 
+#' A list of available statistics for actor rate model. 
+#' See \link{remulateActorEffects} for details on effects: 
 #' \itemize{
 #'  \item \code{baseline()}
 #'  \item \code{indegreeSender()}
@@ -17,7 +22,8 @@
 #'  \item \code{interact()}
 #' }
 #'
-#' A list of available statistics for receiver choice model. See \link{remulateActorEffects} for details on effects: :
+#' A list of available statistics for receiver choice model. 
+#' See \link{remulateActorEffects} for details on effects: :
 #'\itemize{
 #'  \item \code{baseline()}
 #'  \item \code{inertia()}
@@ -40,32 +46,73 @@
 #' }
 #'
 #' 
-#' @param rateEffects an object of type \code{formula} for specification of statistics used to simulate the network under the actor rate sub-model
-#' @param choiceEffects an object of type \code{formula} for specification of statistics used to simulate the network under the receiver choice sub-model
-#' @param actors Numeric or character vector of actor names.
-#' @param time Numeric, time upto which to simulate network.
-#' @param events [Optional] Integer, maximum number of events to simulate.
-#' @param startTime [Optional] (default = 0) Numeric specifying the time at which to initialize the simulation 
-#' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
-#' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
-#' @param memory [Optional] (default = full) String indicating which.
-#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a time window in the past upto.
-#' which occured events will be remembered for computing statistics, "window_m" memory indicates a window (number of events) in the past upto.
-#' which occured events will be remembered for computing statistics, "decay" memory type allows for an exponential decay of past events
-#' weighted by elapsed time.
-#' @param memoryParam [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window.  
-#' For memory type "window_m" this parameter indicates the length (in number of events) of the window. 
-#' For memory type "decay" the memoryParam is the half-life i.e the time until an event has a weight of one half.
-#' @return \describe{
-#' \item{edgelist}{A data.frame object with columns (time, sender, receiver) representing the generated event sequence.}
-#' \item{evls}{A matrix containing the event list with columns (dyad, time), where dyad represents the index of the (sender, receiver) pair in the risk set.}
-#' \item{rateStatistics}{An array of dimensions M x N x P, where M is the number of events, N is the number of actors, and P is the number of sender rate statistics.}
-#' \item{choiceStatistics}{An array of dimensions M x D x Q, where M is the number of events, D is the number of dyads in the risk set, and Q is the number of receiver choice statistics.}
-#' \item{rateParams}{A named list of rate model parameters corresponding to specified rate statistics.}
-#' \item{choiceParams}{A named list of choice model parameters corresponding to specified choice statistics.}
-#' \item{riskset}{A matrix with columns (sender, receiver) representing the risk set used in the simulation.}
-#' \item{actors}{A data.frame containing the mapping of actor names provided by the user to the integer IDs used in internal computations.}
-#' \item{density}{A numeric value indicating the density of the generated network, defined as the number of observed ties divided by N*(N-1) (where N is the number of actors).}
+#' @param rateEffects A \code{formula} object specifying the statistics used to 
+#' simulate the network under the actor rate sub-model.
+#' 
+#' @param choiceEffects A \code{formula} object specifying the statistics used to 
+#' simulate the network under the receiver choice sub-model.
+#' 
+#' @param actors A numeric or character vector representing the actor names.
+#' 
+#' @param time A numeric value specifying the time duration up to which the 
+#' network should be simulated.
+#' 
+#' @param events [Optional] An integer specifying the maximum number of events 
+#' to simulate.
+#' 
+#' @param startTime [Optional] A numeric value (default = 0) indicating the time 
+#' at which the simulation should start.
+#' 
+#' @param initial [Optional] A numeric or \code{data.frame} object (default = 0) 
+#' specifying how to initialize the network.  
+#' - If an integer is provided, it represents the number of random events to 
+#' sample before beginning data generation.  
+#' - If a \code{data.frame} is provided with columns (time, sender, receiver), 
+#' it serves as an edgelist of initial events, after which subsequent events 
+#' are predicted.
+#' 
+#' @param riskset [Optional] A \code{matrix} with columns (sender, receiver) 
+#' defining a custom risk set.
+#' 
+#' @param memory [Optional] A string (default = "full") specifying the memory 
+#' type used for computing statistics.  
+#' - `"full"`: Uses the entire event history.  
+#' - `"window"`: Considers only events occurring within a specified time window.  
+#' - `"window_m"`: Considers only a specified number of most recent events.  
+#' - `"decay"`: Applies an exponential decay, where older events contribute 
+#' less based on elapsed time.
+#' 
+#' @param memoryParam [Optional] A numeric value (> 0) defining the memory 
+#' parameter based on the selected memory type:  
+#' - `"window"`: Length of the time window.  
+#' - `"window_m"`: Number of past events to consider.  
+#' - `"decay"`: Half-life (i.e., time until an event's weight is reduced to half).
+#' 
+#' @return A list containing:
+#' \describe{
+#'   \item{edgelist}{A \code{data.frame} with columns (time, sender, receiver) 
+#'   representing the generated event sequence.}
+#'   \item{evls}{A \code{matrix} containing the event list with columns (dyad, time), 
+#'   where \code{dyad} represents the index of the (sender, receiver) pair in the risk set.}
+#'   \item{rateStatistics}{An array of dimensions \code{M x N x P}, where:  
+#'   - \code{M} is the number of events,  
+#'   - \code{N} is the number of actors,  
+#'   - \code{P} is the number of sender rate statistics.}
+#'   \item{choiceStatistics}{An array of dimensions \code{M x D x Q}, where:  
+#'   - \code{M} is the number of events,  
+#'   - \code{D} is the number of dyads in the risk set,  
+#'   - \code{Q} is the number of receiver choice statistics.}
+#'   \item{rateParams}{A named list of rate model parameters corresponding to the 
+#'   specified rate statistics.}
+#'   \item{choiceParams}{A named list of choice model parameters corresponding to 
+#'   the specified choice statistics.}
+#'   \item{riskset}{A \code{matrix} with columns (sender, receiver) representing 
+#'   the risk set used in the simulation.}
+#'   \item{actors}{A \code{data.frame} mapping the actor names provided by the user 
+#'   to the integer IDs used in internal computations.}
+#'   \item{density}{A numeric value indicating the density of the generated network, 
+#'   defined as the number of observed ties divided by \code{N*(N-1)}, where 
+#'   \code{N} is the number of actors.}
 #' }
 #' @examples 
 #'  # To generate events up to time '50' in a network of 25 actors with 
@@ -114,7 +161,11 @@
 #'    initial = initialREH, 
 #'    events = 500
 #'  )
-
+#' @references
+#' Lakdawala, R., Mulder, J., & Leenders, R. (2025).
+#' *Simulating Relational Event Histories: Why and How*.
+#' arXiv:2403.19329.
+#'
 #' @export
 remulateActor <- function(
     rateEffects,
@@ -125,7 +176,7 @@ remulateActor <- function(
     startTime = 0,
     initial = 0,
     riskset = NULL,
-    memory = c("full","window","brandes","vu"),
+    memory = c("full","window","window_m","decay"),
     memoryParam = NULL){
 
     waiting_time="exp"
@@ -201,7 +252,7 @@ remulateActor <- function(
     #initialize params for sender
     gamma <- vector(length = s_P)
     for(i in 1:s_P){
-        if(class(s_params[[i]])=="function"){#function must be defined at t=0
+        if(is.function(s_params[[i]])){#function must be defined at t=0
             gamma[i] <- s_params[[i]](t)
         }else{
             gamma[i] <- s_params[[i]]
@@ -210,7 +261,7 @@ remulateActor <- function(
     #initialize params for receiver choice
     beta <- vector(length = d_P)
     for(i in 1:d_P){
-        if(class(d_params[[i]])=="function"){#function must be defined at t=0
+        if(is.function(d_params[[i]])){#function must be defined at t=0
             beta[i] <- d_params[[i]](t)
         }else{
             beta[i] <- d_params[[i]]
@@ -333,7 +384,7 @@ remulateActor <- function(
 
         #update parameters in case they vary with time
         for(j in 1:d_P){
-            if(class(d_params[[j]])=="function"){
+            if(is.function(d_params[[j]])){#function must be defined at t=0
                 beta[j] <- d_params[[j]](t)
             }else{
                 beta[j] <- d_params[[j]]
@@ -341,7 +392,7 @@ remulateActor <- function(
         }
         
         for(j in 1:s_P){
-            if(class(s_params[[j]])=="function"){
+            if(is.function(s_params[[j]])){#function must be defined at t=0
                 gamma[j] <- s_params[[j]](t)
             }else{
                 gamma[j] <- s_params[[j]]

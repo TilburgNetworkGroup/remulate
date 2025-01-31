@@ -4,7 +4,7 @@
 \alias{dyad}
 \title{dyad}
 \usage{
-dyad(param = NULL, variable, attributes, scaling = c("raw", "std"))
+dyad(param = NULL, variable, attributes, scaling = c("full", "std"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
@@ -13,7 +13,7 @@ dyad(param = NULL, variable, attributes, scaling = c("raw", "std"))
 
 \item{attributes}{data.frame object with rows specifying values of attributes for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name}
 
-\item{scaling}{specifies the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
+\item{scaling}{specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
 Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.

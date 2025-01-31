@@ -1,9 +1,14 @@
-#' Simulate Temporal Events Network - Tie based model
+#' Simulate Relational Event Data - Tie based model
+#' 
 #' @description 
 #'  A function to simulate relational event data by sampling from a
 #' tie based relational event model.
 #'
 #' @details
+#' If time is irrelevant and only a specific number of events are desired, set time to Inf. 
+#' If both time and events are supplied then the function 
+#' stops simulating whenever the first stop condition is met
+#' 
 #' A list of available statistics. See \link{remulateTieEffects} for details:
 #' \itemize{
 #'  \item \code{baseline(param)}
@@ -44,49 +49,72 @@
 #'  \item \code{interact()}
 #' }
 #'
-#' @param effects an object of type \code{formula} for specification of statistics used to simulate the network. 
-#' @param actors Numeric or character vector of actor names.
-#' @param time Numeric, time upto which to simulate network.
-#' @param events [Optional] Integer, maximum number of events to simulate.
-#' @param startTime [Optional] (default = 0) Numeric specifying the time at which to initialize the simulation 
-#' @param initial [Optional] (default = 0) Numeric or data.frame object indicating how to initialize the network. ' integer' value denotes the number of random events to sample before beginning with the data generation. data.frame with columns (time,sender,receiver), it is an edgelist of initial events following which the subsequent events are predicted.
-#' @param riskset [Optional] \code{matrix} object wtih columns (sender, receiver) for custom risk set
-#' @param memory [Optional] (default = full) String indicating which.
-#'  memory type to use. "full" uses the entire event history to compute statistics, "window" memory indicates a time window in the past upto.
-#' which occured events will be remembered for computing statistics, "window_m" memory indicates a window (number of events) in the past upto.
-#' which occured events will be remembered for computing statistics, "decay" memory type allows for an exponential decay of past events
-#' weighted by elapsed time.
-#' @param memoryParam [Optional] value > 0. For memory type "window" this parameter indicates the length (in time units) of the window.  
-#' For memory type "window_m" this parameter indicates the length (in number of events) of the window. 
-#' For memory type "decay" the memoryParam is the half-life i.e the time until an event has a weight of one half.
-#' @return \describe{
-#' \item{edgelist}{data.frame object with columns (time,sender,receiver)}
-#' \item{statistics}{array of statistics with dimensions M x D x P (M: Number of events, D: Number of dyads in the risk set, P: Number of statistics)}
-#' \item{evls}{matrix containing the event list  with columns (dyad,time) where dyad represents the index of the dyad or the (sender,receiver) pair in the riskset}
-#' \item{actors}{data.frame object containing the mapping of actor names provided by user in \code{actors} argument to the integer ids used in the internal computations}
-#' \item{riskset}{data.frame object  wtih columns (sender, receiver) containing the risket set used for the dyad indices in the statistics and evls}
-#' \item{density}{numeric value indicating density in the generated network i.e number of observed ties / N*(N-1) (N:number of actors)}
+#' @param effects A \code{formula} object specifying the statistics used to 
+#' simulate the network.
+#' 
+#' @param actors A numeric or character vector representing the actor names.
+#' 
+#' @param time A numeric value specifying the time up to which the 
+#' network should be simulated.
+#' 
+#' @param events [Optional] An integer specifying the maximum number of events 
+#' to simulate.
+#' 
+#' @param startTime [Optional] A numeric value (default = 0) indicating the time 
+#' at which the simulation should start.
+#' 
+#' @param initial [Optional] A numeric or \code{data.frame} object (default = 0) 
+#' specifying how to initialize the network. If an integer is provided, it represents the number of random events to 
+#' sample before beginning data generation. If a \code{data.frame} is provided with columns (time, sender, receiver), 
+#' it serves as an edgelist of initial events, after which subsequent events 
+#' are predicted.
+#' 
+#' @param riskset [Optional] A \code{matrix} with columns (sender, receiver) 
+#' defining a custom risk set.
+#' 
+#' @param memory [Optional] A string (default = "full") specifying the memory 
+#' type used for computing statistics. `"full"` uses the entire event history. `"window"` considers only events occurring within a specified time window. 
+#' `"window_m"` considers only a specified number of most recent events. `"decay"` applies an exponential decay, where older events contribute 
+#' less based on elapsed time.
+#' 
+#' @param memoryParam [Optional] A numeric value (> 0) defining the memory 
+#' parameter based on the selected memory type. `"window"` defines the length of the time window. `"window_m"` specifies the number of past events to consider. `"decay"` represents the half-life (i.e., time until an event's weight is reduced to half).
+#' 
+#' @return A list containing:
+#' \describe{
+#'   \item{edgelist}{A \code{data.frame} with columns (time, sender, receiver) 
+#'   representing the generated event sequence.}
+#'   \item{statistics}{An array with dimensions \code{M x D x P}, where \code{M} is the number of events,  
+#'   \code{D} is the number of dyads in the risk set, and \code{P} is the number of computed statistics.}
+#'   \item{evls}{A \code{matrix} containing the event list with columns (dyad, time), 
+#'   where \code{dyad} represents the index of the (sender, receiver) pair in the risk set.}
+#'   \item{actors}{A \code{data.frame} mapping the actor names provided by the user 
+#'   to the integer IDs used in internal computations.}
+#'   \item{riskset}{A \code{data.frame} with columns (sender, receiver) containing 
+#'   the risk set used for dyad indices in the computed statistics and event list.}
+#'   \item{density}{A numeric value indicating the density of the generated network, 
+#'   defined as the number of observed ties divided by \code{N*(N-1)}, where 
+#'   \code{N} is the number of actors.}
 #' }
 #' @examples 
 #'  # To generate events up to time '50' in a network of 25 actors with 
 #'  # 200 random initial events
-#'  
 #'  # Exogenous attributes data.frame
+#'
 #'  cov <- data.frame(
 #'    id = 1:25, 
 #'    time = rep(0, 25), 
 #'    sex = sample(c(0, 1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
 #'    age = sample(20:30, 25, replace = TRUE) 
 #'  )
-#'  
-#'  # Effects specification
+#'
+#'  #Effects specification
 #'  effects <- ~ remulate::baseline(-5) + 
 #'              remulate::inertia(0.01) + 
 #'              remulate::reciprocity(-0.04) + 
 #'              remulate::itp(0.01, scaling = "std") + 
 #'              remulate::same(0.02, variable = "sex", attributes = cov) + 
 #'              remulate::interact(0.01, indices = c(2, 5))
-#'  
 #'  # Calling remulateTie
 #'  remulate::remulateTie(
 #'    effects, 
@@ -95,14 +123,14 @@
 #'    events = 500, 
 #'    initial = 200
 #'  )
-#'  
+#'
 #'  # To predict events, given an edgelist of initial events
 #'  initialREH <- data.frame(
 #'    time = seq(0.5, 100, 0.5), 
 #'    sender = sample(1:25, 200, TRUE), 
 #'    receiver = sample(1:25, 200, TRUE)
 #'  )
-#'  
+#'
 #'  remulate::remulateTie(
 #'    effects, 
 #'    actors = 1:25, 
@@ -110,13 +138,13 @@
 #'    events = 500, 
 #'    initial = initialREH
 #'  )
-#'  
+#'
 #'  # Custom risk set
 #'  rs <- as.matrix(expand.grid(1:25, 1:25))
 #'  rs <- rs[rs[, 1] != rs[, 2], ]
-#'  
+#'
 #'  custom_rs <- rs[sample(1:90, 50), ]
-#'  
+#'
 #'  remulate::remulateTie(
 #'    effects, 
 #'    actors = 1:25, 
@@ -124,13 +152,12 @@
 #'    events = 500, 
 #'    riskset = custom_rs
 #'  )
-#' 
+#'
 #' @references
 #' Lakdawala, R., Mulder, J., & Leenders, R. (2025).
 #' *Simulating Relational Event Histories: Why and How*.
 #' arXiv:2403.19329.
-#' 
-#' }
+#'
 #' @export
 remulateTie <- function(
   effects,
@@ -140,7 +167,7 @@ remulateTie <- function(
   startTime = 0,
   initial = 0,
   riskset = NULL,
-  memory = c("full", "window", "decay"),
+  memory = c("full", "window", "window_m", "decay"),
   memoryParam = NULL) {
 
   waiting_time="exp"
@@ -214,7 +241,7 @@ remulateTie <- function(
   #initialize params
   beta <- vector(length = P)
   for (i in 1:P) {
-    if (class(params[[i]]) == "function") {
+    if(is.function(params[[i]])){
       #function must be defined at t=0
       beta[i] <- params[[i]](t)
     } else {
@@ -322,7 +349,7 @@ remulateTie <- function(
 
     #update beta
     for (j in 1:P) {
-      if (class(params[[j]]) == "function") {
+     if(is.function(params[[j]])){
         beta[j] <- params[[j]](t)
       } else {
         beta[j] <- params[[j]]

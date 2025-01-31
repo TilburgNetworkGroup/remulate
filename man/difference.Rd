@@ -4,7 +4,7 @@
 \alias{difference}
 \title{difference}
 \usage{
-difference(param = NULL, variable, attributes, scaling = c("raw", "std"))
+difference(param = NULL, variable, attributes, scaling = c("full", "std"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
@@ -13,7 +13,7 @@ difference(param = NULL, variable, attributes, scaling = c("raw", "std"))
 
 \item{attributes}{data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name}
 
-\item{scaling}{specifies the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
+\item{scaling}{specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
 Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values

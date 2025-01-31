@@ -4,23 +4,7 @@
 \alias{remulateActorEffects}
 \title{Remulate Actor Effects}
 \usage{
-#Specification of endogenous effect
-endo(param, scaling=c("raw","std","prop))
-
-#Specification of exogenous effect
-exo(param, scaling=c("raw","std","prop), variable, attributes)
-}
-\arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the model.}
-
-\item{scaling}{the method for scaling the statistic. \code{"raw"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling.}
-
-\item{variable}{string with the name of the column in the \code{attributes} data.frame for which the statistic has to be computed.}
-
-\item{attributes}{a data.frame object that contains the exogenous attributes (see details).}
-}
-\value{
-The effect functions do not return anything when called individually. They are only used to specify statistics in the \code{effects} argument for the function \code{\link{remulateActor}}.
+remulateActorEffects()
 }
 \description{
 This page lists the effects that are available in the remulate package for the actor oriented relational event model.
@@ -98,7 +82,6 @@ at timepoint t is equal to the minimum of past
 \item{\code{indegreeReceiver}}{In degree effect of receiver is the tendency to create an event i->j if j has received more events in the past.  The statistic at timepoint t for dyad (i,j) is equal to the number of events received by actor j before timepoint t. Note: if \code{scaling} is "prop" for indegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
 \item{\code{outdegreeReceiver}}{Out degree effect of receiver is the tendency to create an event i->j if j has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
 \item{\code{totaldegreeReceiver}}{Total degree effect of receiver is the tendency to create an event i->j if j has sent and received more events in the past.}
-
 }
 
 \strong{Exogenous effects:}
@@ -112,25 +95,42 @@ at timepoint t is equal to the minimum of past
 
 \examples{
 
-# To specify an endogenous effects (example inertia)
-effects <- ~  inertia(0.1 , scaling = "std") 
+#To specify an exogenous effect (example: same)
 
-# To specify an exogenous effects (example same)
-cov <- data.frame(actor = 1:10, time = rep(0,10), gender = sample(c(0,1), replace=TRUE, 10), age=sample(20:30, 10, replace=TRUE))
-effects <- ~ same(0.2 , variable="gender", attributes = cov)
+cov <- data.frame(
+  actor = 1:10,
+  time = rep(0, 10),
+  gender = sample(c(0, 1), replace = TRUE, 10),
+  age = sample(20:30, 10, replace = TRUE)
+)
+
+effects <- ~ same(0.2, variable = "gender", attributes = cov)
 
 #Rate Effects:
+
 #If parameter is constant
-rateEffects <- ~ outdegreeSender(0.3) + send(0.1,variable = "age",attributes = cov)
+
+rateEffects <- ~ outdegreeSender(0.3) + 
+  send(0.1, variable = "age", attributes = cov)
 
 #If parameter varies with time
-rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) + send(0.1,variable="age",attributes=cov)
+
+rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) + 
+  send(0.1, variable = "age", attributes = cov)
 
 #Choice Effects:
+
 #If parameter is constant
-choiceEffects <- ~ inertia(0.4) + reciprocity(-0.1) + same(0.2,variable="gender",attributes=cov) + receive(0.1, variable="age", attributes=cov)
+
+choiceEffects <- ~ inertia(0.4) + 
+  reciprocity(-0.1) + 
+  same(0.2, variable = "gender", attributes = cov) + 
+  receive(0.1, variable = "age", attributes = cov)
 
 #If parameter varies with time
-choiceEffects <- ~ inertia(param = function(t) exp(-t)) +  reciprocity(-0.1) + same(0.2,variable="gender",attributes=cov) + receive(0.1,variable="age",attributes=cov)
 
+choiceEffects <- ~ inertia(param = function(t) exp(-t)) +  
+  reciprocity(-0.1) + 
+  same(0.2, variable = "gender", attributes = cov) + 
+  receive(0.1, variable = "age", attributes = cov)
 }
