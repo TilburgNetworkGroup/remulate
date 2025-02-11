@@ -6,12 +6,12 @@
  
  This function specifies the input for the osp  sender effect in the \code{s_formula} argument for the function \code{\link{remulateActor}}. Not to be used independently}
 \usage{
-otpSender(param = NULL, scaling = c("full", "prop"))
+otpSender(param = NULL, scaling = c("none", "prop"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the Actor Oriented Model}
 
-\item{scaling}{the method for scaling the osp sender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
+\item{scaling}{the method for scaling the osp sender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
 \description{
 osp sender

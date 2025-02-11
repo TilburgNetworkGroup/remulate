@@ -2,10 +2,10 @@
 #' 
 #' This page lists the effects that are available in the remulate package.
 #' 
-#' The attributes object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). At least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.
-# by specifying the \code{attributes} argument of \code{\link{remulateTie}}.
+#' The attr_actors object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attr_actors change (set to zero if the attr_actors do not vary over time). At least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
+# by specifying the \code{attr_actors} argument of \code{\link{remulateTie}}.
 #' 
-#' The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.
+#' The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 #' 
 #' @details
 #' 
@@ -103,7 +103,7 @@
 #'} 
 #' 
 
-#' \strong{Exogenous effects (Node Attributes):}
+#' \strong{Exogenous effects (Node attr_actors):}
 #' \describe{
 #' \item{\code{send}}{Sender covariate: The tendency to create an event i->j when i has a high attribute value.}
 #' \item{\code{receive}}{Receiver covariate: The tendency to create an event i->j when j has a high attribute value.}
@@ -133,7 +133,7 @@
 #'   age = sample(20:30, 10, replace = TRUE)
 #' )
 #' 
-#' effects <- ~ same(0.2, variable = "gender", attributes = cov)
+#' effects <- ~ same(0.2, variable = "gender", attr_actors = cov)
 #' 
 #' #To specify an exogenous dyadic effect (example: dyad)
 #' 
@@ -141,26 +141,26 @@
 #' cov <- cov[cov[, 1] != cov[, 2], ]
 #' cov$grade <- runif(90, 1, 10)
 #' 
-#' effects <- ~ dyad(0.2, variable = "grade", attributes = cov)
+#' effects <- ~ dyad(0.2, variable = "grade", attr_actors = cov)
 #' 
 #' #If parameter is constant
 #' 
 #' effects <- ~ inertia(0.3) + 
-#'   same(0.2, variable = "gender", attributes = cov) + 
+#'   same(0.2, variable = "gender", attr_actors = cov) + 
 #'   reciprocity(-0.1) + 
 #'   itp(0.01)
 #' 
 #' #If parameter varies with time
 #' 
 #' effects <- ~ inertia(param = function(t) exp(-t)) + 
-#'   same(0.2, variable = "gender", attributes = cov) +
+#'   same(0.2, variable = "gender", attr_actors = cov) +
 #'   reciprocity(-0.1) + 
 #'   itp(0.01)
 #' 
 #' #To specify an interaction (example: between inertia and same constitutive effects)
 #' 
 #' effects <- ~ inertia(0.3) + 
-#'   same(0.2, variable = "gender", attributes = cov) + 
+#'   same(0.2, variable = "gender", attr_actors = cov) + 
 #'   reciprocity(-0.1) + 
 #'   itp(0.01) + 
 #'   interact(0.1, indices = c(1, 2))
@@ -176,7 +176,7 @@ remulateTieEffects <- function() {
 #' 
 #' @export
 baseline <- function(param = NULL) {
-  out <- prepEndoVar("baseline", param, "full")
+  out <- prepEndoVar("baseline", param, "none")
   out
 }
 
@@ -187,9 +187,9 @@ baseline <- function(param = NULL) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the tie statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the tie statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-tie <- function(param = NULL, scaling = c("full", "std", "prop")) {
+tie <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("tie", param, scaling, start=0, end=0)
   out
@@ -202,9 +202,9 @@ tie <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the inertia statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the inertia statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-inertia <- function(param = NULL, scaling = c("full", "std", "prop")) {
+inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("inertia", param, scaling, start=0, end=0)
   out
@@ -217,9 +217,9 @@ inertia <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the reciprocity statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the in degree of the sender at time t.
+#' @param scaling the method for scaling the reciprocity statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the in degree of the sender at time t.
 #' @export
-reciprocity <- function(param = NULL, scaling = c("full", "std", "prop")) {
+reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("reciprocity", param, scaling, start=0, end=0)
   out
@@ -231,9 +231,9 @@ reciprocity <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the indegreeSender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the indegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-indegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) {
+indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("indegreeSender", param, scaling, start=0, end=0)
   out
@@ -245,9 +245,9 @@ indegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the indegreeReceiver statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the indegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-indegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")) {
+indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("indegreeReceiver", param, scaling, start=0, end=0)
   out
@@ -259,9 +259,9 @@ indegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the outdegreeSender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
+#' @param scaling the method for scaling the outdegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
 #' @export
-outdegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) {
+outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("outdegreeSender", param, scaling, start=0, end=0)
   out
@@ -274,9 +274,9 @@ outdegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the outdegreeReceiver statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
+#' @param scaling the method for scaling the outdegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
 #' @export
-outdegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")) {
+outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("outdegreeReceiver", param, scaling, start=0, end=0)
   out
@@ -288,9 +288,9 @@ outdegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")) 
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the totaldegreeSender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @param scaling the method for scaling the totaldegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
 #' @export
-totaldegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) {
+totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("totaldegreeSender", param, scaling, start=0, end=0)
   out
@@ -303,9 +303,9 @@ totaldegreeSender <- function(param = NULL, scaling = c("full", "std", "prop")) 
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the totaldegreeReceiver statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @param scaling the method for scaling the totaldegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
 #' @export
-totaldegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")) {
+totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("totaldegreeReceiver", param, scaling, start=0, end=0)
   out
@@ -317,9 +317,9 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("full", "std", "prop")
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the otp statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the otp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-otp <- function(param = NULL, scaling = c("full", "std", "prop")) {
+otp <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("otp", param, scaling, start=0, end=0)
   out
@@ -331,9 +331,9 @@ otp <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the itp statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the itp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-itp <- function(param = NULL, scaling = c("full", "std", "prop")) {
+itp <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("itp", param, scaling, start=0, end=0)
   out
@@ -345,9 +345,9 @@ itp <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the osp statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the osp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-osp <- function(param = NULL, scaling = c("full", "std", "prop")) {
+osp <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("osp", param, scaling, start=0, end=0)
   out
@@ -359,9 +359,9 @@ osp <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the isp statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the isp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-isp <- function(param = NULL, scaling = c("full", "std", "prop")) {
+isp <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("isp", param, scaling, start=0, end=0)
   out
@@ -373,9 +373,9 @@ isp <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABBA statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABBA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABBA <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABBA <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABBA", param, scaling)
   out
@@ -388,9 +388,9 @@ psABBA <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABBY statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABBY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABBY <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABBY <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABBY", param, scaling)
   out
@@ -403,9 +403,9 @@ psABBY <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXA statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABXA <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABXA <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXA", param, scaling)
   out
@@ -418,9 +418,9 @@ psABXA <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXB statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXB statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABXB <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABXB <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXB", param, scaling)
   out
@@ -433,9 +433,9 @@ psABXB <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXY statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABXY <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABXY <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXY", param, scaling)
   out
@@ -447,9 +447,9 @@ psABXY <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABAY statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABAY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
 #' @export
-psABAY <- function(param = NULL, scaling = c("full", "std", "prop")) {
+psABAY <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABAY", param, scaling)
   out
@@ -462,7 +462,7 @@ psABAY <- function(param = NULL, scaling = c("full", "std", "prop")) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 recencyContinue <- function(param = NULL) {
-  out <- prepEndoVar("recencyContinue", param,"full")
+  out <- prepEndoVar("recencyContinue", param,"none")
   out
 }
 
@@ -473,7 +473,7 @@ recencyContinue <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 recencySendSender <- function(param = NULL) {
-  out <- prepEndoVar("recencySendSender", param,"full")
+  out <- prepEndoVar("recencySendSender", param,"none")
   out
 }
 
@@ -483,7 +483,7 @@ recencySendSender <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 recencySendReceiver <- function(param = NULL) {
-  out <- prepEndoVar("recencySendReceiver", param,"full")
+  out <- prepEndoVar("recencySendReceiver", param,"none")
   out
 }
 
@@ -495,7 +495,7 @@ recencySendReceiver <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 recencyReceiveSender <- function(param = NULL) {
-  out <- prepEndoVar("recencyReceiveSender", param,"full")
+  out <- prepEndoVar("recencyReceiveSender", param,"none")
   out
 }
 
@@ -506,7 +506,7 @@ recencyReceiveSender <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 recencyReceiveReceiver <- function(param = NULL) {
-  out <- prepEndoVar("recencyReceiveReceiver", param,"full")
+  out <- prepEndoVar("recencyReceiveReceiver", param,"none")
   out
 }
 
@@ -518,7 +518,7 @@ recencyReceiveReceiver <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 rrankReceive <- function(param = NULL) {
-  out <- prepEndoVar("rrankReceive", param,"full")
+  out <- prepEndoVar("rrankReceive", param,"none")
   out
 }
 
@@ -530,7 +530,7 @@ rrankReceive <- function(param = NULL) {
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @export
 rrankSend <- function(param = NULL) {
-  out <- prepEndoVar("rrankSend", param,"full")
+  out <- prepEndoVar("rrankSend", param,"none")
   out
 }
 
@@ -543,12 +543,12 @@ rrankSend <- function(param = NULL) {
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in data dataframe
-#' @param attributes data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @param attr_actors data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @export
-send <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("send", param, scaling, variable, attributes)
+  out <- prepExoVar("send", param, scaling, variable, attr_actors)
   out
 }
 
@@ -559,13 +559,13 @@ send <- function(param = NULL, variable, attributes, scaling = c("full", "std"))
 #' This function specifies the input for the receive effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
 #' @export
-receive <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("receive", param, scaling, variable, attributes)
+  out <- prepExoVar("receive", param, scaling, variable, attr_actors)
   out
 }
 
@@ -576,13 +576,13 @@ receive <- function(param = NULL, variable, attributes, scaling = c("full", "std
 #' This function specifies the input for the same effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
 #' @export
-same <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("same", param, scaling, variable, attributes)
+  out <- prepExoVar("same", param, scaling, variable, attr_actors)
   out
 }
 
@@ -593,13 +593,13 @@ same <- function(param = NULL, variable, attributes, scaling = c("full", "std"))
 #' This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
 #' @export
-difference <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+difference <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("difference", param, scaling, variable, attributes)
+  out <- prepExoVar("difference", param, scaling, variable, attr_actors)
   out
 }
 
@@ -610,13 +610,13 @@ difference <- function(param = NULL, variable, attributes, scaling = c("full", "
 #' This function specifies the input for the average effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
 #' @export
-average <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+average <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("average", param, scaling, variable, attributes)
+  out <- prepExoVar("average", param, scaling, variable, attr_actors)
   out
 }
 
@@ -627,13 +627,13 @@ average <- function(param = NULL, variable, attributes, scaling = c("full", "std
 #' This function specifies the input for the minimum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
 #' @export
-minimum <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("minimum", param, scaling, variable, attributes)
+  out <- prepExoVar("minimum", param, scaling, variable, attr_actors)
   out
 }
 
@@ -644,13 +644,13 @@ minimum <- function(param = NULL, variable, attributes, scaling = c("full", "std
 #' This function specifies the input for the maximum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @export
-maximum <- function(param = NULL, variable, attributes, scaling = c("full", "std")) {
+maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("maximum", param, scaling, variable, attributes)
+  out <- prepExoVar("maximum", param, scaling, variable, attr_actors)
   out
 }
 
@@ -661,13 +661,13 @@ maximum <- function(param = NULL, variable, attributes, scaling = c("full", "std
 #' This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param variable character vector specifies the name of the column with covariate value in attributes data.frame
-#' @param attributes data.frame object with rows specifying values of attributes for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name
-#' @param scaling specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
+#' @param attr_actors data.frame object with rows specifying values of attr_actors for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name
+#' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @export
-dyad <- function(param = NULL, variable, attributes,scaling=c("full","std")){
+dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
   scaling <- match.arg(scaling)
-  out <- prepExoVar("dyad",param, scaling, variable, attributes)
+  out <- prepExoVar("dyad",param, scaling, variable, attr_actors)
   out
 }
 
@@ -677,9 +677,9 @@ dyad <- function(param = NULL, variable, attributes,scaling=c("full","std")){
 #' 
 #' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param indices is a numeric vector of indices corresponding to the effects specified in \code{effects} argument of function \code{\link{remulateTie}} on which the interaction term needs to be computed.
-#' @param scaling specifies the method for scaling the statistic after the interaction has been computed. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @param scaling specifies the method for scaling the statistic after the interaction has been computed. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @export
-interact <- function(param = NULL, indices,scaling=c("full","std")) {
+interact <- function(param = NULL, indices,scaling=c("none","std")) {
   scaling <- match.arg(scaling)
   out <- prepInteractVar(param, indices,scaling)
   out

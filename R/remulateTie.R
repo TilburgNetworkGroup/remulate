@@ -80,10 +80,9 @@
 #' @param memoryParam [Optional] A numeric value (> 0) defining the memory 
 #' parameter based on the selected memory type. `"window"` defines the length of the time window. `"window_m"` specifies the number of past events to consider. `"decay"` represents the half-life (i.e., time until an event's weight is reduced to half).
 #' 
-#' @return A list containing:
+#' @return An object of class \code{"remulateTie"}. A data.frame containing the simulated event sequence with columns (time, sender, receiver).
+#' The \code{"remulateTie"} object has the following attributes:
 #' \describe{
-#'   \item{edgelist}{A \code{data.frame} with columns (time, sender, receiver) 
-#'   representing the generated event sequence.}
 #'   \item{statistics}{An array with dimensions \code{M x D x P}, where \code{M} is the number of events,  
 #'   \code{D} is the number of dyads in the risk set, and \code{P} is the number of computed statistics.}
 #'   \item{evls}{A \code{matrix} containing the event list with columns (dyad, time), 
@@ -92,6 +91,10 @@
 #'   to the integer IDs used in internal computations.}
 #'   \item{riskset}{A \code{data.frame} with columns (sender, receiver) containing 
 #'   the risk set used for dyad indices in the computed statistics and event list.}
+#'   \item{initial}{A A numeric or \code{data.frame} object representing the network initialization, 
+#'   which can be a number of random initialization events or
+#'   a \code{data.frame} specifying pre-existing ties.}
+#'   \item{effects}{A \code{formula} object specifying the effects included in the model.}
 #'   \item{density}{A numeric value indicating the density of the generated network, 
 #'   defined as the number of observed ties divided by \code{N*(N-1)}, where 
 #'   \code{N} is the number of actors.}
@@ -386,14 +389,20 @@ remulateTie <- function(
     dimnames(statistics) <- list(NULL, NULL, effect_names)
   }
 
-  return(
-    list(
-        edgelist = edgelist,
-        evls = evls,
-        statistics = statistics,
-        params = params,
-        riskset = rs,
-        actors = actors_map,
-        density = get.density(evls, actors)    )
-  )
+  output <- structure(
+  edgelist,
+  evls       = evls,
+  params     = params,
+  statistics = statistics,
+  riskset    = rs,
+  actors     = actors_map,
+  initial    = initial,
+  effects    = effects,
+  density    = get.density(evls, actors),
+  class      = c("remulateTie", "data.frame")
+)
+
+return(output)
+
+
 }

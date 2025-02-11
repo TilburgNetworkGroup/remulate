@@ -135,8 +135,8 @@ remulateActorEffects <- function() {
 #'  
 #'@param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the Actor Oriented Model
 #'  
-#'@param scaling the method for scaling the otp sender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-ospSender <- function(param = NULL, scaling = c("full", "prop")) {
+#'@param scaling the method for scaling the otp sender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+ospSender <- function(param = NULL, scaling = c("none", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("ospSender", param, scaling)
   out
@@ -148,8 +148,8 @@ ospSender <- function(param = NULL, scaling = c("full", "prop")) {
 #'  
 #'@param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the Actor Oriented Model
 #'  
-#'@param scaling the method for scaling the osp sender statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
-otpSender <- function(param = NULL, scaling = c("full", "prop")) {
+#'@param scaling the method for scaling the osp sender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+otpSender <- function(param = NULL, scaling = c("none", "prop")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("otpSender", param, scaling)
   out

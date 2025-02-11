@@ -61,10 +61,9 @@ parameter based on the selected memory type:
 - `"decay"`: Half-life (i.e., time until an event's weight is reduced to half).}
 }
 \value{
-A list containing:
+An object of class \code{"remulateActor"}. A data.frame containing the simulated event sequence with columns (time, sender, receiver).
+The \code{"remulateActor"} object has the following attributes::
 \describe{
-  \item{edgelist}{A \code{data.frame} with columns (time, sender, receiver) 
-  representing the generated event sequence.}
   \item{evls}{A \code{matrix} containing the event list with columns (dyad, time), 
   where \code{dyad} represents the index of the (sender, receiver) pair in the risk set.}
   \item{rateStatistics}{An array of dimensions \code{M x N x P}, where:  
@@ -83,6 +82,11 @@ A list containing:
   the risk set used in the simulation.}
   \item{actors}{A \code{data.frame} mapping the actor names provided by the user 
   to the integer IDs used in internal computations.}
+#'   \item{initial}{A A numeric or \code{data.frame} object representing the network initialization, 
+  which can be a number of random initialization events or
+  a \code{data.frame} specifying pre-existing ties.}
+  \item{rateEffects}{A \code{formula} object specifying the effects included in the rate sub-model.}
+  \item{choiceEffects}{A \code{formula} object specifying the effects included in the choice sub-model.}
   \item{density}{A numeric value indicating the density of the generated network, 
   defined as the number of observed ties divided by \code{N*(N-1)}, where 
   \code{N} is the number of actors.}

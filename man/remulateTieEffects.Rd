@@ -13,9 +13,9 @@ The effect functions do not return anything when called individually. They are o
 This page lists the effects that are available in the remulate package.
 }
 \details{
-The attributes object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). At least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.
+The attr_actors object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attr_actors change (set to zero if the attr_actors do not vary over time). At least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 
-The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attributes with column name corresponding to variable name specified in the effect specification.
+The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 
 
 
@@ -113,7 +113,7 @@ each timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the
 time that has past since receiver j was last active as receiver + 1).}
 } 
 
-\strong{Exogenous effects (Node Attributes):}
+\strong{Exogenous effects (Node attr_actors):}
 \describe{
 \item{\code{send}}{Sender covariate: The tendency to create an event i->j when i has a high attribute value.}
 \item{\code{receive}}{Receiver covariate: The tendency to create an event i->j when j has a high attribute value.}
@@ -144,7 +144,7 @@ cov <- data.frame(
   age = sample(20:30, 10, replace = TRUE)
 )
 
-effects <- ~ same(0.2, variable = "gender", attributes = cov)
+effects <- ~ same(0.2, variable = "gender", attr_actors = cov)
 
 #To specify an exogenous dyadic effect (example: dyad)
 
@@ -152,26 +152,26 @@ cov <- expand.grid(1:10, 1:10)
 cov <- cov[cov[, 1] != cov[, 2], ]
 cov$grade <- runif(90, 1, 10)
 
-effects <- ~ dyad(0.2, variable = "grade", attributes = cov)
+effects <- ~ dyad(0.2, variable = "grade", attr_actors = cov)
 
 #If parameter is constant
 
 effects <- ~ inertia(0.3) + 
-  same(0.2, variable = "gender", attributes = cov) + 
+  same(0.2, variable = "gender", attr_actors = cov) + 
   reciprocity(-0.1) + 
   itp(0.01)
 
 #If parameter varies with time
 
 effects <- ~ inertia(param = function(t) exp(-t)) + 
-  same(0.2, variable = "gender", attributes = cov) +
+  same(0.2, variable = "gender", attr_actors = cov) +
   reciprocity(-0.1) + 
   itp(0.01)
 
 #To specify an interaction (example: between inertia and same constitutive effects)
 
 effects <- ~ inertia(0.3) + 
-  same(0.2, variable = "gender", attributes = cov) + 
+  same(0.2, variable = "gender", attr_actors = cov) + 
   reciprocity(-0.1) + 
   itp(0.01) + 
   interact(0.1, indices = c(1, 2))

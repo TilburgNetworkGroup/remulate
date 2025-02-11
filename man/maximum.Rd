@@ -4,16 +4,16 @@
 \alias{maximum}
 \title{maximum}
 \usage{
-maximum(param = NULL, variable, attributes, scaling = c("full", "std"))
+maximum(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 }
 \arguments{
 \item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
-\item{variable}{character vector specifies the name of the column with covariate value in attributes data.frame}
+\item{variable}{character vector specifies the name of the column with covariate value in attr_actors data.frame}
 
-\item{attributes}{data.frame object with rows specifying values of attributes for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name}
+\item{attr_actors}{data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name}
 
-\item{scaling}{specifies the method for scaling the statistic. \code{"full"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
+\item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
 Dyadic covariate: maximum attribute value for dyad (i,j) is the bigger of the attribute values for actors i , j
