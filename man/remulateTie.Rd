@@ -2,7 +2,7 @@
 % Please edit documentation in R/remulateTie.R
 \name{remulateTie}
 \alias{remulateTie}
-\title{Simulate Relational Event Data - Tie based model}
+\title{Simulate Relational Event Data - Tie oriented model}
 \usage{
 remulateTie(
   effects,
@@ -18,7 +18,8 @@ remulateTie(
 }
 \arguments{
 \item{effects}{A \code{formula} object specifying the statistics used to 
-simulate the network.}
+simulate the network or an object of class \code{"\link[remstimate]{remstimate}"} containing 
+a fitted object.}
 
 \item{actors}{A numeric or character vector representing the actor names.}
 
@@ -71,7 +72,7 @@ The \code{"remulateTie"} object has the following attributes:
 }
 \description{
 A function to simulate relational event data by sampling from a
-tie based relational event model.
+tie oriented relational event model.
 }
 \details{
 If time is irrelevant and only a specific number of events are desired, set time to Inf. 
@@ -135,7 +136,7 @@ A list of available statistics. See \link{remulateTieEffects} for details:
              remulate::inertia(0.01) + 
              remulate::reciprocity(-0.04) + 
              remulate::itp(0.01, scaling = "std") + 
-             remulate::same(0.02, variable = "sex", attributes = cov) + 
+             remulate::same(0.02, variable = "sex", attr_actors = cov) + 
              remulate::interact(0.01, indices = c(2, 5))
  # Calling remulateTie
  remulate::remulateTie(

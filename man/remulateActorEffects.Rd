@@ -10,7 +10,7 @@ remulateActorEffects()
 This page lists the effects that are available in the remulate package for the actor oriented relational event model.
 }
 \details{
-The attributes object contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateActor}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). Subsequent columns contain the attributes that are called in the specifications of exogenous statistics. The same \code{attributes} object can be used with multiple exogenous statistics.
+The attr_actors object contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateActor}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). Subsequent columns contain the attributes that are called in the specifications of exogenous statistics. The same \code{attr_actors} object can be used with multiple exogenous statistics.
 }
 \section{remulateActor Rate Effects}{
 
@@ -104,19 +104,19 @@ cov <- data.frame(
   age = sample(20:30, 10, replace = TRUE)
 )
 
-effects <- ~ same(0.2, variable = "gender", attributes = cov)
+effects <- ~ same(0.2, variable = "gender", attr_actors = cov)
 
 #Rate Effects:
 
 #If parameter is constant
 
 rateEffects <- ~ outdegreeSender(0.3) + 
-  send(0.1, variable = "age", attributes = cov)
+  send(0.1, variable = "age", attr_actors = cov)
 
 #If parameter varies with time
 
 rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) + 
-  send(0.1, variable = "age", attributes = cov)
+  send(0.1, variable = "age", attr_actors = cov)
 
 #Choice Effects:
 
@@ -124,13 +124,13 @@ rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) +
 
 choiceEffects <- ~ inertia(0.4) + 
   reciprocity(-0.1) + 
-  same(0.2, variable = "gender", attributes = cov) + 
-  receive(0.1, variable = "age", attributes = cov)
+  same(0.2, variable = "gender", attr_actors = cov) + 
+  receive(0.1, variable = "age", attr_actors = cov)
 
 #If parameter varies with time
 
 choiceEffects <- ~ inertia(param = function(t) exp(-t)) +  
   reciprocity(-0.1) + 
-  same(0.2, variable = "gender", attributes = cov) + 
-  receive(0.1, variable = "age", attributes = cov)
+  same(0.2, variable = "gender", attr_actors = cov) + 
+  receive(0.1, variable = "age", attr_actors = cov)
 }

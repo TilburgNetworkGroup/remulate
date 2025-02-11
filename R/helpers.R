@@ -170,7 +170,15 @@ parseEffectsTie <- function(formula){
     i
   })
   
-  return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects,"mem_start"=mem_start,"mem_end"=mem_end))
+  return(list(
+    "int_effects"=int_effects,
+    "params"=params,
+    "scaling"=scaling,
+    "effects"=stat_names,
+    "attributes"=attributes,
+    "interact_effects"=interact_effects,
+    "mem_start"=mem_start,
+    "mem_end"=mem_end))
 }
 
 # attributes- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
@@ -334,8 +342,96 @@ parseEffectsChoice <- function(formula){
     i
   })
   
-  return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects,"mem_start"=mem_start,"mem_end"=mem_end))
+  return(list(
+    "int_effects"=int_effects,
+    "params"=params,
+    "scaling"=scaling,
+    "effects"=stat_names,
+    "attributes"=attributes,
+    "interact_effects"=interact_effects,
+    "mem_start"=mem_start,
+    "mem_end"=mem_end))
 }
+
+# Does not work with interact effects(!) and exogenous stats objects must be loaded
+parseEffectsTieRemstimate <- function(remstimate_object){
+    formula = attr(remstimate_object,"formula")
+    coefficients = remstimate_object$coef
+    
+    formula_str <- deparse(formula)
+    
+    # Replace remstats:: with remulate::
+    formula_str <- gsub("remstats::", "remulate::", formula_str)
+    
+    # Convert '1' to remulate::baseline
+    formula_str <- gsub("\\b1\\b", "remulate::baseline()", formula_str)
+
+    formula_remulate = as.formula(paste(formula_str, collapse = " "))
+    
+    ft <- stats::terms(formula_remulate, keep.order = TRUE)
+    
+    var <- attr(ft, "variables")
+    var <- as.list(var)[-1]
+    
+    effects <- lapply(var, eval)
+    effects <- unlist(effects, recursive = FALSE)
+    
+    all_effects <- c(
+        "baseline", "send", "receive", "same", "difference", "average",
+        "minimum", "maximum", "tie", "inertia", "reciprocity",
+        "indegreeSender", "indegreeReceiver", "outdegreeSender", "outdegreeReceiver",
+        "totaldegreeSender", "totaldegreeReceiver", "otp", "itp", "osp", "isp",
+        "psABBA", "psABBY", "psABXA", "psABXB", "psABXY", "psABAY", "dyad",
+        "interact", "recencyContinue", "recencySendSender", "recencySendReceiver",
+        "recencyReceiveSender", "recencyReceiveReceiver", "rrankSend", "rrankReceive"
+    )
+    
+    if (any(!names(effects) %in% all_effects)) {
+        stop("An effect specified in effects argument is not a valid effect")
+    }
+    
+    int_effects <- match(names(effects), all_effects)
+    
+    scaling <- sapply(effects, function(x) {
+      sc <- x$scaling
+      sc
+    })
+    
+    mem_start <- sapply(effects, function(x) {
+      mm <- x$mem_start
+      mm
+    })
+    
+    mem_end <- sapply(effects, function(x) {
+      mm <- x$mem_end
+      mm
+    })
+      
+    # params <- sapply(names(effects), function(x){
+    #       coefficients[[x]]
+    # }) 
+    params <- coefficients
+    
+    stat_names <- sapply(effects, function(x) x$stat_name)
+    
+    attributes <- lapply(effects, function(x) x$cov)
+    
+    interact_effects <- lapply(effects,function(x){
+      NULL
+    })
+    
+    return(list(
+        "int_effects" = int_effects,
+        "params" = params,
+        "scaling" = scaling,
+        "effects" = stat_names,
+        "attributes" = attributes,
+        "interact_effects" = interact_effects,
+        "mem_start" = mem_start,
+        "mem_end" = mem_end
+    ))
+}
+
 
 # Internal function, modified from remstats
 prepExoVar <- function(effect_name, param, scaling, variable, attributes) {

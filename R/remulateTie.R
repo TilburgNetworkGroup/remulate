@@ -1,8 +1,8 @@
-#' Simulate Relational Event Data - Tie based model
+#' Simulate Relational Event Data - Tie oriented model
 #' 
 #' @description 
 #'  A function to simulate relational event data by sampling from a
-#' tie based relational event model.
+#' tie oriented relational event model.
 #'
 #' @details
 #' If time is irrelevant and only a specific number of events are desired, set time to Inf. 
@@ -50,7 +50,8 @@
 #' }
 #'
 #' @param effects A \code{formula} object specifying the statistics used to 
-#' simulate the network.
+#' simulate the network or an object of class \code{"\link[remstimate]{remstimate}"} containing 
+#' a fitted object.
 #' 
 #' @param actors A numeric or character vector representing the actor names.
 #' 
@@ -116,7 +117,7 @@
 #'              remulate::inertia(0.01) + 
 #'              remulate::reciprocity(-0.04) + 
 #'              remulate::itp(0.01, scaling = "std") + 
-#'              remulate::same(0.02, variable = "sex", attributes = cov) + 
+#'              remulate::same(0.02, variable = "sex", attr_actors = cov) + 
 #'              remulate::interact(0.01, indices = c(2, 5))
 #'  # Calling remulateTie
 #'  remulate::remulateTie(
@@ -175,7 +176,12 @@ remulateTie <- function(
 
   waiting_time="exp"
 
-  parsed_effects <- parseEffectsTie(effects)
+  if(inherits(effects, "remstimate")){
+    parsed_effects <- parseEffectsTieRemstimate(effects)
+  }else if(inherits(effects, "formula")){
+    parsed_effects <- parseEffectsTie(effects)
+  }
+  
 
   params <- parsed_effects$params
   scaling <- parsed_effects$scaling

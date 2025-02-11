@@ -1,4 +1,4 @@
-#' Simulate Relational Event Data - Tie based model
+#' Simulate Relational Event Data - Actor Oriented model
 #' 
 #' @description
 #' A function to simulate relational event data by sampling from an
@@ -133,7 +133,7 @@
 #'  # Effects specification
 #'  rateform <- ~ remulate::baseline(-6) + 
 #'               remulate::indegreeSender(0.01) + 
-#'               remulate::send(0.02, variable = "age", attributes = cov) + 
+#'               remulate::send(0.02, variable = "age", attr_actors = cov) + 
 #'               remulate::interact(0.01, indices = c(2, 3))
 #'  
 #'  choiceform <- ~ remulate::inertia(0.01) + 

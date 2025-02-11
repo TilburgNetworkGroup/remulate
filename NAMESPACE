@@ -1,6 +1,7 @@
 useDynLib(remulate, .registration=TRUE)
 importFrom(Rcpp,sourceCpp)
 importFrom(stats, rexp)
+importFrom(stats, as.formula)
 export(average)
 export(baseline)
 export(difference)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/remulateActor.R
 \name{remulateActor}
 \alias{remulateActor}
-\title{Simulate Relational Event Data - Tie based model}
+\title{Simulate Relational Event Data - Actor Oriented model}
 \usage{
 remulateActor(
   rateEffects,
@@ -152,7 +152,7 @@ See \link{remulateActorEffects} for details on effects: :
  # Effects specification
  rateform <- ~ remulate::baseline(-6) + 
               remulate::indegreeSender(0.01) + 
-              remulate::send(0.02, variable = "age", attributes = cov) + 
+              remulate::send(0.02, variable = "age", attr_actors = cov) + 
               remulate::interact(0.01, indices = c(2, 3))
  
  choiceform <- ~ remulate::inertia(0.01) + 
