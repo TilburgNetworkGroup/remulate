@@ -7,8 +7,16 @@
 baseline(param = NULL)
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the baseline in the REM model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the baseline in the REM model}
 }
 \description{
 This function specified the input for the baseline effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}.
+}
+\details{
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

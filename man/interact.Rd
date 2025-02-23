@@ -7,7 +7,7 @@
 interact(param = NULL, indices, scaling = c("none", "std"))
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
 \item{indices}{is a numeric vector of indices corresponding to the effects specified in \code{effects} argument of function \code{\link{remulateTie}} on which the interaction term needs to be computed.}
 
@@ -15,4 +15,12 @@ interact(param = NULL, indices, scaling = c("none", "std"))
 }
 \description{
 This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+}
+\details{
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

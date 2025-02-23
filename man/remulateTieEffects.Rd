@@ -19,6 +19,14 @@ The attribute object for exogenous effect \code{dyad} contains at least three co
 
 
 
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
+
+
 The indices aregument in the interact effect corresponds to the position of the specified effects in the \code{effects} argument of \code{\link{remulateTie}} for which the interaction needs to be computed. The individual constitutive effects for an interaction must be specified before the interact term in the \code{effects} argument. To omit the individual constitutive effects in the generation, specify the \code{param} arugment to zero.
 }
 \section{Remulate Effects}{
@@ -168,6 +176,18 @@ effects <- ~ inertia(param = function(t) exp(-t)) +
   reciprocity(-0.1) + 
   itp(0.01)
 
+ #If parameter varies across dyads or actors
+ rs <- expand.grid(1:10,1:10)
+ rs <- rs[rs[,1] != rs[, 2],]
+
+ param_df <- as.data.frame(rs)
+ param_df$beta = runif(nrow(rs),-0.1,0.1)
+
+ effects <- ~ remulate::baseline(-3)+
+    remulate::inertia(param_df) +
+    remulate::reciprocity(0.1)
+
+ 
 #To specify an interaction (example: between inertia and same constitutive effects)
 
 effects <- ~ inertia(0.3) + 

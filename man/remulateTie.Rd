@@ -79,6 +79,10 @@ If time is irrelevant and only a specific number of events are desired, set time
 If both time and events are supplied then the function 
 stops simulating whenever the first stop condition is met
 
+If effects is a \code{'remstimate'} object, then the params are extracted automatically.
+Furthermore if exogenous statistics are used, the data.frames corresponding to 
+the 'attr_actors' argument of the \code{'remstats'} formula must be loaded in the environment.
+
 A list of available statistics. See \link{remulateTieEffects} for details:
 \itemize{
  \item \code{baseline(param)}

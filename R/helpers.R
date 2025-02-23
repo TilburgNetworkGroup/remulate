@@ -33,6 +33,32 @@ initialize_adj_mat<- function(actors_map,initial,rs){
   return(adj_mat)
 }
 
+
+# Returns a vector of size D 
+initialize_beta_mat <- function(params, actors_map, rs){
+    
+    colnames(params) <- c("sender", "receiver","value")
+    
+    #change actor ids to names in params
+    params["sender"] <- sapply(params["sender"], function(x) {
+        actors_map$id[match(x,actors_map$name)]
+    })
+    params["receiver"] <- sapply(params["receiver"], function(x) {
+        actors_map$id[match(x,actors_map$name)]
+    })
+    
+    arranged_params <- sapply(1:nrow(rs), function(x){
+        indx = which(params$sender == rs[x,1] & params$receiver == rs[x,2])
+        if (length(indx) == 1) {
+            return(params$value[indx])
+        } else {
+            stop("param data.frame incorrectly specified. Some dyads have missing or double values.")        
+        }
+    })
+    return(arranged_params)
+}
+
+
 # get.density
 # Function to compute the global density of the network. Can be used to check for degeneracy of the simulated network
 #
@@ -44,40 +70,41 @@ get.density <- function(evls,actors){
   return(edges/total_edges)
 }
 
-#Function to initialize attributes dataframe according to integer actor IDs in actors map
-initialize_exo_effects <- function(attributes,actors_map,effects){
-  P = length(attributes)
+#Function to initialize attr_actors dataframe according to integer actor IDs in actors map
+initialize_exo_effects <- function(attr_actors,actors_map,effects){
+  P = length(attr_actors)
   if(P==0){
     return(list())
   }
   for(i in 1:P){
-    if(!is.null(attributes[[i]])){
+    if(!is.null(attr_actors[[i]])){
       if(effects$int_effects[i] %in% c(28)){  #28:dyad
-        if(any(! actors_map$name %in% attributes[[i]]$sender_id )){
+        if(any(! actors_map$name %in% attr_actors[[i]]$sender_id )){
           stop(paste(names(effects)[i]," dyadic covariate not specified for all senders in actor's list"))
         }
-        if(any(! actors_map$name %in% attributes[[i]]$receiver_id )){
+        if(any(! actors_map$name %in% attr_actors[[i]]$receiver_id )){
           stop(paste(names(effects)[i]," dyadic covariate not specified for all receivers in actor's list"))
         }
 
-        attributes[[i]]$sender_id <- actors_map$id[match(attributes[[i]]$sender_id,actors_map$name)]
-        attributes[[i]]$receiver_id <- actors_map$id[match(attributes[[i]]$receiver_id,actors_map$name)]
-        attributes[[i]] <- as.matrix(attributes[[i]])
+        attr_actors[[i]]$sender_id <- actors_map$id[match(attr_actors[[i]]$sender_id,actors_map$name)]
+        attr_actors[[i]]$receiver_id <- actors_map$id[match(attr_actors[[i]]$receiver_id,actors_map$name)]
+        attr_actors[[i]] <- as.matrix(attr_actors[[i]])
 
       }else{
-        if(any(! actors_map$name %in% attributes[[i]]$id )){
+        if(any(! actors_map$name %in% attr_actors[[i]]$id )){
           stop(paste(names(effects)[i]," actor covariate not specified for all actors in actor's list"))
         }
-        attributes[[i]]$id <- actors_map$id[match(attributes[[i]]$id,actors_map$name)]
-        attributes[[i]] <- as.matrix(attributes[[i]])
+        attr_actors[[i]]$id <- actors_map$id[match(attr_actors[[i]]$id,actors_map$name)]
+        attr_actors[[i]] <- as.matrix(attr_actors[[i]])
       }
       
     }
   }
-  return(attributes)
+  return(attr_actors)
 }
 
-# attributes- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
+# attr_actors- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
+#'@export
 parseEffectsTie <- function(formula){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)
@@ -132,11 +159,17 @@ parseEffectsTie <- function(formula){
   })
   
   # Prepare the params, can be NULL if just computing statistics
-  params <- sapply(effects,function(x){
+  params <- lapply(effects,function(x){
     p <- x$param
     p
   })
   
+  #boolean for if the param is dyadic/frailty/latent class etc
+  is_param_dyadic <- sapply(effects,function(x){
+    pt <- x$is_param_dyadic
+    pt        
+  })
+
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -173,6 +206,7 @@ parseEffectsTie <- function(formula){
   return(list(
     "int_effects"=int_effects,
     "params"=params,
+    "is_param_dyadic" = is_param_dyadic,
     "scaling"=scaling,
     "effects"=stat_names,
     "attributes"=attributes,
@@ -181,7 +215,7 @@ parseEffectsTie <- function(formula){
     "mem_end"=mem_end))
 }
 
-# attributes- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
+# attr_actors- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
 parseEffectsRate <- function(formula,pred = FALSE){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)
@@ -216,11 +250,17 @@ parseEffectsRate <- function(formula,pred = FALSE){
   })
   
   # Prepare the params, can be NULL if just computing statistics
-  params <- sapply(effects,function(x){
+  params <- lapply(effects,function(x){
     p <- x$param
     p
   })
   
+  #boolean for if the param is dyadic/frailty/latent class etc
+  is_param_dyadic <- sapply(effects,function(x){
+    pt <- x$is_param_dyadic
+    pt        
+  })
+
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -231,7 +271,7 @@ parseEffectsRate <- function(formula,pred = FALSE){
     s
   })
   
-  #Prepare the attributes
+  #Prepare the attr_actors
   attributes<- lapply(effects,function(x){
     c <- x$cov
     c
@@ -254,7 +294,13 @@ parseEffectsRate <- function(formula,pred = FALSE){
     i
   })
   
-  return(list("int_effects"=int_effects,"params"=params,"scaling"=scaling,"effects"=stat_names,"attributes"=attributes,"interact_effects"=interact_effects))
+  return(list("int_effects"=int_effects,
+      "params"=params,
+      "is_param_dyadic" = is_param_dyadic,
+      "scaling"=scaling,
+      "effects"=stat_names,
+      "attributes"=attributes,
+      "interact_effects"=interact_effects))
 }
 
 parseEffectsChoice <- function(formula){
@@ -304,11 +350,17 @@ parseEffectsChoice <- function(formula){
   
   
   # Prepare the params, can be NULL if just computing statistics
-  params <- sapply(effects,function(x){
+  params <- lapply(effects,function(x){
     p <- x$param
     p
   })
   
+  #boolean for if the param is dyadic/frailty/latent class etc
+  is_param_dyadic <- sapply(effects,function(x){
+    pt <- x$is_param_dyadic
+    pt        
+  })
+
   #Prepare dimnames of stats cube output
   stat_names <- sapply(effects,function(x){
     if(x$stat_name=="interact"){
@@ -319,7 +371,7 @@ parseEffectsChoice <- function(formula){
     s
   })
   
-  #Prepare the attributes
+  #Prepare the attr_actors
   attributes<- lapply(effects,function(x){
     c <- x$cov
     c
@@ -345,6 +397,7 @@ parseEffectsChoice <- function(formula){
   return(list(
     "int_effects"=int_effects,
     "params"=params,
+    "is_param_dyadic" = is_param_dyadic,
     "scaling"=scaling,
     "effects"=stat_names,
     "attributes"=attributes,
@@ -410,7 +463,7 @@ parseEffectsTieRemstimate <- function(remstimate_object){
     # params <- sapply(names(effects), function(x){
     #       coefficients[[x]]
     # }) 
-    params <- coefficients
+    params <- as.list(coefficients)
     
     stat_names <- sapply(effects, function(x) x$stat_name)
     
@@ -434,10 +487,10 @@ parseEffectsTieRemstimate <- function(remstimate_object){
 
 
 # Internal function, modified from remstats
-prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
+prepExoVar <- function(effect_name, param, scaling, variable, attr_actors) {
   # Warning for missing values
-  if(anyNA(attributes[,variable])) {
-    warning(paste("Missing values in attributes object, variable:",variable))
+  if(anyNA(attr_actors[,variable])) {
+    warning(paste("Missing values in attr_actors object, variable:",variable))
   }
   
   scaling <- match(scaling,c("full","std","inertia"))
@@ -445,23 +498,34 @@ prepExoVar <- function(effect_name, param, scaling, variable, attributes) {
   #dyadic covariate
   if(effect_name %in% c("dyad")){
     cov<- data.frame(
-      sender_id = attributes[,1],
-      receiver_id = attributes[,2],
-      val = attributes[,variable]
+      sender_id = attr_actors[,1],
+      receiver_id = attr_actors[,2],
+      val = attr_actors[,variable]
     )
   }else{
     #TODO: Allow all cov in the same matrix for cpp computation (memory)
     cov <- data.frame(
-      id = attributes[,1],
-      time = attributes[,2],
-      val = attributes[,variable]
+      id = attr_actors[,1],
+      time = attr_actors[,2],
+      val = attr_actors[,variable]
     )
     cov <- cov[order(cov$id,cov$time),]
   }
   
+  # for frailty/latent class etc
+  is_param_dyadic = FALSE
+  if(is.data.frame(param)){
+    if(ncol(param) == 3){
+      is_param_dyadic = TRUE
+    }else{
+      stop(paste0("Error: The data.frame 'param' supplied for ", effect_name, " has insufficient columns."))
+    }
+  }
+
   out <- list(
     effect = list(
       param= param,
+      is_param_dyadic = is_param_dyadic,
       scaling = scaling,
       cov = cov,
       mem_start=0,
@@ -482,9 +546,20 @@ prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
   }else{
     stat_name = effect_name
   }
+
+  is_param_dyadic = FALSE
+  if(is.data.frame(param)){
+    if(ncol(param) == 3){
+      is_param_dyadic = TRUE
+    }else{
+      stop(paste0("Error: The data.frame 'param' supplied for ", effect_name, " has insufficient columns."))
+    }
+  }
+
   out <- list(
     effect = list(
       param= param,
+      is_param_dyadic = is_param_dyadic,
       scaling = scaling,
       mem_start=start,
       mem_end=end,
@@ -501,9 +576,20 @@ prepInteractVar <- function(param=NULL,effects,scaling){
   
   scaling <- match(scaling,c("full","std","prop"))
   
+  # for frailty/latent class etc
+  is_param_dyadic = FALSE
+  if(is.data.frame(param)){
+    if(ncol(param) == 3){
+      is_param_dyadic = TRUE
+    }else{
+      stop(paste0("Error: The data.frame 'param' supplied for interaction has insufficient columns."))
+    }
+  }
+
   out <- list(
     interact=list(
       param = param,
+      is_param_dyadic = is_param_dyadic,
       interact.vec = effects,
       stat_name = "interact",
       scaling = 3,

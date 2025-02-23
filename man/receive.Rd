@@ -7,7 +7,7 @@
 receive(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
 \item{variable}{character vector specifies the name of the column with covariate value in attr_actors data.frame}
 
@@ -20,4 +20,13 @@ Receiver covariate: The tendency to create an event i->j when j has a high attri
 }
 \details{
 This function specifies the input for the receive effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+
+
+
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

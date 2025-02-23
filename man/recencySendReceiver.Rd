@@ -8,9 +8,17 @@ This function specifies the input for the recencySendReceiver effect in the \cod
 recencySendReceiver(param = NULL)
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 }
 \description{
 recencySendReceiver
 This function specifies the input for the recencySendReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
+}
+\details{
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

@@ -9,6 +9,10 @@
 #' If both time and events are supplied then the function 
 #' stops simulating whenever the first stop condition is met
 #' 
+#' If effects is a \code{'remstimate'} object, then the params are extracted automatically.
+#' Furthermore if exogenous statistics are used, the data.frames corresponding to 
+#' the 'attr_actors' argument of the \code{'remstats'} formula must be loaded in the environment.
+#' 
 #' A list of available statistics. See \link{remulateTieEffects} for details:
 #' \itemize{
 #'  \item \code{baseline(param)}
@@ -184,6 +188,7 @@ remulateTie <- function(
   
 
   params <- parsed_effects$params
+  is_param_dyadic <- parsed_effects$is_param_dyadic
   scaling <- parsed_effects$scaling
   mem_start <- parsed_effects$mem_start
   mem_end <- parsed_effects$mem_end
@@ -191,7 +196,7 @@ remulateTie <- function(
   attributes <- parsed_effects$attributes
   interact_effects <- parsed_effects$interact_effects
   effect_names <- unname(parsed_effects$effects)
-
+  
   P <- length(effect_names)
 
   memory<- match.arg(memory)
@@ -234,7 +239,7 @@ remulateTie <- function(
 
   #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
   if(is.data.frame(initial)){
-      t <- initial[nrow(initial),1]
+      t <- max(initial[,1])
       if(t > time){
         stop("Last event of initial data.frame is after 'time' argument")
       }
@@ -248,15 +253,28 @@ remulateTie <- function(
   attributes <- initialize_exo_effects(attributes, actors_map, parsed_effects)
 
   #initialize params
-  beta <- vector(length = P)
-  for (i in 1:P) {
-    if(is.function(params[[i]])){
-      #function must be defined at t=0
-      beta[i] <- params[[i]](t)
-    } else {
-      beta[i] <- params[[i]]
+  if(any(is_param_dyadic)){ 
+    beta_mat <- matrix(0, nrow = nrow(rs), ncol = P)
+      for (i in 1:P) {
+        if(is_param_dyadic[i]) {            
+          arranged_params <- initialize_beta_mat(params[[i]], actors_map, rs)
+          beta_mat[, i] <- arranged_params  # params[[i]] is a vector of size D
+        }else{
+            beta_mat[,i] <- rep(params[[i]], nrow(rs))  # params[[i]] is a scalar
+        }
+      }
+  }else{
+    beta <- vector(length = P)
+    for (i in 1:P) {
+      if(is.function(params[[i]])){
+        #function must be defined at t=0
+        beta[i] <- params[[i]](t)
+      } else {
+        beta[i] <- params[[i]]
+      }
     }
   }
+  
 
   #initialize output objects
   statistics <- list() #list of matrices
@@ -275,11 +293,21 @@ remulateTie <- function(
 
   while(t <= time){
     #updating event rate / lambda
-    if (P == 1) {
-      lambda <- exp(statistics[[i]] * beta)
-    } else {
-      lambda <- exp(statistics[[i]] %*% beta)
+    # if (P == 1) {
+    #   lambda <- exp(statistics[[i]] * beta)
+    # } else {
+    #   lambda <- exp(statistics[[i]] %*% beta)
+    # }
+    if(any(is_param_dyadic)){      
+        lambda <- exp(rowSums(statistics[[i]] * beta_mat))
+    }else{
+        if (P == 1) {
+            lambda <- exp(statistics[[i]] * beta)
+        } else {
+            lambda <- exp(statistics[[i]] %*% beta)
+        }
     }
+
 
     #sampling waiting time dt
     if (waiting_time == "exp") {
@@ -356,12 +384,10 @@ remulateTie <- function(
     evls <- rbind(evls, array(0, dim = c(1, 2)))
     #probs <- rbind(probs, array(0, dim = c(1,nrow(rs))))
 
-    #update beta
+    #update beta only if function
     for (j in 1:P) {
      if(is.function(params[[j]])){
         beta[j] <- params[[j]](t)
-      } else {
-        beta[j] <- params[[j]]
       }
     }
     i=i+1

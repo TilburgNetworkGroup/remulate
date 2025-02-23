@@ -4,13 +4,21 @@
 \alias{psABXY}
 \title{psABXY}
 \usage{
-psABXY(param = NULL, scaling = c("none", "std", "prop"))
+psABXY(param = NULL, scaling = c("none", "std"))
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
-\item{scaling}{the method for scaling the psABXY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
+\item{scaling}{the method for scaling the psABXY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.}
 }
 \description{
 This function specifies the input for the psABXY effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+}
+\details{
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

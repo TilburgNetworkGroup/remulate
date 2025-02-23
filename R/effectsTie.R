@@ -9,6 +9,14 @@
 #' 
 #' @details
 #' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
+#' 
+#' 
 #' The indices aregument in the interact effect corresponds to the position of the specified effects in the \code{effects} argument of \code{\link{remulateTie}} for which the interaction needs to be computed. The individual constitutive effects for an interaction must be specified before the interact term in the \code{effects} argument. To omit the individual constitutive effects in the generation, specify the \code{param} arugment to zero.
 #' @return The effect functions do not return anything when called individually. They are only used to specify statistics in the \code{effects} argument for the function \code{\link{remulateTie}}.
 #' @section Remulate Effects:
@@ -157,6 +165,18 @@
 #'   reciprocity(-0.1) + 
 #'   itp(0.01)
 #' 
+#'  #If parameter varies across dyads or actors
+#'  rs <- expand.grid(1:10,1:10)
+#'  rs <- rs[rs[,1] != rs[, 2],]
+#' 
+#'  param_df <- as.data.frame(rs)
+#'  param_df$beta = runif(nrow(rs),-0.1,0.1)
+#' 
+#'  effects <- ~ remulate::baseline(-3)+
+#'     remulate::inertia(param_df) +
+#'     remulate::reciprocity(0.1)
+#' 
+#'  
 #' #To specify an interaction (example: between inertia and same constitutive effects)
 #' 
 #' effects <- ~ inertia(0.3) + 
@@ -172,8 +192,16 @@ remulateTieEffects <- function() {
 #'
 #' This function specified the input for the baseline effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. 
 #'
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the baseline in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the baseline in the REM model
 #' 
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 baseline <- function(param = NULL) {
   out <- prepEndoVar("baseline", param, "none")
@@ -185,11 +213,19 @@ baseline <- function(param = NULL) {
 #' 
 #' This function specifies the input for the tie effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
 #' @param scaling the method for scaling the tie statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-tie <- function(param = NULL, scaling = c("none", "std", "prop")) {
+tie <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("tie", param, scaling, start=0, end=0)
   out
@@ -200,9 +236,17 @@ tie <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the inertia effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
 #' @param scaling the method for scaling the inertia statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -215,9 +259,17 @@ inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the reciprocity effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
 #' @param scaling the method for scaling the reciprocity statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the in degree of the sender at time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -229,9 +281,17 @@ reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the indegreeSender effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the indegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the indegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the number of past events until time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -243,9 +303,17 @@ indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the indegreeReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the indegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the indegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the number of past events until time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -257,9 +325,17 @@ indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the outdegreeSender effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the outdegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
+#' @param scaling the method for scaling the outdegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the number of past events until time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -272,9 +348,17 @@ outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the outdegreeReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the outdegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the total degree of the sender at time t.
+#' @param scaling the method for scaling the outdegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the number of past events until time t.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -286,9 +370,17 @@ outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' 
 #' This function specifies the input for the totaldegreeSender effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
 #' @param scaling the method for scaling the totaldegreeSender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -301,9 +393,17 @@ totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' 
 #' This function specifies the input for the totaldegreeReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
 #' @param scaling the method for scaling the totaldegreeReceiver statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -315,11 +415,19 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")
 #' 
 #' This function specifies the input for the otp effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the otp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the otp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-otp <- function(param = NULL, scaling = c("none", "std", "prop")) {
+otp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("otp", param, scaling, start=0, end=0)
   out
@@ -329,11 +437,19 @@ otp <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the itp effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the itp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the itp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-itp <- function(param = NULL, scaling = c("none", "std", "prop")) {
+itp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("itp", param, scaling, start=0, end=0)
   out
@@ -343,11 +459,19 @@ itp <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the osp effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the osp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the osp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-osp <- function(param = NULL, scaling = c("none", "std", "prop")) {
+osp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("osp", param, scaling, start=0, end=0)
   out
@@ -357,11 +481,19 @@ osp <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the isp effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the isp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the isp statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-isp <- function(param = NULL, scaling = c("none", "std", "prop")) {
+isp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("isp", param, scaling, start=0, end=0)
   out
@@ -371,11 +503,19 @@ isp <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABBA effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABBA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABBA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABBA <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABBA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABBA", param, scaling)
   out
@@ -386,11 +526,19 @@ psABBA <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABBY effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABBY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABBY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABBY <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABBY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABBY", param, scaling)
   out
@@ -401,11 +549,19 @@ psABBY <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABXA effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXA statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABXA <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABXA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXA", param, scaling)
   out
@@ -416,11 +572,19 @@ psABXA <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABXB effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXB statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXB statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABXB <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABXB <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXB", param, scaling)
   out
@@ -431,11 +595,19 @@ psABXB <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABXY effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABXY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABXY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABXY <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABXY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABXY", param, scaling)
   out
@@ -445,11 +617,19 @@ psABXY <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the psABAY effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' 
-#' @param scaling the method for scaling the psABAY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.
+#' @param scaling the method for scaling the psABAY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
-psABAY <- function(param = NULL, scaling = c("none", "std", "prop")) {
+psABAY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
   out <- prepEndoVar("psABAY", param, scaling)
   out
@@ -459,7 +639,15 @@ psABAY <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' This function specifies the input for the recencyContinue effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 recencyContinue <- function(param = NULL) {
   out <- prepEndoVar("recencyContinue", param,"none")
@@ -470,7 +658,15 @@ recencyContinue <- function(param = NULL) {
 #' 
 #' This function specifies the input for the recencySendSender effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 recencySendSender <- function(param = NULL) {
   out <- prepEndoVar("recencySendSender", param,"none")
@@ -480,7 +676,15 @@ recencySendSender <- function(param = NULL) {
 #' recencySendReceiver
 #' This function specifies the input for the recencySendReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 recencySendReceiver <- function(param = NULL) {
   out <- prepEndoVar("recencySendReceiver", param,"none")
@@ -492,7 +696,15 @@ recencySendReceiver <- function(param = NULL) {
 #' 
 #' This function specifies the input for the recencyReceiveSender effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 recencyReceiveSender <- function(param = NULL) {
   out <- prepEndoVar("recencyReceiveSender", param,"none")
@@ -503,7 +715,15 @@ recencyReceiveSender <- function(param = NULL) {
 #' 
 #' This function specifies the input for the recencyReceiveReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 recencyReceiveReceiver <- function(param = NULL) {
   out <- prepEndoVar("recencyReceiveReceiver", param,"none")
@@ -515,7 +735,15 @@ recencyReceiveReceiver <- function(param = NULL) {
 #' 
 #' This function specifies the input for the rrankReceive effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 rrankReceive <- function(param = NULL) {
   out <- prepEndoVar("rrankReceive", param,"none")
@@ -527,7 +755,15 @@ rrankReceive <- function(param = NULL) {
 #' 
 #' This function specifies the input for the rrankSend effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 rrankSend <- function(param = NULL) {
   out <- prepEndoVar("rrankSend", param,"none")
@@ -541,10 +777,18 @@ rrankSend <- function(param = NULL) {
 #' 
 #' This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in data dataframe
 #' @param attr_actors data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -558,10 +802,18 @@ send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' 
 #' This function specifies the input for the receive effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -575,10 +827,18 @@ receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' This function specifies the input for the same effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -592,10 +852,18 @@ same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' 
 #' This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 difference <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -609,10 +877,18 @@ difference <- function(param = NULL, variable, attr_actors, scaling = c("none", 
 #' 
 #' This function specifies the input for the average effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 average <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -626,10 +902,18 @@ average <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' This function specifies the input for the minimum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time  
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -643,10 +927,18 @@ minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' This function specifies the input for the maximum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -660,10 +952,18 @@ maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
 #' @param attr_actors data.frame object with rows specifying values of attr_actors for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
   scaling <- match.arg(scaling)
@@ -675,9 +975,17 @@ dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
 #'
 #'This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
-#' @param param numeric value or function with time parameter. Specifies the value of the effect for the statistic in the REM model
+#' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param indices is a numeric vector of indices corresponding to the effects specified in \code{effects} argument of function \code{\link{remulateTie}} on which the interaction term needs to be computed.
 #' @param scaling specifies the method for scaling the statistic after the interaction has been computed. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
+#' @details
+#' 
+#' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+#' representing the parameter value for thay dyadic pair. The data.frame must contain 
+#' all pairs of actors or dyads corresponding to the riskset. 
+#' 
+#' if param is a function, it's first argument must be 't', corresponding to the time. The
+#' function may have additional arguments.
 #' @export
 interact <- function(param = NULL, indices,scaling=c("none","std")) {
   scaling <- match.arg(scaling)
