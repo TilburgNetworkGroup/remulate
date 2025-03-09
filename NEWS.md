@@ -1,7 +1,10 @@
+## remulate v2.1.0 (Release Data: 090-03-2025)
+- time argument name changed and tinytests added
+
 ## remulate v2.0.0 (Release Date: 11-02-2024)
 
 ### Major Updates
-
+- time argument is now called endTime
 -   Refactored Output Structure for `remulateTie` and `remulateActor`
     -   The main output is now a data frame, making it easier to work with.
     -   Metadata (e.g., `riskset`, `statistics`, `density`) are now stored as attributes instead of list elements.
