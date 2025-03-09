@@ -2,8 +2,7 @@
 % Please edit documentation in R/effectsTie.R
 \name{recencySendReceiver}
 \alias{recencySendReceiver}
-\title{recencySendReceiver
-This function specifies the input for the recencySendReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently}
+\title{recencySendReceiver}
 \usage{
 recencySendReceiver(param = NULL)
 }
@@ -11,7 +10,6 @@ recencySendReceiver(param = NULL)
 \item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 }
 \description{
-recencySendReceiver
 This function specifies the input for the recencySendReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 }
 \details{

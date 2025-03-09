@@ -59,7 +59,7 @@
 #' 
 #' @param actors A numeric or character vector representing the actor names.
 #' 
-#' @param time A numeric value specifying the time up to which the 
+#' @param endTime A numeric value specifying the end time up to which the 
 #' network should be simulated.
 #' 
 #' @param events [Optional] An integer specifying the maximum number of events 
@@ -126,9 +126,9 @@
 #'  # Calling remulateTie
 #'  remulate::remulateTie(
 #'    effects, 
-#'    actors = 1:25, 
-#'    time = 50, 
-#'    events = 500, 
+#'    actors  = 1:25, 
+#'    endTime = 50, 
+#'    events  = 500, 
 #'    initial = 200
 #'  )
 #'
@@ -141,9 +141,9 @@
 #'
 #'  remulate::remulateTie(
 #'    effects, 
-#'    actors = 1:25, 
-#'    time = 150, 
-#'    events = 500, 
+#'    actors  = 1:25, 
+#'    endTime = 150, 
+#'    events  = 500, 
 #'    initial = initialREH
 #'  )
 #'
@@ -155,9 +155,9 @@
 #'
 #'  remulate::remulateTie(
 #'    effects, 
-#'    actors = 1:25, 
-#'    time = 150, 
-#'    events = 500, 
+#'    actors  = 1:25, 
+#'    endTime = 150, 
+#'    events  = 500, 
 #'    riskset = custom_rs
 #'  )
 #'
@@ -170,7 +170,7 @@
 remulateTie <- function(
   effects,
   actors,
-  time ,
+  endTime ,
   events = NULL,
   startTime = 0,
   initial = 0,
@@ -240,8 +240,8 @@ remulateTie <- function(
   #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
   if(is.data.frame(initial)){
       t <- max(initial[,1])
-      if(t > time){
-        stop("Last event of initial data.frame is after 'time' argument")
+      if(t > endTime){
+        stop("Last event of initial data.frame is after 'endTime' argument")
       }
   }else{
       #in case is.numeric(initial) OR intial == NULL
@@ -291,7 +291,7 @@ remulateTie <- function(
 
   i = 1
 
-  while(t <= time){
+  while(t <= endTime){
     #updating event rate / lambda
     # if (P == 1) {
     #   lambda <- exp(statistics[[i]] * beta)
@@ -324,7 +324,7 @@ remulateTie <- function(
     #   t <- t + dt
     # }
 
-    if(t > time){
+    if(t > endTime){
       cat(i-1, "events generated \n")
       break
     }

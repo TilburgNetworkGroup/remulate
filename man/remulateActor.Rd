@@ -8,7 +8,7 @@ remulateActor(
   rateEffects,
   choiceEffects,
   actors,
-  time,
+  endTime,
   events = NULL,
   startTime = 0,
   initial = 0,
@@ -26,7 +26,7 @@ simulate the network under the receiver choice sub-model.}
 
 \item{actors}{A numeric or character vector representing the actor names.}
 
-\item{time}{A numeric value specifying the time duration up to which the 
+\item{endTime}{A numeric value specifying the end time up to which the 
 network should be simulated.}
 
 \item{events}{[Optional] An integer specifying the maximum number of events 
@@ -143,10 +143,10 @@ See \link{remulateActorEffects} for details on effects: :
  
  # Exogenous attributes data.frame
  cov <- data.frame(
-   id = 1:25, 
+   id   = 1:25, 
    time = rep(0, 25), 
-   sex = sample(c(0,1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
-   age = sample(20:30, 25, replace = TRUE) 
+   sex  = sample(c(0,1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
+   age  = sample(20:30, 25, replace = TRUE) 
  )
  
  # Effects specification
@@ -163,10 +163,10 @@ See \link{remulateActorEffects} for details on effects: :
  remulate::remulateActor(
    rateform, 
    choiceform, 
-   actors = 1:25, 
-   time = 100, 
+   actors  = 1:25, 
+   endTime = 100, 
    initial = 200, 
-   events = 500, 
+   events  = 500, 
  )
   
  # To predict events, given an edgelist of initial events
@@ -179,10 +179,10 @@ See \link{remulateActorEffects} for details on effects: :
  remulate::remulateActor(
    rateform, 
    choiceform, 
-   actors = 1:25, 
-   time = 200, 
+   actors  = 1:25, 
+   endTime = 200, 
    initial = initialREH, 
-   events = 500
+   events  = 500
  )
 }
 \references{

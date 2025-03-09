@@ -6,7 +6,7 @@
 \alias{remulate-package}
 \title{remulate: Remulate - Simulate Dynamic Networks from Relational Event Models}
 \description{
-This package allows for model based generation of relational event networks under tie and actor oriented models while providing flexibility to model temporal variability, heterogeneity, changes in the network composition and to account for memory decay in dynamic social networks. The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
+This package allows for model based simulation of relational event networks under tie-oriented (Butts, C., 2008, \doi{10.1111/j.1467-9531.2008.00203.x}) and actor oriented models (Stadtfeld, C., & Block, P., 2017, \doi{10.15195/v4.a14}). The package providing flexibility to incorpoate temporal variability in effects, heterogeneity via latent class REMs or blockmodels, and to account for memory decay when simulating from relational event models (Lakdawala, R., 2024 \doi{10.48550/arXiv.2403.19329}). The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
 }
 \seealso{
 Useful links:
@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Rumana Lakdawala \email{r.j.lakdawala@tilburguniversity.edu}
+\strong{Maintainer}: Rumana Lakdawala \email{rumanalakdawala@gmail.com} (\href{https://orcid.org/0000-0002-9992-6035}{ORCID})
 
 Other contributors:
 \itemize{

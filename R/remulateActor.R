@@ -2,7 +2,7 @@
 #' 
 #' @description
 #' A function to simulate relational event data by sampling from an
-#' actor oriented event model.
+#' actor oriented relational event model.
 #'
 #' @details
 #' #' If time is irrelevant and only a specific number of events are desired, set time to Inf. 
@@ -54,7 +54,7 @@
 #' 
 #' @param actors A numeric or character vector representing the actor names.
 #' 
-#' @param time A numeric value specifying the time duration up to which the 
+#' @param endTime A numeric value specifying the end time up to which the 
 #' network should be simulated.
 #' 
 #' @param events [Optional] An integer specifying the maximum number of events 
@@ -124,10 +124,10 @@
 #'  
 #'  # Exogenous attributes data.frame
 #'  cov <- data.frame(
-#'    id = 1:25, 
+#'    id   = 1:25, 
 #'    time = rep(0, 25), 
-#'    sex = sample(c(0,1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
-#'    age = sample(20:30, 25, replace = TRUE) 
+#'    sex  = sample(c(0,1), 25, replace = TRUE, prob = c(0.4, 0.6)), 
+#'    age  = sample(20:30, 25, replace = TRUE) 
 #'  )
 #'  
 #'  # Effects specification
@@ -144,10 +144,10 @@
 #'  remulate::remulateActor(
 #'    rateform, 
 #'    choiceform, 
-#'    actors = 1:25, 
-#'    time = 100, 
+#'    actors  = 1:25, 
+#'    endTime = 100, 
 #'    initial = 200, 
-#'    events = 500, 
+#'    events  = 500, 
 #'  )
 #'   
 #'  # To predict events, given an edgelist of initial events
@@ -160,10 +160,10 @@
 #'  remulate::remulateActor(
 #'    rateform, 
 #'    choiceform, 
-#'    actors = 1:25, 
-#'    time = 200, 
+#'    actors  = 1:25, 
+#'    endTime = 200, 
 #'    initial = initialREH, 
-#'    events = 500
+#'    events  = 500
 #'  )
 #' @references
 #' Lakdawala, R., Mulder, J., & Leenders, R. (2025).
@@ -175,7 +175,7 @@ remulateActor <- function(
     rateEffects,
     choiceEffects,
     actors,
-    time,
+    endTime,
     events = NULL,
     startTime = 0,
     initial = 0,
@@ -207,7 +207,7 @@ remulateActor <- function(
     d_P <- length(d_effects)
     memory<- match.arg(memory)
     #checking memory specification
-    if(! memory[1] %in% c("full","window","window_m","brandes","vu")){
+    if(! memory[1] %in% c("full","window","window_m","decay","vu")){
         stop(paste("\n'",memory[1], "'memory method not defined"))
     }
     if(memory != "full" && is.null(memoryParam)){
@@ -240,8 +240,8 @@ remulateActor <- function(
     #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
     if(is.data.frame(initial)){
         t <- initial[nrow(initial),1]
-        if(t > time){
-         stop("Last event of initial data.frame is after 'time' argument")
+        if(t > endTime){
+         stop("Last event of initial data.frame is after 'endTime' argument")
         }
     }else{
         #in case is.numeric(initial) OR intial == NULL
@@ -289,7 +289,7 @@ remulateActor <- function(
 
     i = 1
 
-    while(t <= time){
+    while(t <= endTime){
                 
         #compute rate and choice probabilities
         if(s_P==1){
@@ -319,7 +319,7 @@ remulateActor <- function(
         #    t <- t + dt
         # }
         
-        if(t > time){
+        if(t > endTime){
             cat(i-1, "events generated \n")
             break
         }
@@ -356,19 +356,19 @@ remulateActor <- function(
                 adj_mat[edgelist[i,2],edgelist[i,3]] =  adj_mat[edgelist[i,2],edgelist[i,3]] + 1;
             } 
         }
-        else if(memory=="brandes"){
+        else if(memory=="decay"){
             #TODO: to vectorize
             adj_mat [] <- 0
             for(j in 1:i){#loop through edgelist
                 adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + exp((-(t-edgelist[j,1]))*(log(2)/memoryParam))
             }
         }
-        else if(memory=="vu"){
-            adj_mat [] <- 0
-            for(j in 1:i-1){#loop through edgelist
-                adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + 1/((t-edgelist[j,1])**memoryParam)
-            }
-        }
+        # else if(memory=="vu"){
+        #     adj_mat [] <- 0
+        #     for(j in 1:i-1){#loop through edgelist
+        #         adj_mat[edgelist[j,2], edgelist[j,3]] = adj_mat[edgelist[j,2], edgelist[j,3]] + 1/((t-edgelist[j,1])**memoryParam)
+        #     }
+        # }
         #stop if max number of events reached
         if(!is.null(events) && i-1>=events){
             cat(paste0("Stopping: maximum number of events (",i-1,") sampled \n"))

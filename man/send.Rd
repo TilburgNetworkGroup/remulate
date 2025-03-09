@@ -16,10 +16,10 @@ send(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 \item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
-Sender covariate: The tendency to create an event i->j when i has a high attribute value.
+This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }
 \details{
-This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+Sender covariate: The tendency to create an event i->j when i has a high attribute value.
 
 
 

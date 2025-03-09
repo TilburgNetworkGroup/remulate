@@ -16,10 +16,10 @@ dyad(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 \item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
-Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.
+This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }
 \details{
-This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.
 
 
 

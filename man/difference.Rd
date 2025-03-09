@@ -16,10 +16,10 @@ difference(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 \item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
-Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values
+This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }
 \details{
-This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values
 
 
 

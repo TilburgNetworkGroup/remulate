@@ -7,7 +7,7 @@
 remulateTie(
   effects,
   actors,
-  time,
+  endTime,
   events = NULL,
   startTime = 0,
   initial = 0,
@@ -23,7 +23,7 @@ a fitted object.}
 
 \item{actors}{A numeric or character vector representing the actor names.}
 
-\item{time}{A numeric value specifying the time up to which the 
+\item{endTime}{A numeric value specifying the end time up to which the 
 network should be simulated.}
 
 \item{events}{[Optional] An integer specifying the maximum number of events 
@@ -145,9 +145,9 @@ A list of available statistics. See \link{remulateTieEffects} for details:
  # Calling remulateTie
  remulate::remulateTie(
    effects, 
-   actors = 1:25, 
-   time = 50, 
-   events = 500, 
+   actors  = 1:25, 
+   endTime = 50, 
+   events  = 500, 
    initial = 200
  )
 
@@ -160,9 +160,9 @@ A list of available statistics. See \link{remulateTieEffects} for details:
 
  remulate::remulateTie(
    effects, 
-   actors = 1:25, 
-   time = 150, 
-   events = 500, 
+   actors  = 1:25, 
+   endTime = 150, 
+   events  = 500, 
    initial = initialREH
  )
 
@@ -174,9 +174,9 @@ A list of available statistics. See \link{remulateTieEffects} for details:
 
  remulate::remulateTie(
    effects, 
-   actors = 1:25, 
-   time = 150, 
-   events = 500, 
+   actors  = 1:25, 
+   endTime = 150, 
+   events  = 500, 
    riskset = custom_rs
  )
 

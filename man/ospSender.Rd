@@ -2,19 +2,23 @@
 % Please edit documentation in R/effectsActor.R
 \name{ospSender}
 \alias{ospSender}
-\title{otp sender
- 
- This function specifies the input for the otp  sender effect in the \code{s_formula} argument for the function \code{\link{remulateActor}}. Not to be used independently}
+\title{otp sender}
 \usage{
-ospSender(param = NULL, scaling = c("none", "prop"))
+ospSender(param = NULL, scaling = c("none", "std", "prop"))
 }
 \arguments{
-\item{param}{numeric value or function with time parameter. Specifies the value of the effect for the statistic in the Actor Oriented Model}
+\item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the baseline in the REM model}
 
 \item{scaling}{the method for scaling the otp sender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
 \description{
-otp sender
- 
- This function specifies the input for the otp  sender effect in the \code{s_formula} argument for the function \code{\link{remulateActor}}. Not to be used independently
+This function specified the input for the baseline effect in the \code{formula} argument for the function \code{\link{remulateActor}}. Not to be used independently.
+}
+\details{
+if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
+representing the parameter value for thay dyadic pair. The data.frame must contain 
+all pairs of actors or dyads corresponding to the riskset. 
+
+if param is a function, it's first argument must be 't', corresponding to the time. The
+function may have additional arguments.
 }

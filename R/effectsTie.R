@@ -1,6 +1,6 @@
 #' Remulate Tie Effects
 #' 
-#' This page lists the effects that are available in the remulate package.
+#' This page lists the effects that are available in the remulate package for the tie oriented relational event model.
 #' 
 #' The attr_actors object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attr_actors change (set to zero if the attr_actors do not vary over time). At least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 # by specifying the \code{attr_actors} argument of \code{\link{remulateTie}}.
@@ -674,6 +674,7 @@ recencySendSender <- function(param = NULL) {
 }
 
 #' recencySendReceiver
+#' 
 #' This function specifies the input for the recencySendReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
@@ -773,10 +774,10 @@ rrankSend <- function(param = NULL) {
 
 #'send
 #' 
-#' Sender covariate: The tendency to create an event i->j when i has a high attribute value.
-#' 
 #' This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
+#' Sender covariate: The tendency to create an event i->j when i has a high attribute value.
+#'
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in data dataframe
 #' @param attr_actors data.frame object with rows specifying values of data for an actor. First column must contain actor id, Second column time when covariate value changes (default zero if no change), Third column contains values for the data with column name corresponding to variable name
@@ -798,9 +799,9 @@ send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 
 #'receive
 #' 
-#' Receiver covariate: The tendency to create an event i->j when j has a high attribute value.
-#' 
 #' This function specifies the input for the receive effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Receiver covariate: The tendency to create an event i->j when j has a high attribute value.
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -823,9 +824,9 @@ receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 
 #'same
 #' 
-#' Dyadic covariate: (Homophily) is the tendency to create an event i->j if actors i and j have the same attribute values
-#' 
 #' This function specifies the input for the same effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: (Homophily) is the tendency to create an event i->j if actors i and j have the same attribute values
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -848,9 +849,9 @@ same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 
 #'difference
 #' 
-#' Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values
-#' 
 #' This function specifies the input for the difference effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -873,9 +874,9 @@ difference <- function(param = NULL, variable, attr_actors, scaling = c("none", 
 
 #'average
 #' 
-#' Dyadic covariate: average attribute value for dyad (i,j) is the average of the attribute values for actors i, j
-#' 
 #' This function specifies the input for the average effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: average attribute value for dyad (i,j) is the average of the attribute values for actors i, j
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -898,9 +899,9 @@ average <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 
 #'minimum
 #' 
-#' Dyadic covariate: minimum attribute value for dyad (i,j) is the smaller of the attribute values for actors i , j
-#' 
 #' This function specifies the input for the minimum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: minimum attribute value for dyad (i,j) is the smaller of the attribute values for actors i , j
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -923,9 +924,9 @@ minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 
 #'maximum
 #' 
-#' Dyadic covariate: maximum attribute value for dyad (i,j) is the bigger of the attribute values for actors i , j
-#' 
 #' This function specifies the input for the maximum effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: maximum attribute value for dyad (i,j) is the bigger of the attribute values for actors i , j
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -948,9 +949,9 @@ maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 
 #'dyad
 #' 
-#' Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.
-#' 
 #' This function specifies the input for the dyad effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' 
+#' Dyadic covariate: dyad attribute value is the tendency to create an event i -> j when (i,j) has a high attribute value.
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
@@ -973,10 +974,10 @@ dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
 
 #' interact
 #'
-#'This function specifies the input for the send effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+#' This function specifies the input for the interact effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
-#' @param indices is a numeric vector of indices corresponding to the effects specified in \code{effects} argument of function \code{\link{remulateTie}} on which the interaction term needs to be computed.
+#' @param indices is a numeric vector of indices corresponding to the effects specified in \code{effects} argument of function \code{\link{remulateTie}} or \code{\link{remulateActor}} on which the interaction term needs to be computed.
 #' @param scaling specifies the method for scaling the statistic after the interaction has been computed. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @details
 #' 

@@ -104,7 +104,6 @@ initialize_exo_effects <- function(attr_actors,actors_map,effects){
 }
 
 # attr_actors- list of data frames for each each effect in formula, NULL if the effect is not exogenous and a data frame with columns (id,time,value) if exogenous
-#'@export
 parseEffectsTie <- function(formula){
   # Get effects information
   ft <- stats::terms(formula,keep.order = TRUE)

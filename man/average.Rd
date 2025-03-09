@@ -16,10 +16,10 @@ average(param = NULL, variable, attr_actors, scaling = c("none", "std"))
 \item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
 \description{
-Dyadic covariate: average attribute value for dyad (i,j) is the average of the attribute values for actors i, j
+This function specifies the input for the average effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }
 \details{
-This function specifies the input for the average effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
+Dyadic covariate: average attribute value for dyad (i,j) is the average of the attribute values for actors i, j
 
 
 
