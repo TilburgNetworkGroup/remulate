@@ -157,7 +157,7 @@ expected_cov_dyad <- data.frame(
   val         = c(10, 20),
   stringsAsFactors = FALSE
 )
-expect_equal(res_exo_var_dyad$dyad$cov, expected_cov_dyad)
+expect_equal(res_exo_var_dyad$dyad$attribute, expected_cov_dyad)
 
 # Test for a actor cov
 attr_actors_exo_actor <- data.frame(
@@ -174,7 +174,7 @@ expected_cov_actor <- data.frame(
   val   = c(100, 200, 300),
   stringsAsFactors = FALSE
 )
-expect_equal(res_exo_var_actor$exog$cov, expected_cov_actor)
+expect_equal(res_exo_var_actor$exog$attribute, expected_cov_actor)
 
 ### Test prepEndoVar
 

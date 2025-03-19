@@ -35,13 +35,13 @@
 #' @section remulateActor Choice Effects:
 #' \strong{Endogenous effects (Dyad statistics):}
 #' \describe{
-#'  \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occured in the past. The statistic at timepoint t for dyad (i,j) is 
+#'  \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occurred in the past. The statistic at timepoint t for dyad (i,j) is 
 #' equal to the number of (i,j) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the out degree of the sender i at time t.}
 #'
-#' \item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occured in the past.The statistic at timepoint t for dyad (i,j) is 
+#' \item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occurred in the past.The statistic at timepoint t for dyad (i,j) is 
 #' equal to the number of (j,i) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the in degree of the sender i at time t.}
-#' \item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occured at least once in the past. The statistic at timepoint t for dyad (i,j) is 
-#' equal to 1 if a an event i->j occured before timepoint t}
+#' \item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occurred at least once in the past. The statistic at timepoint t for dyad (i,j) is 
+#' equal to 1 if a an event i->j occurred before timepoint t}
 #' }
 #' 
 #' \strong{Endogenous effects (Triadic statistics):}
@@ -124,7 +124,7 @@
 #'   reciprocity(-0.1) + 
 #'   same(0.2, variable = "gender", attr_actors = cov) + 
 #'   receive(0.1, variable = "age", attr_actors = cov)
-remulateActorEffects <- function() {
+remulateActorEffects <- function(){
   print("")
 }
 

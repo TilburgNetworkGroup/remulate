@@ -4,14 +4,14 @@
 \alias{dyad}
 \title{dyad}
 \usage{
-dyad(param = NULL, variable, attr_actors, scaling = c("none", "std"))
+dyad(param = NULL, variable, attr_dyads, scaling = c("none", "std"))
 }
 \arguments{
 \item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 
 \item{variable}{character vector specifies the name of the column with covariate value in attr_actors data.frame}
 
-\item{attr_actors}{data.frame object with rows specifying values of attr_actors for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name}
+\item{attr_dyads}{data.frame object with rows specifying values of attr_dyads for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name}
 
 \item{scaling}{specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }

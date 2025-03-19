@@ -80,10 +80,10 @@ initialize_exo_effects <- function(attr_actors,actors_map,effects){
     if(!is.null(attr_actors[[i]])){
       if(effects$int_effects[i] %in% c(28)){  #28:dyad
         if(any(! actors_map$name %in% attr_actors[[i]]$sender_id )){
-          stop(paste(names(effects)[i]," dyadic covariate not specified for all senders in actor's list"))
+          stop(paste(names(effects)[i]," dyadic attributeariate not specified for all senders in actor's list"))
         }
         if(any(! actors_map$name %in% attr_actors[[i]]$receiver_id )){
-          stop(paste(names(effects)[i]," dyadic covariate not specified for all receivers in actor's list"))
+          stop(paste(names(effects)[i]," dyadic attributeariate not specified for all receivers in actor's list"))
         }
 
         attr_actors[[i]]$sender_id <- actors_map$id[match(attr_actors[[i]]$sender_id,actors_map$name)]
@@ -92,7 +92,7 @@ initialize_exo_effects <- function(attr_actors,actors_map,effects){
 
       }else{
         if(any(! actors_map$name %in% attr_actors[[i]]$id )){
-          stop(paste(names(effects)[i]," actor covariate not specified for all actors in actor's list"))
+          stop(paste(names(effects)[i]," actor attributeariate not specified for all actors in actor's list"))
         }
         attr_actors[[i]]$id <- actors_map$id[match(attr_actors[[i]]$id,actors_map$name)]
         attr_actors[[i]] <- as.matrix(attr_actors[[i]])
@@ -181,7 +181,7 @@ parseEffectsTie <- function(formula){
   
   #Prepare the attributes
   attributes<- lapply(effects,function(x){
-    c <- x$cov
+    c <- x$attribute
     c
   })
   
@@ -224,6 +224,7 @@ parseEffectsRate <- function(formula,pred = FALSE){
   
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
+  #effects <- do.call(c, effects)
   
   all_effects <- c(
     "baseline", #1
@@ -272,7 +273,7 @@ parseEffectsRate <- function(formula,pred = FALSE){
   
   #Prepare the attr_actors
   attributes<- lapply(effects,function(x){
-    c <- x$cov
+    c <- x$attribute
     c
   })
   
@@ -311,6 +312,7 @@ parseEffectsChoice <- function(formula){
   
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
+  #effects <- do.call(c, effects)
   
   all_effects <- c(
     "baseline", #1
@@ -372,7 +374,7 @@ parseEffectsChoice <- function(formula){
   
   #Prepare the attr_actors
   attributes<- lapply(effects,function(x){
-    c <- x$cov
+    c <- x$attribute
     c
   })
   
@@ -426,7 +428,8 @@ parseEffectsTieRemstimate <- function(remstimate_object){
     var <- as.list(var)[-1]
     
     effects <- lapply(var, eval)
-    effects <- unlist(effects, recursive = FALSE)
+    #effects <- unlist(effects, recursive = FALSE)
+    effects <- do.call(c, effects)
     
     all_effects <- c(
         "baseline", "send", "receive", "same", "difference", "average",
@@ -466,7 +469,7 @@ parseEffectsTieRemstimate <- function(remstimate_object){
     
     stat_names <- sapply(effects, function(x) x$stat_name)
     
-    attributes <- lapply(effects, function(x) x$cov)
+    attributes <- lapply(effects, function(x) x$attribute)
     
     interact_effects <- lapply(effects,function(x){
       NULL
@@ -489,26 +492,26 @@ parseEffectsTieRemstimate <- function(remstimate_object){
 prepExoVar <- function(effect_name, param, scaling, variable, attr_actors) {
   # Warning for missing values
   if(anyNA(attr_actors[,variable])) {
-    warning(paste("Missing values in attr_actors object, variable:",variable))
+    stop(paste("Missing values in attr_actors object, variable:",variable))
   }
   
   scaling <- match(scaling,c("full","std","inertia"))
 
-  #dyadic covariate
+  #dyadic attributeariate
   if(effect_name %in% c("dyad")){
-    cov<- data.frame(
+    attribute <- data.frame(
       sender_id = attr_actors[,1],
       receiver_id = attr_actors[,2],
       val = attr_actors[,variable]
     )
   }else{
-    #TODO: Allow all cov in the same matrix for cpp computation (memory)
-    cov <- data.frame(
+    #TODO: Allow all attribute in the same matrix for cpp computation (memory)
+    attribute <- data.frame(
       id = attr_actors[,1],
       time = attr_actors[,2],
       val = attr_actors[,variable]
     )
-    cov <- cov[order(cov$id,cov$time),]
+    attribute <- attribute[order(attribute$id,attribute$time),]
   }
   
   # for frailty/latent class etc
@@ -526,7 +529,7 @@ prepExoVar <- function(effect_name, param, scaling, variable, attr_actors) {
       param= param,
       is_param_dyadic = is_param_dyadic,
       scaling = scaling,
-      cov = cov,
+      attribute = attribute,
       mem_start=0,
       mem_end=0,
       stat_name = paste0(effect_name,"_",variable)
@@ -563,7 +566,7 @@ prepEndoVar <- function(effect_name, param, scaling,start=0,end=0) {
       mem_start=start,
       mem_end=end,
       stat_name = stat_name,
-      cov=NULL
+      attribute=NULL
     )
   )
   
@@ -594,7 +597,7 @@ prepInteractVar <- function(param=NULL,effects,scaling){
       scaling = 3,
       mem_start=0,
       mem_end=0,
-      cov = NULL
+      attribute = NULL
     )
   )
   names(out) <- "interact"

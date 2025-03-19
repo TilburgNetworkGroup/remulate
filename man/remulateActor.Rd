@@ -94,7 +94,7 @@ The \code{"remulateActor"} object has the following attributes::
 }
 \description{
 A function to simulate relational event data by sampling from an
-actor oriented event model.
+actor oriented relational event model.
 }
 \details{
 #' If time is irrelevant and only a specific number of events are desired, set time to Inf. 

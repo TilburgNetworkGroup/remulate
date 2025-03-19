@@ -1,8 +1,8 @@
-#' Simulate Relational Event Data - Tie oriented model
+#' Simulate Relational Event Data - Tie-Oriented model
 #' 
 #' @description 
 #'  A function to simulate relational event data by sampling from a
-#' tie oriented relational event model.
+#' tie-oriented relational event model.
 #'
 #' @details
 #' If time is irrelevant and only a specific number of events are desired, set time to Inf. 

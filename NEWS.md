@@ -1,4 +1,4 @@
-## remulate v2.1.0 (Release Data: 090-03-2025)
+## remulate v2.1.0 (Release Data: 09-03-2025)
 - time argument name changed and tinytests added
 
 ## remulate v2.0.0 (Release Date: 11-02-2024)

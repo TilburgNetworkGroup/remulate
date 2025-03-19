@@ -26,13 +26,13 @@
 #' 
 #' \strong{Endogenous effects (Dyad statistics):}
 #' \describe{
-#'  \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occured in the past. The statistic at timepoint t for dyad (i,j) is 
+#'  \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occurred in the past. The statistic at timepoint t for dyad (i,j) is 
 #' equal to the number of (i,j) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the out degree of the sender i at time t.}
 #'
-#' \item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occured in the past.The statistic at timepoint t for dyad (i,j) is 
-#' equal to the number of (j,i) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the in degree of the sender i at time t.}
-#' \item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occured at least once in the past. The statistic at timepoint t for dyad (i,j) is 
-#' equal to 1 if a an event i->j occured before timepoint t}
+#' \item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occurred in the past.The statistic at timepoint t for dyad (i,j) is 
+#' equal to the number of (j,i) events before timepoint t.  Note: if \code{scaling} is "prop" for reciprocity, the statistic for dyad (i,j) at time t is divided by the in degree of the sender i at time t.}
+#' \item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occurred at least once in the past. The statistic at timepoint t for dyad (i,j) is 
+#' equal to 1 if a an event i->j occurred before timepoint t}
 #' }
 #' 
 #' \strong{Endogenous effects (Triadic statistics):}
@@ -65,12 +65,12 @@
 #' to create an event i->j if i has received more events in the past. 
 #' The statistic at timepoint t for dyad (i,j) is equal to the number of events 
 #' received by actor i before timepoint t. Note: if \code{scaling} is "prop" for indegreeSender, 
-#' the statistic for dyad (i,j) at time t is divided by the total degree of the sender i at time t. }
+#' the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 #' \item{\code{indegreeReceiver}}{In degree effect of receiver is the tendency 
-#' to create an event i->j if j has received more events in the past.  The statistic at timepoint t for dyad (i,j) is equal to the number of events received by actor j before timepoint t. Note: if \code{scaling} is "prop" for indegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
+#' to create an event i->j if j has received more events in the past.  The statistic at timepoint t for dyad (i,j) is equal to the number of events received by actor j before timepoint t. Note: if \code{scaling} is "prop" for indegreeReceiver, the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 #' \item{\code{outdegreeSender}}{Out degree effect of sender is the tendency
-#'  to create an event i->j if i has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeSender, the statistic for dyad (i,j) at time t is divided by the total degree of the sender i at time t. }
-#' \item{\code{outdegreeReceiver}}{Out degree effect of receiver is the tendency to create an event i->j if j has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
+#'  to create an event i->j if i has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeSender, the statistic for dyad (i,j) at time t is divided by by the number of past events until time t. }
+#' \item{\code{outdegreeReceiver}}{Out degree effect of receiver is the tendency to create an event i->j if j has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeReceiver, the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 #' \item{\code{totaldegreeSender}}{Total degree effect of sender is the tendency to create an event i->j if i has sent and received more events in the past.}
 #' \item{\code{totaldegreeReceiver}}{Total degree effect of receiver is the tendency to create an event i->j if j has sent and received more events in the past.}
 #' 
@@ -78,12 +78,12 @@
 #' 
 #' \strong{Endogenous effects (Participating Shifts):}
 #' \describe{
-#' \item{\code{psABBA}}{ AB-BA Pacticipating shift (turn receiving) is the tendency to create an event j->i at timepoint t if event i->j occured at timepoint t-1. The psABBA statistic is equal to one for the dyad (j.i) that will create the participation shift at timepoint t.}
-#' \item{\code{psABBY}}{ AB-BY Participating shift (turn receiving) is the tendency to create an event j->h at timepoint t if event i->j occured at timepoint t-1. The psABBY statistic is equal to one for the dyads (j,h) for all h not equal to i, that will create the participation shift at timepoint t.}
-#' \item{\code{PSABAY}}{AB-AY Participating shifts  (turn continuing) is the tendency to create an event i->h at timepoint t if event i->j occured at timepoint t-1. The PSABAY statistic is equal to one for the dyads (i,h) for all h not equal to j, that will create the participation shift at timepoint t. }
-#' \item{\code{psABXA}}{ AB-XA Participating shifts (turn usurping) is the tendency to create an event h->i at timepoint t if event i->j occured at timepoint t-1. The psABXA statistic is equal to one for the dyads (h,i) for all h not equal to j, that will create the participation shift at timepoint t.}
-#' \item{\code{psABXB}}{ AB-XB Participating shifts (turn usurping) is the tendency to create an event h->j at timepoint t if event i->j occured at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,j) for all h not equal to i, that will create the participation shift at timepoint t.}
-#' \item{\code{psABXY}}{ AB-XY Participating shifts (turn usurping) is the tendency to create an event h->k at timepoint t if event i->j occured at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,k) for all h not equal to i and k not equal to j, that will create the participation shift at timepoint t. }
+#' \item{\code{psABBA}}{ AB-BA Pacticipating shift (turn receiving) is the tendency to create an event j->i at timepoint t if event i->j occurred at timepoint t-1. The psABBA statistic is equal to one for the dyad (j.i) that will create the participation shift at timepoint t.}
+#' \item{\code{psABBY}}{ AB-BY Participating shift (turn receiving) is the tendency to create an event j->h at timepoint t if event i->j occurred at timepoint t-1. The psABBY statistic is equal to one for the dyads (j,h) for all h not equal to i, that will create the participation shift at timepoint t.}
+#' \item{\code{PSABAY}}{AB-AY Participating shifts  (turn continuing) is the tendency to create an event i->h at timepoint t if event i->j occurred at timepoint t-1. The PSABAY statistic is equal to one for the dyads (i,h) for all h not equal to j, that will create the participation shift at timepoint t. }
+#' \item{\code{psABXA}}{ AB-XA Participating shifts (turn usurping) is the tendency to create an event h->i at timepoint t if event i->j occurred at timepoint t-1. The psABXA statistic is equal to one for the dyads (h,i) for all h not equal to j, that will create the participation shift at timepoint t.}
+#' \item{\code{psABXB}}{ AB-XB Participating shifts (turn usurping) is the tendency to create an event h->j at timepoint t if event i->j occurred at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,j) for all h not equal to i, that will create the participation shift at timepoint t.}
+#' \item{\code{psABXY}}{ AB-XY Participating shifts (turn usurping) is the tendency to create an event h->k at timepoint t if event i->j occurred at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,k) for all h not equal to i and k not equal to j, that will create the participation shift at timepoint t. }
 #' }
 #' 
 #' \strong{Endogenous effects (Recency statistics):}
@@ -204,7 +204,7 @@ remulateTieEffects <- function() {
 #' function may have additional arguments.
 #' @export
 baseline <- function(param = NULL) {
-  out <- prepEndoVar("baseline", param, "none")
+  out <- prepEndoVar(effect_name = "baseline", param = param, scaling = "none")
   out
 }
 
@@ -227,7 +227,7 @@ baseline <- function(param = NULL) {
 #' @export
 tie <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("tie", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "tie", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -250,7 +250,7 @@ tie <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("inertia", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "inertia", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -273,7 +273,7 @@ inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' @export
 reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("reciprocity", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "reciprocity", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -295,7 +295,7 @@ reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' @export
 indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("indegreeSender", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "indegreeSender", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -317,7 +317,7 @@ indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' @export
 indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("indegreeReceiver", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "indegreeReceiver", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -339,7 +339,7 @@ indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' @export
 outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("outdegreeSender", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "outdegreeSender", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -362,7 +362,7 @@ outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' @export
 outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("outdegreeReceiver", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "outdegreeReceiver", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -384,7 +384,7 @@ outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' @export
 totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("totaldegreeSender", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "totaldegreeSender", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -407,7 +407,7 @@ totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' @export
 totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("totaldegreeReceiver", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "totaldegreeReceiver", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -429,7 +429,7 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")
 #' @export
 otp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("otp", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "otp", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -451,7 +451,7 @@ otp <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 itp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("itp", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "itp", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -473,7 +473,7 @@ itp <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 osp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("osp", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "osp", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -495,7 +495,7 @@ osp <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 isp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("isp", param, scaling, start=0, end=0)
+  out <- prepEndoVar(effect_name = "isp", param = param, scaling = scaling, start=0, end=0)
   out
 }
 
@@ -517,7 +517,7 @@ isp <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABBA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABBA", param, scaling)
+  out <- prepEndoVar(effect_name = "psABBA", param = param, scaling = scaling)
   out
 }
 
@@ -540,7 +540,7 @@ psABBA <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABBY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABBY", param, scaling)
+  out <- prepEndoVar(effect_name = "psABBY", param = param, scaling = scaling)
   out
 }
 
@@ -563,7 +563,7 @@ psABBY <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABXA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABXA", param, scaling)
+  out <- prepEndoVar(effect_name = "psABXA", param = param, scaling = scaling)
   out
 }
 
@@ -586,7 +586,7 @@ psABXA <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABXB <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABXB", param, scaling)
+  out <- prepEndoVar(effect_name = "psABXB", param = param, scaling = scaling)
   out
 }
 
@@ -609,7 +609,7 @@ psABXB <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABXY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABXY", param, scaling)
+  out <- prepEndoVar(effect_name = "psABXY", param = param, scaling = scaling)
   out
 }
 
@@ -631,7 +631,7 @@ psABXY <- function(param = NULL, scaling = c("none", "std")) {
 #' @export
 psABAY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepEndoVar("psABAY", param, scaling)
+  out <- prepEndoVar(effect_name = "psABAY", param = param, scaling = scaling)
   out
 }
 
@@ -650,7 +650,7 @@ psABAY <- function(param = NULL, scaling = c("none", "std")) {
 #' function may have additional arguments.
 #' @export
 recencyContinue <- function(param = NULL) {
-  out <- prepEndoVar("recencyContinue", param,"none")
+  out <- prepEndoVar(effect_name = "recencyContinue", param = param, scaling = "none")
   out
 }
 
@@ -669,7 +669,7 @@ recencyContinue <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 recencySendSender <- function(param = NULL) {
-  out <- prepEndoVar("recencySendSender", param,"none")
+  out <- prepEndoVar(effect_name = "recencySendSender", param = param, scaling = "none")
   out
 }
 
@@ -688,7 +688,7 @@ recencySendSender <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 recencySendReceiver <- function(param = NULL) {
-  out <- prepEndoVar("recencySendReceiver", param,"none")
+  out <- prepEndoVar(effect_name = "recencySendReceiver", param = param, scaling = "none")
   out
 }
 
@@ -708,7 +708,7 @@ recencySendReceiver <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 recencyReceiveSender <- function(param = NULL) {
-  out <- prepEndoVar("recencyReceiveSender", param,"none")
+  out <- prepEndoVar(effect_name = "recencyReceiveSender", param = param, scaling = "none")
   out
 }
 
@@ -727,7 +727,7 @@ recencyReceiveSender <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 recencyReceiveReceiver <- function(param = NULL) {
-  out <- prepEndoVar("recencyReceiveReceiver", param,"none")
+  out <- prepEndoVar(effect_name = "recencyReceiveReceiver", param = param, scaling = "none")
   out
 }
 
@@ -747,7 +747,7 @@ recencyReceiveReceiver <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 rrankReceive <- function(param = NULL) {
-  out <- prepEndoVar("rrankReceive", param,"none")
+  out <- prepEndoVar(effect_name = "rrankReceive", param = param, scaling = "none")
   out
 }
 
@@ -767,7 +767,7 @@ rrankReceive <- function(param = NULL) {
 #' function may have additional arguments.
 #' @export
 rrankSend <- function(param = NULL) {
-  out <- prepEndoVar("rrankSend", param,"none")
+  out <- prepEndoVar(effect_name = "rrankSend", param = param, scaling = "none")
   out
 }
 
@@ -793,7 +793,7 @@ rrankSend <- function(param = NULL) {
 #' @export
 send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("send", param, scaling, variable, attr_actors)
+  out <- prepExoVar("send", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -818,7 +818,7 @@ send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' @export
 receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("receive", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "receive", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -843,7 +843,7 @@ receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' @export
 same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("same", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "same", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -868,7 +868,7 @@ same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' @export
 difference <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("difference", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "difference", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -893,7 +893,7 @@ difference <- function(param = NULL, variable, attr_actors, scaling = c("none", 
 #' @export
 average <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("average", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "average", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -918,7 +918,7 @@ average <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' @export
 minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("minimum", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "minimum", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -943,7 +943,7 @@ minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' @export
 maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
-  out <- prepExoVar("maximum", param, scaling, variable, attr_actors)
+  out <- prepExoVar(effect_name = "maximum", param = param, scaling = scaling, variable = variable, attr_actors = attr_actors)
   out
 }
 
@@ -955,7 +955,7 @@ maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' @param param numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model
 #' @param variable character vector specifies the name of the column with covariate value in attr_actors data.frame
-#' @param attr_actors data.frame object with rows specifying values of attr_actors for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name
+#' @param attr_dyads data.frame object with rows specifying values of attr_dyads for a pair of actors (dyad). First column must contain sender id, Second column receiver id, Third column contains values for the attributes with column name corresponding to variable name
 #' @param scaling specifies the method for scaling the statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time 
 #' @details
 #' 
@@ -966,9 +966,10 @@ maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
 #' @export
-dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
+dyad <- function(param = NULL, variable, attr_dyads, scaling=c("none","std")){
   scaling <- match.arg(scaling)
-  out <- prepExoVar("dyad",param, scaling, variable, attr_actors)
+  force(attr_dyads)
+  out <- prepExoVar(effect_name = "dyad", param = param, scaling = scaling, variable = variable, attr_actors = attr_dyads)
   out
 }
 
@@ -990,6 +991,6 @@ dyad <- function(param = NULL, variable, attr_actors,scaling=c("none","std")){
 #' @export
 interact <- function(param = NULL, indices,scaling=c("none","std")) {
   scaling <- match.arg(scaling)
-  out <- prepInteractVar(param, indices,scaling)
+  out <- prepInteractVar( param = param, effects = indices, scaling = scaling)
   out
 }

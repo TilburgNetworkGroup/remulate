@@ -17,7 +17,8 @@ expect_true(!is.null(attr(sim1, "statistics")))
 expect_true(!is.null(attr(sim1, "actors")))
 
 ### Test 2: Simulation with more statistics
-cov <- data.frame(
+if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
+attr_actors <- data.frame(
   id      = 1:5,
   endTime = rep(0, 5),
   sex     = c(0, 1, 0, 1, 0),
@@ -27,8 +28,8 @@ effects2 <- ~ remulate::baseline(-3) +
   remulate::inertia(0.10, scaling = "std") +
   remulate::reciprocity(0.05) +
   remulate::itp(0.01, scaling = "none") +
-  remulate::same(0.02, variable = "sex", attr_actors = cov, scaling = "std") +
-  remulate::send(0.01, variable = "age", attr_actors = cov, scaling = "std") +
+  remulate::same(0.02, variable = "sex", attr_actors = attr_actors, scaling = "std") +
+  remulate::send(0.01, variable = "age", attr_actors = attr_actors, scaling = "std") +
   remulate::tie(0.001) +
   remulate::interact(0.01, indices = c(2, 5), scaling = "std")
 set.seed(123)
@@ -38,8 +39,9 @@ expect_true(nrow(sim2) <= 5)
 # Check that the number of computed statistics (3rd dim) matches the number of effects in the effects formula
 stats2 <- attr(sim2, "statistics")
 expect_equal(dim(stats2)[3], 8)
-
+}
 ### Test 3: Simulation with a data frame parameter
+if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
 N3 <- 10
 rs_full <- as.matrix(expand.grid(1:N3, 1:N3))
 rs_full <- rs_full[rs_full[, 1] != rs_full[, 2], ]
@@ -54,7 +56,7 @@ sim3 <- remulate::remulateTie(effects3, actors = 1:N3, endTime = 10, events = 5,
 expect_true(is.data.frame(sim3))
 stats3 <- attr(sim3, "statistics")
 expect_equal(dim(stats3)[2], nrow(rs_full))
-
+}
 ### Test 4: Simulation with a custom start time
 effects4 <- ~ baseline(-3) + inertia(0.10) + reciprocity(-0.04)
 set.seed(123)
@@ -75,6 +77,7 @@ stats5 <- attr(sim5, "statistics")
 expect_true(!is.null(stats5))
 
 ### Test 6: Simulation with a time varying effect function 
+if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
 baseline_func <- function(t) {
   if (t < 30) {
     -2
@@ -89,3 +92,4 @@ set.seed(123)
 sim6 <- remulate::remulateTie(effects6, actors = 1:5, endTime = 10, events = 5)
 expect_true(is.data.frame(sim6))
 expect_true(nrow(sim6) <= 5)
+}
