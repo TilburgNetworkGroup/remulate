@@ -2,7 +2,7 @@
 % Please edit documentation in R/remulateTie.R
 \name{remulateTie}
 \alias{remulateTie}
-\title{Simulate Relational Event Data - Tie oriented model}
+\title{Simulate Relational Event Data - Tie-Oriented model}
 \usage{
 remulateTie(
   effects,
@@ -72,7 +72,7 @@ The \code{"remulateTie"} object has the following attributes:
 }
 \description{
 A function to simulate relational event data by sampling from a
-tie oriented relational event model.
+tie-oriented relational event model.
 }
 \details{
 If time is irrelevant and only a specific number of events are desired, set time to Inf. 

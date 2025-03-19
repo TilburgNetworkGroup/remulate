@@ -37,13 +37,13 @@ The indices aregument in the interact effect corresponds to the position of the 
 
 \strong{Endogenous effects (Dyad statistics):}
 \describe{
- \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occured in the past. The statistic at timepoint t for dyad (i,j) is 
+ \item{\code{inertia}}{Inertia is the tendency to create an event i->j if the event i->j occurred in the past. The statistic at timepoint t for dyad (i,j) is 
 equal to the number of (i,j) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the out degree of the sender i at time t.}
 
-\item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occured in the past.The statistic at timepoint t for dyad (i,j) is 
-equal to the number of (j,i) events before timepoint t.  Note: if \code{scaling} is "prop" for inertia, the statistic for dyad (i,j) at time t is divided by the in degree of the sender i at time t.}
-\item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occured at least once in the past. The statistic at timepoint t for dyad (i,j) is 
-equal to 1 if a an event i->j occured before timepoint t}
+\item{\code{reciprocity}}{Reciprocity is the tendency to create an event i->j if j->i occurred in the past.The statistic at timepoint t for dyad (i,j) is 
+equal to the number of (j,i) events before timepoint t.  Note: if \code{scaling} is "prop" for reciprocity, the statistic for dyad (i,j) at time t is divided by the in degree of the sender i at time t.}
+\item{\code{tie}}{ Tie effect is the tendency to create an event i->j if the event i->j occurred at least once in the past. The statistic at timepoint t for dyad (i,j) is 
+equal to 1 if a an event i->j occurred before timepoint t}
 }
 
 \strong{Endogenous effects (Triadic statistics):}
@@ -76,12 +76,12 @@ at timepoint t is equal to the minimum of past
 to create an event i->j if i has received more events in the past. 
 The statistic at timepoint t for dyad (i,j) is equal to the number of events 
 received by actor i before timepoint t. Note: if \code{scaling} is "prop" for indegreeSender, 
-the statistic for dyad (i,j) at time t is divided by the total degree of the sender i at time t. }
+the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 \item{\code{indegreeReceiver}}{In degree effect of receiver is the tendency 
-to create an event i->j if j has received more events in the past.  The statistic at timepoint t for dyad (i,j) is equal to the number of events received by actor j before timepoint t. Note: if \code{scaling} is "prop" for indegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
+to create an event i->j if j has received more events in the past.  The statistic at timepoint t for dyad (i,j) is equal to the number of events received by actor j before timepoint t. Note: if \code{scaling} is "prop" for indegreeReceiver, the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 \item{\code{outdegreeSender}}{Out degree effect of sender is the tendency
- to create an event i->j if i has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeSender, the statistic for dyad (i,j) at time t is divided by the total degree of the sender i at time t. }
-\item{\code{outdegreeReceiver}}{Out degree effect of receiver is the tendency to create an event i->j if j has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeReceiver, the statistic for dyad (i,j) at time t is divided by the total degree of the receiver j at time t. }
+ to create an event i->j if i has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeSender, the statistic for dyad (i,j) at time t is divided by by the number of past events until time t. }
+\item{\code{outdegreeReceiver}}{Out degree effect of receiver is the tendency to create an event i->j if j has sent more events in the past. Note: if \code{scaling} is "prop" for outdegreeReceiver, the statistic for dyad (i,j) at time t is divided by the number of past events until time t. }
 \item{\code{totaldegreeSender}}{Total degree effect of sender is the tendency to create an event i->j if i has sent and received more events in the past.}
 \item{\code{totaldegreeReceiver}}{Total degree effect of receiver is the tendency to create an event i->j if j has sent and received more events in the past.}
 
@@ -89,12 +89,12 @@ to create an event i->j if j has received more events in the past.  The statisti
 
 \strong{Endogenous effects (Participating Shifts):}
 \describe{
-\item{\code{psABBA}}{ AB-BA Pacticipating shift (turn receiving) is the tendency to create an event j->i at timepoint t if event i->j occured at timepoint t-1. The psABBA statistic is equal to one for the dyad (j.i) that will create the participation shift at timepoint t.}
-\item{\code{psABBY}}{ AB-BY Participating shift (turn receiving) is the tendency to create an event j->h at timepoint t if event i->j occured at timepoint t-1. The psABBY statistic is equal to one for the dyads (j,h) for all h not equal to i, that will create the participation shift at timepoint t.}
-\item{\code{PSABAY}}{AB-AY Participating shifts  (turn continuing) is the tendency to create an event i->h at timepoint t if event i->j occured at timepoint t-1. The PSABAY statistic is equal to one for the dyads (i,h) for all h not equal to j, that will create the participation shift at timepoint t. }
-\item{\code{psABXA}}{ AB-XA Participating shifts (turn usurping) is the tendency to create an event h->i at timepoint t if event i->j occured at timepoint t-1. The psABXA statistic is equal to one for the dyads (h,i) for all h not equal to j, that will create the participation shift at timepoint t.}
-\item{\code{psABXB}}{ AB-XB Participating shifts (turn usurping) is the tendency to create an event h->j at timepoint t if event i->j occured at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,j) for all h not equal to i, that will create the participation shift at timepoint t.}
-\item{\code{psABXY}}{ AB-XY Participating shifts (turn usurping) is the tendency to create an event h->k at timepoint t if event i->j occured at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,k) for all h not equal to i and k not equal to j, that will create the participation shift at timepoint t. }
+\item{\code{psABBA}}{ AB-BA Pacticipating shift (turn receiving) is the tendency to create an event j->i at timepoint t if event i->j occurred at timepoint t-1. The psABBA statistic is equal to one for the dyad (j.i) that will create the participation shift at timepoint t.}
+\item{\code{psABBY}}{ AB-BY Participating shift (turn receiving) is the tendency to create an event j->h at timepoint t if event i->j occurred at timepoint t-1. The psABBY statistic is equal to one for the dyads (j,h) for all h not equal to i, that will create the participation shift at timepoint t.}
+\item{\code{PSABAY}}{AB-AY Participating shifts  (turn continuing) is the tendency to create an event i->h at timepoint t if event i->j occurred at timepoint t-1. The PSABAY statistic is equal to one for the dyads (i,h) for all h not equal to j, that will create the participation shift at timepoint t. }
+\item{\code{psABXA}}{ AB-XA Participating shifts (turn usurping) is the tendency to create an event h->i at timepoint t if event i->j occurred at timepoint t-1. The psABXA statistic is equal to one for the dyads (h,i) for all h not equal to j, that will create the participation shift at timepoint t.}
+\item{\code{psABXB}}{ AB-XB Participating shifts (turn usurping) is the tendency to create an event h->j at timepoint t if event i->j occurred at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,j) for all h not equal to i, that will create the participation shift at timepoint t.}
+\item{\code{psABXY}}{ AB-XY Participating shifts (turn usurping) is the tendency to create an event h->k at timepoint t if event i->j occurred at timepoint t-1. The psABXB statistic is equal to one for the dyads (h,k) for all h not equal to i and k not equal to j, that will create the participation shift at timepoint t. }
 }
 
 \strong{Endogenous effects (Recency statistics):}
