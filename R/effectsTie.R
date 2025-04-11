@@ -2,12 +2,14 @@
 #' 
 #' This page lists the effects that are available in the remulate package for the tie oriented relational event model.
 #' 
+#' @param endogenous Logical or NULL.   If `TRUE`, returns only endogenous effects.  If `FALSE`, returns only exogenous effects.  If `NULL` (default), returns both endogenous and exogenous effects.
+#'
+#' @details
+#' 
 #' The attr_actors object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attr_actors change (set to zero if the attr_actors do not vary over time). At least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 # by specifying the \code{attr_actors} argument of \code{\link{remulateTie}}.
 #' 
 #' The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
-#' 
-#' @details
 #' 
 #' if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
 #' representing the parameter value for thay dyadic pair. The data.frame must contain 
@@ -18,7 +20,7 @@
 #' 
 #' 
 #' The indices aregument in the interact effect corresponds to the position of the specified effects in the \code{effects} argument of \code{\link{remulateTie}} for which the interaction needs to be computed. The individual constitutive effects for an interaction must be specified before the interact term in the \code{effects} argument. To omit the individual constitutive effects in the generation, specify the \code{param} arugment to zero.
-#' @return The effect functions do not return anything when called individually. They are only used to specify statistics in the \code{effects} argument for the function \code{\link{remulateTie}}.
+#' @return Returns a character vector of available effects for the \code{effects} argument for the function \code{\link{remulateTie}}.
 #' @section Remulate Effects:
 #' \describe{
 #' \item{\code{baseline}}{Baseline tendency for dyads to create events. The statistic equals to 1 for all dyads (i,j) in the riskset. The parameter for baseline controls the average number of events per unit time.}
@@ -184,8 +186,48 @@
 #'   reciprocity(-0.1) + 
 #'   itp(0.01) + 
 #'   interact(0.1, indices = c(1, 2))
-remulateTieEffects <- function() {
-  print("")
+remulateTieEffects <- function(endogenous = NULL) {
+  if(is.null(endogenous)){
+    effects <- c(
+        "baseline", "send", "receive", 
+        "same", "difference", "average",        
+        "minimum", "maximum", 
+        "tie", "inertia", "reciprocity",
+        "indegreeSender", "indegreeReceiver",
+         "outdegreeSender", "outdegreeReceiver",
+        "totaldegreeSender", "totaldegreeReceiver",
+         "otp", "itp", "osp", "isp",
+        "psABBA", "psABBY", "psABXA", 
+        "psABXB", "psABXY", "psABAY", "dyad",
+        "interact", "recencyContinue", "recencySendSender", "recencySendReceiver",
+        "recencyReceiveSender", "recencyReceiveReceiver", "rrankSend", "rrankReceive")
+    return(effects)
+  }
+  if(endogenous){
+    effects <- c("send", "receive", #2 #3
+    "same", "difference", "average", #4 #5 #6
+    "minimum", "maximum", "dyad")
+    return(effects)
+  }
+  if(!endogenous){
+     effects <- c(
+    "baseline", #1    
+    "tie", "inertia", "reciprocity", #9 #10 #11
+    "indegreeSender", "indegreeReceiver", #12 #13
+    "outdegreeSender", "outdegreeReceiver", #14 #15
+    "totaldegreeSender", "totaldegreeReceiver", #16, #17
+    "otp", "itp", "osp", "isp", #18 #19 #20 #21
+    "psABBA", "psABBY", "psABXA",  #22 #23 #24
+    "psABXB", "psABXY", "psABAY",  #25 #26 #27
+    
+    "recencyContinue", #30
+    "recencySendSender","recencySendReceiver", #31,#32
+    "recencyReceiveSender","recencyReceiveReceiver", #33, #34
+    "rrankSend","rrankReceive" #35, #36
+  )
+  return(effects)
+  }
+  
 }
 
 #'baseline
@@ -202,6 +244,7 @@ remulateTieEffects <- function() {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 baseline <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "baseline", param = param, scaling = "none")
@@ -224,6 +267,7 @@ baseline <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 tie <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -247,6 +291,7 @@ tie <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -270,6 +315,7 @@ inertia <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -292,6 +338,7 @@ reciprocity <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -314,6 +361,7 @@ indegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -336,6 +384,7 @@ indegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -359,6 +408,7 @@ outdegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -381,6 +431,7 @@ outdegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -404,6 +455,7 @@ totaldegreeSender <- function(param = NULL, scaling = c("none", "std", "prop")) 
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)
@@ -426,6 +478,7 @@ totaldegreeReceiver <- function(param = NULL, scaling = c("none", "std", "prop")
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 otp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -448,6 +501,7 @@ otp <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 itp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -470,6 +524,7 @@ itp <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 osp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -492,6 +547,7 @@ osp <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 isp <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -514,6 +570,7 @@ isp <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABBA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -537,6 +594,7 @@ psABBA <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABBY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -560,6 +618,7 @@ psABBY <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABXA <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -583,6 +642,7 @@ psABXA <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABXB <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -606,6 +666,7 @@ psABXB <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABXY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -628,6 +689,7 @@ psABXY <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 psABAY <- function(param = NULL, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -648,6 +710,7 @@ psABAY <- function(param = NULL, scaling = c("none", "std")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 recencyContinue <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "recencyContinue", param = param, scaling = "none")
@@ -667,6 +730,7 @@ recencyContinue <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 recencySendSender <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "recencySendSender", param = param, scaling = "none")
@@ -686,6 +750,7 @@ recencySendSender <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 recencySendReceiver <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "recencySendReceiver", param = param, scaling = "none")
@@ -706,6 +771,7 @@ recencySendReceiver <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 recencyReceiveSender <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "recencyReceiveSender", param = param, scaling = "none")
@@ -725,6 +791,7 @@ recencyReceiveSender <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 recencyReceiveReceiver <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "recencyReceiveReceiver", param = param, scaling = "none")
@@ -745,6 +812,7 @@ recencyReceiveReceiver <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 rrankReceive <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "rrankReceive", param = param, scaling = "none")
@@ -765,6 +833,7 @@ rrankReceive <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 rrankSend <- function(param = NULL) {
   out <- prepEndoVar(effect_name = "rrankSend", param = param, scaling = "none")
@@ -790,6 +859,7 @@ rrankSend <- function(param = NULL) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -815,6 +885,7 @@ send <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -840,6 +911,7 @@ receive <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -865,6 +937,7 @@ same <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 difference <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -890,6 +963,7 @@ difference <- function(param = NULL, variable, attr_actors, scaling = c("none", 
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 average <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -915,6 +989,7 @@ average <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -940,6 +1015,7 @@ minimum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "std")) {
   scaling <- match.arg(scaling)
@@ -965,6 +1041,7 @@ maximum <- function(param = NULL, variable, attr_actors, scaling = c("none", "st
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 dyad <- function(param = NULL, variable, attr_dyads, scaling=c("none","std")){
   scaling <- match.arg(scaling)
@@ -988,6 +1065,7 @@ dyad <- function(param = NULL, variable, attr_dyads, scaling=c("none","std")){
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
 #' @export
 interact <- function(param = NULL, indices,scaling=c("none","std")) {
   scaling <- match.arg(scaling)

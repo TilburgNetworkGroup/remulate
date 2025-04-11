@@ -9,6 +9,9 @@ recencyReceiveReceiver(param = NULL)
 \arguments{
 \item{param}{numeric value, data.frame  or function with time parameter. Specifies the value of the effect for the statistic in the REM model}
 }
+\value{
+List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
+}
 \description{
 This function specifies the input for the recencyReceiveReceiver effect in the \code{formula} argument for the function \code{\link{remulateTie}}. Not to be used independently
 }

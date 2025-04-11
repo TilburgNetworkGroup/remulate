@@ -25,7 +25,6 @@
 #' A list of available statistics for receiver choice model. 
 #' See \link{remulateActorEffects} for details on effects: :
 #'\itemize{
-#'  \item \code{baseline()}
 #'  \item \code{inertia()}
 #'  \item \code{reciprocity()}
 #'  \item \code{indegreeReceiver()}
@@ -35,6 +34,16 @@
 #'  \item \code{itp()}
 #'  \item \code{osp()}
 #'  \item \code{isp()}
+#'  \item \code{psABBA()}
+#'  \item \code{psABBY()}
+#'  \item \code{psABXA()}
+#'  \item \code{psABXB()}
+#'  \item \code{psABXY()}
+#'  \item \code{psABAY()}
+#'  \item \code{recencyContinue()}
+#'  \item \code{recencySendReceiver()}
+#'  \item \code{recencyReceiveReceiver()} 
+#'  \item \code{rrankReceive()} 
 #'  \item \code{receive()}
 #'  \item \code{dyad()}
 #'  \item \code{same()}
@@ -224,17 +233,25 @@ remulateActor <- function(
     
     #Create a risk set
     #TODO: allow risk set to vary with time
-    rs <- as.matrix(expand.grid(actors_map$id,actors_map$id))
-    colnames(rs) <- c("sender", "receiver")
-    rs <- rs[rs[,"sender"]!=rs[,"receiver"],]
-    if(!is.null(riskset)){
-        if(any(!riskset[[1]] %in% actors_map$name)){
-            stop("risk set contains sender actor not specified in actor's list")
+     if (!is.null(riskset)) { #custom riskset
+        if (any(!riskset[[1]] %in% actors_map$name)) {
+        stop("risk set contains sender actor not specified in actor's list")
         } else if (any(!riskset[[2]] %in% actors_map$name)) {
-           stop("risk set contains receiver actor not specified in actor's list")
+        stop("risk set contains receiver actor not specified in actor's list")
         }
         #convert names in riskset to ids
-        rs <- rs[(rs[,1] %in% actors_map$id[actors_map$name %in% riskset[[1]]] & rs[,2] %in% actors_map$id[actors_map$name %in% riskset[[2]] ]),]
+        rs <- riskset
+        rs[,2] <- sapply(rs[,2], function(x) {
+        actors_map$id[match(x,actors_map$name)]
+        })
+        rs[,1] <- sapply(rs[,1], function(x) {
+            actors_map$id[match(x,actors_map$name)]
+        })
+    }else{
+        #TODO: allow risk set to vary with time (enhancement:feature)
+        rs <- as.matrix(expand.grid(actors_map$id, actors_map$id))
+        colnames(rs) <- c("sender", "receiver")
+        rs <- rs[rs[, "sender"] != rs[, "receiver"],]
     }
     
     #initialize start time as t=0 if simulating cold-start else set t as time of last event in initial edgelist
@@ -320,7 +337,7 @@ remulateActor <- function(
         # }
         
         if(t > endTime){
-            cat(i-1, "events generated \n")
+            message(paste0(i-1, " events generated"))
             break
         }
 
@@ -347,8 +364,7 @@ remulateActor <- function(
         }
         else if(memory=="window_m"){ #window_m takes memory by last m events
             if(memoryParam<i){
-                adj_mat[] <- 0
-                print(paste("memory in:",i-memoryParam,"to",i))
+                adj_mat[] <- 0                
                 for(ind in c(i-memoryParam,i)){
                     adj_mat[edgelist[ind,2],edgelist[ind,3]] =  adj_mat[edgelist[ind,2],edgelist[ind,3]] + 1;
                 }
@@ -371,7 +387,7 @@ remulateActor <- function(
         # }
         #stop if max number of events reached
         if(!is.null(events) && i-1>=events){
-            cat(paste0("Stopping: maximum number of events (",i-1,") sampled \n"))
+            message(paste0("Stopping: maximum number of events (", i - 1, ") generated"))
             break
         }
 

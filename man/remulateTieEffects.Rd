@@ -4,10 +4,13 @@
 \alias{remulateTieEffects}
 \title{Remulate Tie Effects}
 \usage{
-remulateTieEffects()
+remulateTieEffects(endogenous = NULL)
+}
+\arguments{
+\item{endogenous}{Logical or NULL.   If `TRUE`, returns only endogenous effects.  If `FALSE`, returns only exogenous effects.  If `NULL` (default), returns both endogenous and exogenous effects.}
 }
 \value{
-The effect functions do not return anything when called individually. They are only used to specify statistics in the \code{effects} argument for the function \code{\link{remulateTie}}.
+Returns a character vector of available effects for the \code{effects} argument for the function \code{\link{remulateTie}}.
 }
 \description{
 This page lists the effects that are available in the remulate package for the tie oriented relational event model.
@@ -16,8 +19,6 @@ This page lists the effects that are available in the remulate package for the t
 The attr_actors object for exogenous effects based on actor covariates (\code{send}, \code{receive}, \code{same}, \code{difference}, \code{average}, \code{max}, \code{min}) contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateTie}}). The second column contains the time when attr_actors change (set to zero if the attr_actors do not vary over time). At least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
 
 The attribute object for exogenous effect \code{dyad} contains at least three columns (sender_id,receiver_id,attribute). It should be constructed as follows: First column must contain sender id, second column receiver id, at least one of the subsequent columns must contain values for the attr_actors with column name corresponding to variable name specified in the effect specification.
-
-
 
 if param is a data frame, it must have three columns: sender, receiver, and value (numeric), 
 representing the parameter value for thay dyadic pair. The data.frame must contain 

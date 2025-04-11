@@ -1,7 +1,12 @@
 #' Remulate Actor Effects
 #' 
-#' This page lists the effects that are available in the remulate package for the actor oriented relational event model.
+#' This page lists the effects that are available in the remulate package for the actor-oriented relational event model.
 #'
+#' @param rateEffects Logical. If TRUE, includes rate effects (i.e sender-rate effects) of the actor-oriented relational event model.  
+#'   If FALSE, rate effects are excluded.
+#' @param choiceEffects Logical. If TRUE, includes choice effects (i.e receiver-choice effects)  of the actor-oriented relational event model.    
+#'   If FALSE, choice effects are excluded.
+#' 
 #' @details
 #' The attr_actors object contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateActor}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). Subsequent columns contain the attributes that are called in the specifications of exogenous statistics. The same \code{attr_actors} object can be used with multiple exogenous statistics.
 # by specifying the \code{attr_actors} argument of \code{\link{remulateActor}}.
@@ -84,7 +89,7 @@
 #' \item{\code{Difference}}{difference attribute value (Heterophily) is the tendency to create an event i->j if actors i and j have a high absolute difference in attribute values}
 #' }
 #' 
-#' @examples 
+#' @return Returns a character vector of available effects for the \code{rateEffects} or \code{choiceEffects} argument for the function \code{\link{remulateActor}}.
 #' 
 #' #To specify an exogenous effect (example: same)
 #' 
@@ -124,8 +129,66 @@
 #'   reciprocity(-0.1) + 
 #'   same(0.2, variable = "gender", attr_actors = cov) + 
 #'   receive(0.1, variable = "age", attr_actors = cov)
-remulateActorEffects <- function(){
-  print("")
+remulateActorEffects <- function(rateEffects = TRUE, choiceEffects = TRUE){   
+   if(rateEffects & !choiceEffects){
+      effects <- c(
+      "baseline", #1
+      "send", #2
+      "indegreeSender", #3
+      "outdegreeSender", #4
+      "totaldegreeSender",#5
+      "ospSender", "otpSender",
+      "recencySendSender","recencyReceiveSender",
+      "rrankSend", #6 #7
+      "interact" #8
+      )
+      return(effects)
+   }
+   if(choiceEffects & !rateEffects){
+      effects <- c(
+      "baseline", #1
+      "receive", #2 #3
+      "same", "difference", "average", #4 #5 #6
+      "minimum", "maximum", #7 #8
+      "tie", "inertia", "reciprocity", #9 #10 #11
+      "indegreeReceiver", #12 #13
+      "outdegreeReceiver", #14 #15
+      "totaldegreeReceiver", #16, #17
+      "otp", "itp", "osp", "isp", #18 #19 #20 #21  
+      "psABBA", "psABBY", "psABXA",  #22 #23 #24
+      "psABXB", "psABXY", "psABAY",  #25 #26 #27  
+      "dyad", #28
+      "interact", #29
+      "recencyContinue", #30
+      "recencySendReceiver", #31,#32
+      "recencyReceiveReceiver", #33, #34
+      "rrankSend","rrankReceive" #35, #36
+    )
+    return(effects)
+   }    
+  if(choiceEffects & rateEffects){
+     effects <- c(
+        "baseline", #1
+        "send", "receive", #2 #3
+        "same", "difference", "average", #4 #5 #6
+        "minimum", "maximum", #7 #8
+        "tie", "inertia", "reciprocity", #9 #10 #11
+        "indegreeSender", "indegreeReceiver", #12 #13
+        "outdegreeSender", "outdegreeReceiver", #14 #15
+        "totaldegreeSender", "totaldegreeReceiver", #16, #17
+        "otp", "itp", "osp", "isp", #18 #19 #20 #21
+        "psABBA", "psABBY", "psABXA",  #22 #23 #24
+        "psABXB", "psABXY", "psABAY",  #25 #26 #27
+        "dyad", #28
+        "interact", #29
+        "recencyContinue", #30
+        "recencySendSender","recencySendReceiver", #31,#32
+        "recencyReceiveSender","recencyReceiveReceiver", #33, #34
+        "rrankSend","rrankReceive" #35, #36
+      )
+      return(effects)
+  }
+
 }
 
 #'otp sender
@@ -143,6 +206,7 @@ remulateActorEffects <- function(){
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by 'remulate::remulateActor()' to compute the statistic.
 #' @export 
 ospSender <- function(param = NULL, scaling = c("none", "std","prop")) {
   scaling <- match.arg(scaling)
@@ -165,6 +229,7 @@ ospSender <- function(param = NULL, scaling = c("none", "std","prop")) {
 #' 
 #' if param is a function, it's first argument must be 't', corresponding to the time. The
 #' function may have additional arguments.
+#' @returns List with all information required by 'remulate::remulateActor()' to compute the statistic.
 #' @export 
 otpSender <- function(param = NULL, scaling = c("none", "std", "prop")) {
   scaling <- match.arg(scaling)

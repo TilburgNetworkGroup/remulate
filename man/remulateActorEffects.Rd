@@ -4,10 +4,59 @@
 \alias{remulateActorEffects}
 \title{Remulate Actor Effects}
 \usage{
-remulateActorEffects()
+remulateActorEffects(rateEffects = TRUE, choiceEffects = TRUE)
+}
+\arguments{
+\item{rateEffects}{Logical. If TRUE, includes rate effects (i.e sender-rate effects) of the actor-oriented relational event model.
+If FALSE, rate effects are excluded.}
+
+\item{choiceEffects}{Logical. If TRUE, includes choice effects (i.e receiver-choice effects)  of the actor-oriented relational event model.
+If FALSE, choice effects are excluded.}
+}
+\value{
+Returns a character vector of available effects for the \code{rateEffects} or \code{choiceEffects} argument for the function \code{\link{remulateActor}}.
+
+#To specify an exogenous effect (example: same)
+
+cov <- data.frame(
+  actor = 1:10,
+  time = rep(0, 10),
+  gender = sample(c(0, 1), replace = TRUE, 10),
+  age = sample(20:30, 10, replace = TRUE)
+)
+
+effects <- ~ same(0.2, variable = "gender", attr_actors = cov)
+
+#Rate Effects:
+
+#If parameter is constant
+
+rateEffects <- ~ outdegreeSender(0.3) + 
+  send(0.1, variable = "age", attr_actors = cov)
+
+#If parameter varies with time
+
+rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) + 
+  send(0.1, variable = "age", attr_actors = cov)
+
+#Choice Effects:
+
+#If parameter is constant
+
+choiceEffects <- ~ inertia(0.4) + 
+  reciprocity(-0.1) + 
+  same(0.2, variable = "gender", attr_actors = cov) + 
+  receive(0.1, variable = "age", attr_actors = cov)
+
+#If parameter varies with time
+
+choiceEffects <- ~ inertia(param = function(t) exp(-t)) +  
+  reciprocity(-0.1) + 
+  same(0.2, variable = "gender", attr_actors = cov) + 
+  receive(0.1, variable = "age", attr_actors = cov)
 }
 \description{
-This page lists the effects that are available in the remulate package for the actor oriented relational event model.
+This page lists the effects that are available in the remulate package for the actor-oriented relational event model.
 }
 \details{
 The attr_actors object contains at least three columns (actor,time,attribute). It should be constructed as follows: Each row refers to the attribute value of actor i at timepoint t. The first column contains the actor names (corresponding to the vector of names in the \code{actors} argument of \code{\link{remulateActor}}). The second column contains the time when attributes change (set to zero if the attributes do not vary over time). Subsequent columns contain the attributes that are called in the specifications of exogenous statistics. The same \code{attr_actors} object can be used with multiple exogenous statistics.
@@ -93,44 +142,3 @@ at timepoint t is equal to the minimum of past
 }
 }
 
-\examples{
-
-#To specify an exogenous effect (example: same)
-
-cov <- data.frame(
-  actor = 1:10,
-  time = rep(0, 10),
-  gender = sample(c(0, 1), replace = TRUE, 10),
-  age = sample(20:30, 10, replace = TRUE)
-)
-
-effects <- ~ same(0.2, variable = "gender", attr_actors = cov)
-
-#Rate Effects:
-
-#If parameter is constant
-
-rateEffects <- ~ outdegreeSender(0.3) + 
-  send(0.1, variable = "age", attr_actors = cov)
-
-#If parameter varies with time
-
-rateEffects <- ~ outdegreeSender(param = function(t) exp(-t)) + 
-  send(0.1, variable = "age", attr_actors = cov)
-
-#Choice Effects:
-
-#If parameter is constant
-
-choiceEffects <- ~ inertia(0.4) + 
-  reciprocity(-0.1) + 
-  same(0.2, variable = "gender", attr_actors = cov) + 
-  receive(0.1, variable = "age", attr_actors = cov)
-
-#If parameter varies with time
-
-choiceEffects <- ~ inertia(param = function(t) exp(-t)) +  
-  reciprocity(-0.1) + 
-  same(0.2, variable = "gender", attr_actors = cov) + 
-  receive(0.1, variable = "age", attr_actors = cov)
-}

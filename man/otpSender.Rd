@@ -13,6 +13,9 @@ otpSender(param = NULL, scaling = c("none", "std", "prop"))
 
 \item{scaling}{the method for scaling the osp sender statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
+\value{
+List with all information required by 'remulate::remulateActor()' to compute the statistic.
+}
 \description{
 osp sender
  

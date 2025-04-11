@@ -11,6 +11,9 @@ inertia(param = NULL, scaling = c("none", "std", "prop"))
 
 \item{scaling}{the method for scaling the inertia statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point, and \code{"prop"} denotes proportional scaling in which raw counts are divided by the out degree of the sender at time t.}
 }
+\value{
+List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
+}
 \description{
 This function specifies the input for the inertia effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

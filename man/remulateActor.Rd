@@ -117,7 +117,6 @@ See \link{remulateActorEffects} for details on effects:
 A list of available statistics for receiver choice model. 
 See \link{remulateActorEffects} for details on effects: :
 \itemize{
- \item \code{baseline()}
  \item \code{inertia()}
  \item \code{reciprocity()}
  \item \code{indegreeReceiver()}
@@ -127,6 +126,16 @@ See \link{remulateActorEffects} for details on effects: :
  \item \code{itp()}
  \item \code{osp()}
  \item \code{isp()}
+ \item \code{psABBA()}
+ \item \code{psABBY()}
+ \item \code{psABXA()}
+ \item \code{psABXB()}
+ \item \code{psABXY()}
+ \item \code{psABAY()}
+ \item \code{recencyContinue()}
+ \item \code{recencySendReceiver()}
+ \item \code{recencyReceiveReceiver()} 
+ \item \code{rrankReceive()} 
  \item \code{receive()}
  \item \code{dyad()}
  \item \code{same()}

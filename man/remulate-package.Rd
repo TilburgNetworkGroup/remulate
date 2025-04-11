@@ -4,9 +4,9 @@
 \name{remulate-package}
 \alias{remulate}
 \alias{remulate-package}
-\title{remulate: Remulate - Simulate Dynamic Networks from Relational Event Models}
+\title{remulate: Simulate Dynamic Networks from Relational Event Models}
 \description{
-This package allows for model based simulation of relational event networks under tie-oriented (Butts, C., 2008, \doi{10.1111/j.1467-9531.2008.00203.x}) and actor oriented models (Stadtfeld, C., & Block, P., 2017, \doi{10.15195/v4.a14}). The package providing flexibility to incorpoate temporal variability in effects, heterogeneity via latent class REMs or blockmodels, and to account for memory decay when simulating from relational event models (Lakdawala, R., 2024 \doi{10.48550/arXiv.2403.19329}). The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
+Model based simulation of dynamic networks under tie-oriented (Butts, C., 2008, \doi{10.1111/j.1467-9531.2008.00203.x}) and actor-oriented (Stadtfeld, C., & Block, P., 2017, \doi{10.15195/v4.a14}) relational event models. Supports simulation from a variety of relational event model extensions, including temporal variability in effects, heterogeneity through dyadic latent class relational event models (DLC-REM), random effects, blockmodels, and memory decay in relational event models (Lakdawala, R., 2024 \doi{10.48550/arXiv.2403.19329}). The development of this package was supported by a Vidi Grant (452-17-006) awarded by the Netherlands Organization for Scientific Research (NWO) Grant and an ERC Starting Grant (758791).
 }
 \seealso{
 Useful links:

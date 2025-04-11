@@ -13,6 +13,9 @@ interact(param = NULL, indices, scaling = c("none", "std"))
 
 \item{scaling}{specifies the method for scaling the statistic after the interaction has been computed. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time}
 }
+\value{
+List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
+}
 \description{
 This function specifies the input for the interact effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

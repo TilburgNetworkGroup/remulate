@@ -325,7 +325,7 @@ remulateTie <- function(
     # }
 
     if(t > endTime){
-      cat(i-1, "events generated \n")
+      message(paste0(i-1, " events generated"))
       break
     }
 
@@ -354,7 +354,6 @@ remulateTie <- function(
       #window_m takes memory by last m events
       if (memoryParam < i) {
         adj_mat[] <- 0
-        print(paste("memory in:", i - memoryParam, "to", i))
         for (ind in c(i - memoryParam, i)) {
           adj_mat[edgelist[ind, 2], edgelist[ind, 3]] = adj_mat[edgelist[ind, 2], edgelist[ind, 3]] + 1;
         }
@@ -373,7 +372,7 @@ remulateTie <- function(
     
     #stop if max number of events reached
     if(!is.null(events) && i-1>=events){
-      cat(paste0("Stopping: maximum number of events (",i-1,") sampled \n"))
+      message(paste0("Stopping: maximum number of events (", i - 1, ") generated"))
       break
     }
 

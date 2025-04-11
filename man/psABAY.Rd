@@ -11,6 +11,9 @@ psABAY(param = NULL, scaling = c("none", "std"))
 
 \item{scaling}{the method for scaling the psABAY statistic. \code{"none"} [default] gives raw value of the statistic at time t, \code{"std"} the statistic is standardized per time point.}
 }
+\value{
+List with all information required by `remulate::remulateTie()` or 'remulate::remulateActor()' to compute the statistic.
+}
 \description{
 This function specifies the input for the psABAY effect in the \code{formula} argument for the function \code{\link{remulateTie}} or \code{\link{remulateActor}}. Not to be used independently
 }

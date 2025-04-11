@@ -11,7 +11,7 @@ initialize_adj_mat<- function(actors_map,initial,rs){
     for(ind in 1:initial){
       adj_mat[    rs[dyads[ind],1]  ,rs[dyads[ind],2] ] =  adj_mat[    rs[dyads[ind],1]  ,rs[dyads[ind],2] ] + 1;
     }
-    cat(initial,"random events were used to initialize the statistics \n")
+    message(paste0(initial, " random events were used to initialize the statistics"))
   }
   else if(is.data.frame(initial)){
     colnames(initial) <- c("time", "sender", "receiver")
@@ -224,16 +224,25 @@ parseEffectsRate <- function(formula,pred = FALSE){
   
   effects <- lapply(var, eval)
   effects <- unlist(effects, recursive = FALSE)
-  #effects <- do.call(c, effects)
   
   all_effects <- c(
-    "baseline", #1
-    "send", #2
-    "indegreeSender", #3
-    "outdegreeSender", #4
-    "totaldegreeSender",#5
-    "ospSender", "otpSender", #6 #7
-    "interact" #8
+      "baseline", #1
+    "send", "receive", #2 #3
+    "", "", "", #4 #5 #6
+    "", "", #7 #8
+    "", "", "", #9 #10 #11
+    "indegreeSender", "", #12 #13
+    "outdegreeSender", "", #14 #15
+    "totaldegreeSender", "", #16, #17
+    "", "", "", "", #18 #19 #20 #21
+    "", "", "",  #22 #23 #24
+    "", "", "",  #25 #26 #27
+    "", #28
+    "interact", #29
+    "", #30
+    "recencySendSender","", #31,#32
+    "recencyReceiveSender","", #33, #34
+    "rrankSend","" #35, #36
   )
   
   if(any(!names(effects) %in% all_effects)){
@@ -324,10 +333,14 @@ parseEffectsChoice <- function(formula){
     "", "outdegreeReceiver", #14 #15
     "", "totaldegreeReceiver", #16, #17
     "otp", "itp", "osp", "isp", #18 #19 #20 #21
-    "", "", "",  #22 #23 #24
-    "", "", "",  #25 #26 #27
-    "dyad", #28
-    "interact" #29
+    "psABBA", "psABBY", "psABXA",  #22 #23 #24
+      "psABXB", "psABXY", "psABAY",  #25 #26 #27  
+      "dyad", #28
+      "interact", #29
+      "recencyContinue", #30
+      "","recencySendReceiver", #31,#32
+      "","recencyReceiveReceiver", #33, #34
+      "","rrankReceive" #35, #36    
   )
   
   # Prepare effects for switch  case
@@ -432,14 +445,19 @@ parseEffectsTieRemstimate <- function(remstimate_object){
     effects <- do.call(c, effects)
     
     all_effects <- c(
-        "baseline", "send", "receive", "same", "difference", "average",
-        "minimum", "maximum", "tie", "inertia", "reciprocity",
-        "indegreeSender", "indegreeReceiver", "outdegreeSender", "outdegreeReceiver",
-        "totaldegreeSender", "totaldegreeReceiver", "otp", "itp", "osp", "isp",
-        "psABBA", "psABBY", "psABXA", "psABXB", "psABXY", "psABAY", "dyad",
+        "baseline", "send", "receive", 
+        "same", "difference", "average",        
+        "minimum", "maximum", 
+        "tie", "inertia", "reciprocity",
+        "indegreeSender", "indegreeReceiver",
+         "outdegreeSender", "outdegreeReceiver",
+        "totaldegreeSender", "totaldegreeReceiver",
+         "otp", "itp", "osp", "isp",
+        "psABBA", "psABBY", "psABXA", 
+        "psABXB", "psABXY", "psABAY", "dyad",
         "interact", "recencyContinue", "recencySendSender", "recencySendReceiver",
-        "recencyReceiveSender", "recencyReceiveReceiver", "rrankSend", "rrankReceive"
-    )
+        "recencyReceiveSender", "recencyReceiveReceiver", "rrankSend", "rrankReceive")
+     
     
     if (any(!names(effects) %in% all_effects)) {
         stop("An effect specified in effects argument is not a valid effect")
