@@ -60,14 +60,21 @@ help('remulateActorEffects')
 If you use this R package in your research or in any publications, please cite it as follows to help support our work:
 
 ```bibtex
-@misc{lakdawala2024simulatingrelationaleventhistories,
-      title={Simulating Relational Event Histories: Why and How}, 
-      author={Rumana Lakdawala and Joris Mulder and Roger Leenders},
-      year={2025},
-      eprint={2403.19329},
-      archivePrefix={arXiv},
-      primaryClass={cs.SI},
-      url={https://arxiv.org/abs/2403.19329}, 
+@article{lakdawalaSimulatingRelationalEvent2025,
+  title = {Simulating Relational Event History Data: Why and How},
+  shorttitle = {Simulating Relational Event History Data},
+  author = {Lakdawala, Rumana and Mulder, Joris and Leenders, Roger},
+  year = {2025},
+  month = aug,
+  journal = {Journal of Computational Social Science},
+  volume = {8},
+  number = {4},
+  pages = {92},
+  issn = {2432-2725},
+  doi = {10.1007/s42001-025-00427-2},
+  urldate = {2025-08-28},
+  langid = {english},
+  keywords = {Actor-oriented models,Dyadic interaction models,Interventions,Model fit assessment,Relational events,Simulation techniques,Temporal social networks}
 }
 ```
 
